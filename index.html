@@ -133,12 +133,7 @@ p{font-size:large}
     <div id="page-leaders" class="page-section" data-page="Лидеры" style="margin-top:64px">
         <h2 class="section-title">Лидеры</h2>
     </div>
-    <div id="page-shop" class="page-section" data-page="Магазин" style="margin-top:64px">
-        <div class="games-topbar">
-            <div class="pill pill-gray"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span class="balance-value">0</span><div class="add-circle">+</div></div>
-        </div>
-        <h2 class="section-title">Магазин</h2>
-    </div>
+    <div id="page-shop" class="page-section" data-page="Магазин" style="margin-top:64px"></div>
     <div id="page-profile" class="page-section" data-page="Профиль">
         <div class="container" style="margin-top:64px">
             <div class="flexer" style="margin-bottom:4px">
@@ -203,6 +198,19 @@ function renderBalance(){
     document.querySelectorAll('.balance-value').forEach(el=>{el.textContent=text;});
 }
 renderBalance();
+
+(function(){
+    const shopPage=document.getElementById('page-shop');
+    if(shopPage){
+        fetch('shop.html')
+            .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
+            .then(html=>{shopPage.innerHTML=html;renderBalance();})
+            .catch(e=>{
+                console.error('Не удалось загрузить shop.html:',e);
+                shopPage.innerHTML='<p class="hint_text">Не удалось загрузить магазин. Проверьте, что файл shop.html лежит рядом с index.html.</p>';
+            });
+    }
+})();
 
 (function(){
     const items=document.querySelectorAll('.nav-item');
