@@ -19,40 +19,8 @@ p{font-size:large}
 .page-section{display:none;width:100%}
 .page-section.active-page{display:block}
 .section-title{font-size:32px;font-weight:300;margin:0 0 20px;letter-spacing:-.02em}
-.container{background:#ffffff1a;border-radius:24px;padding:10px}
-.star_logo{width:32px;height:32px}
-.flexer{display:flex;text-align:center;align-items:center;justify-content:center}
-#stars_balance_profile,#stars_balance_top{margin:0 0 0 12px;font-weight:bold}
-.hint_text{width:100%;text-align:center;color:#8e8e93;margin:0;line-height:1.1}
-.btn{font-size:x-large;margin:4px;width:100%;padding:16px;border-radius:24px;border:none;background:#49494c;color:#fff;transition:all .2s ease;cursor:pointer}
-.btn:hover{filter:brightness(90%)}
-.btn:active{transform:scale(.98);filter:brightness(85%)}
-.white_btn{background:#fff;color:#000}
-.flexer:last-child{margin-top:-4px}
 .current_balance{background:#49494c;display:flex;width:max-content;padding:4px 10px;border-radius:24px;margin:64px 0 16px auto}
-.withdraw-screen{display:none;position:fixed;inset:0;background:#000;z-index:2000;overflow-y:auto;padding:64px 0 100px}
-.withdraw-screen.active{display:block}
-.withdraw-screen .wrap{padding:14px}
-.withdraw-screen .top{display:flex;justify-content:space-between;align-items:center}
-.withdraw-screen .back-btn{background:#2c2c2e;border:none;color:#fff;font-size:15px;padding:7px 14px;border-radius:16px;cursor:pointer}
-.withdraw-screen .balance{background:#2c2c2e;padding:7px 13px;border-radius:16px;display:flex;align-items:center;gap:5px;font-size:14px}
-.withdraw-screen .star-small{width:16px}
-.withdraw-screen .title{text-align:center;font-size:24px;font-weight:600;margin:18px 0 12px}
-.withdraw-screen .error{background:#d92c2c;padding:14px 16px;border-radius:22px;margin-bottom:12px}
-.withdraw-screen .error-title{font-size:17px;font-weight:600;margin-bottom:4px}
-.withdraw-screen .error-text{font-size:14px;color:#ffb4b4;line-height:1.35}
-.withdraw-screen .block{margin-top:12px;padding:16px;border-radius:22px;background:linear-gradient(180deg,#1c1c1e,#151517)}
-.withdraw-screen .input-box{background:linear-gradient(180deg,#1f1f1f,#171717);border-radius:18px;padding:16px;text-align:center;font-size:18px;border:1px solid rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),inset 0 -1px 0 rgba(0,0,0,.4)}
-.withdraw-screen #w-username{color:#e6e6e6;letter-spacing:.3px}
-.withdraw-screen .subtext{text-align:center;color:#8e8e93;font-size:13px;margin-top:10px;line-height:1.35}
-.withdraw-screen .amount-center{display:flex;justify-content:center;align-items:center;height:95px}
-.withdraw-screen .amount-inner{display:flex;align-items:center}
-.withdraw-screen .amount-input{font-size:64px;font-weight:700;border:none;outline:none;background:transparent;color:#fff;text-align:right;width:2ch}
-.withdraw-screen input::-webkit-outer-spin-button,.withdraw-screen input::-webkit-inner-spin-button{-webkit-appearance:none}
-.withdraw-screen .star-big{width:46px;height:46px;margin-left:6px}
-.withdraw-screen .limits{text-align:center;color:#8e8e93;margin-top:4px;font-size:13px}
-.withdraw-screen .button{position:fixed;bottom:18px;left:14px;right:14px;background:#fff;color:#000;text-align:center;padding:16px;border-radius:26px;font-size:17px;font-weight:600;opacity:.4;pointer-events:none;transition:.2s;cursor:pointer}
-.withdraw-screen .button.active{opacity:1;pointer-events:auto}
+#stars_balance_top{margin:0 0 0 12px;font-weight:bold}
 .toast-container{position:fixed;top:calc(120px + env(safe-area-inset-top));left:12px;right:12px;z-index:9999}
 .toast{background:#c62828;color:#fff;padding:18px 20px;border-radius:28px;font-size:17px;font-weight:500;display:flex;align-items:center;gap:14px;animation:slideDown .25s ease}
 .toast.success{background:#2ea043}
@@ -61,83 +29,50 @@ p{font-size:large}
 @keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
 
 .games-topbar{display:flex;align-items:center;gap:6px;margin:4px 0 20px}
-.live-badge{background:#1c1c1e;color:#ff3b30;font-size:11px;font-weight:800;letter-spacing:.12em;padding:9px 5px;border-radius:14px;writing-mode:vertical-rl;text-orientation:upright;flex-shrink:0}
-.clover-badge{width:44px;height:44px;border-radius:50%;background:#1c1c1e;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.pill{display:flex;align-items:center;gap:5px;padding:9px 13px;border-radius:22px;font-weight:800;font-size:15px;color:#fff;white-space:nowrap;flex-shrink:0}
-.pill-pink{background:linear-gradient(135deg,#e838c9,#9a1fb8)}
-.pill-purple{background:linear-gradient(135deg,#7b4cf5,#4c26d2)}
-.pill-gray{background:#3a3a3d;margin-left:auto;gap:8px}
-.pill-star{width:16px;height:16px}
-.add-circle{width:20px;height:20px;border-radius:50%;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;line-height:1}
+.clover-badge{width:44px;height:44px;border-radius:50%;background:#ffffff1a;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 
-.game-card{border-radius:28px;padding:22px;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;-webkit-tap-highlight-color:transparent;cursor:pointer;transition:transform .15s ease,filter .15s ease}
-.game-card:active{transform:scale(.98);filter:brightness(.92)}
-.game-card-text h3{font-size:25px;font-weight:800;margin:0 0 8px;display:flex;align-items:center;gap:8px;letter-spacing:-.01em}
-.game-card-text p{font-size:14.5px;color:rgba(255,255,255,.72);margin:0;line-height:1.3;max-width:190px;font-weight:500}
-.game-badge-new{background:#fff;color:#000;font-size:12.5px;font-weight:700;padding:4px 12px;border-radius:12px}
-.game-icon{font-size:52px;flex-shrink:0;line-height:1}
-.game-icon-img{width:76px;height:76px;object-fit:contain;flex-shrink:0}
-.game-card.free{background:linear-gradient(160deg,#2e2e32,#0f0f11)}
-.game-card.upgrade{background:linear-gradient(160deg,#e08a2e,#b5540f)}
-.game-card.roulette{background:linear-gradient(160deg,#d13030,#7a1010)}
-.game-card.crash{background:linear-gradient(160deg,#4a3aeb,#1a1268)}
+.live-ticker-wrap{width:100%;overflow:hidden;border-radius:24px;background:#ffffff1a;margin-bottom:16px;position:relative}
+.live-ticker-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 0}
+.live-ticker-hdr-l{display:flex;align-items:center;gap:6px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#30d158;animation:ldp 2s ease-in-out infinite}
+@keyframes ldp{0%,100%{opacity:1}50%{opacity:.4}}
+.live-ticker-hdr span{font-size:12px;font-weight:600}
+.live-dot+span{color:#30d158}
+.live-oc{color:#8e8e93;font-size:11px}
+.live-ticker-track{overflow:hidden;padding:8px 0 10px}
+.live-ticker{display:flex;gap:10px;width:max-content}
+.ticker-item{display:flex;align-items:center;gap:8px;background:#49494c;border-radius:14px;padding:7px 12px 7px 7px;white-space:nowrap;flex-shrink:0;animation:fadeSlideIn .4s ease}
+@keyframes fadeSlideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.ticker-avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;background:#3a3a3d;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.ticker-name{font-size:12px;font-weight:600;color:#e6e6e6}
+.ticker-act{font-size:11px;color:#8e8e93}
+.ticker-act b{color:#ffd60a}
 </style>
 </head>
 <body>
 <div class="content-pages">
     <div class="current_balance">
         <img src="https://chimpbot.org/assets/stars-BaCoVmhq.svg" style="width:20px">
-        <p id="stars_balance_top" style="margin-left:6px">0000,00</p>
+        <p id="stars_balance_top">0000,00</p>
     </div>
     <div id="page-earn" class="page-section active-page" data-page="Заработок"><h2 class="section-title">Заработок</h2></div>
     <div id="page-games" class="page-section" data-page="Игры">
         <div class="games-topbar">
             <div class="clover-badge">🍀</div>
         </div>
-        <div class="game-card free" data-game="free">
-            <div class="game-card-text">
-                <h3>Бесплатно</h3>
-                <p>Бесплатные кейсы и задания</p>
+        <div class="live-ticker-wrap">
+            <div class="live-ticker-hdr">
+                <div class="live-ticker-hdr-l"><div class="live-dot"></div><span>LIVE</span></div>
+                <span class="live-oc" id="onlineCount">0 игроков</span>
             </div>
-            <img class="game-icon-img" src="https://client.frogstar.app/static/media/free.8cdcc72cffe6ba1597cf.png" alt="">
-        </div>
-        <div class="game-card upgrade" data-game="upgrade">
-            <div class="game-card-text">
-                <h3>Апгрейд <span class="game-badge-new">Новое</span></h3>
-                <p>Улучшите свои подарки или приумножьте звезды</p>
+            <div class="live-ticker-track">
+                <div class="live-ticker" id="liveTicker"></div>
             </div>
-            <div class="game-icon">📈</div>
-        </div>
-        <div class="game-card roulette" data-game="roulette">
-            <div class="game-card-text">
-                <h3>Рулетка</h3>
-                <p>Крутите рулетку и получайте призы</p>
-            </div>
-            <img class="game-icon-img" src="https://client.frogstar.app/static/media/roulette.704fc0118f26be991a3d.png" alt="">
-        </div>
-        <div class="game-card crash" data-game="crash">
-            <div class="game-card-text">
-                <h3>Краш</h3>
-                <p>Успейте забрать выигрыш до взрыва ракеты</p>
-            </div>
-            <div class="game-icon">🚀</div>
         </div>
     </div>
     <div id="page-leaders" class="page-section" data-page="Лидеры"><h2 class="section-title">Лидеры</h2></div>
     <div id="page-shop" class="page-section" data-page="Магазин"><h2 class="section-title">Магазин</h2></div>
-    <div id="page-profile" class="page-section" data-page="Профиль">
-        <div class="container" style="margin-top:64px">
-            <div class="flexer" style="margin-bottom:4px">
-                <img src="https://chimpbot.org/assets/stars-BaCoVmhq.svg" class="star_logo">
-                <p id="stars_balance_profile" style="font-size:x-large">0000,00</p>
-            </div>
-            <p class="hint_text">Баланс звёзд</p>
-            <div class="flexer" style="margin-top:12px">
-                <button class="btn" id="openWithdraw">Вывести</button>
-                <button class="btn white_btn">Пополнить</button>
-            </div>
-        </div>
-    </div>
+    <div id="page-profile" class="page-section" data-page="Профиль"><h2 class="section-title">Профиль</h2></div>
 </div>
 <nav class="bottom-nav">
     <div class="nav-item active" data-title="Заработок"><div class="nav-icon-container"><img src="star.png" class="nav-icon"></div><span class="nav-label">Заработок</span></div>
@@ -146,131 +81,89 @@ p{font-size:large}
     <div class="nav-item" data-title="Магазин"><div class="nav-icon-container"><img src="market.png" class="nav-icon"></div><span class="nav-label">Магазин</span></div>
     <div class="nav-item" data-title="Профиль"><div class="nav-icon-container"><img src="profile.png" class="nav-icon"></div><span class="nav-label">Профиль</span></div>
 </nav>
-<div class="withdraw-screen" id="withdrawScreen">
-    <div class="wrap">
-        <div class="top">
-            <button class="back-btn" id="backBtn">← Назад</button>
-            <div class="balance"><img class="star-small" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span id="w-balance">2.66</span></div>
-        </div>
-        <div class="title">Вывод средств</div>
-        <div id="errorBox" class="error" style="display:none">
-            <div class="error-title">Вывод невозможен!</div>
-            <div class="error-text">Для вывода у вашего аккаунта обязательно должен быть юзернейм!</div>
-        </div>
-        <div class="block" id="userBlock">
-            <div class="input-box" id="w-username">@username</div>
-            <div class="subtext">Звезды придут к вам на аккаунт Telegram. Убедитесь, что юзернейм верный!</div>
-        </div>
-        <div class="block">
-            <div class="amount-center"><div class="amount-inner">
-                <input type="number" id="amountInput" class="amount-input" value="0">
-                <img class="star-big" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg">
-            </div></div>
-            <div class="limits">Минимальная сумма - 50, максимальная 10.000</div>
-        </div>
-    </div>
-    <div class="button" id="btn">Введите сумму</div>
-</div>
 <div class="toast-container" id="toasts"></div>
 <script>
-let tg=null;
+var S='https://chimpbot.org/assets/stars-BaCoVmhq.svg';
+var tg=null;
 if(window.Telegram&&window.Telegram.WebApp){tg=window.Telegram.WebApp;try{tg.expand();}catch(e){}}
-const tgUser=tg&&tg.initDataUnsafe?tg.initDataUnsafe.user:null;
+var U=tg&&tg.initDataUnsafe?tg.initDataUnsafe.user:null;
+var bal=1500;
+
+function upd(){
+    var f=bal.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
+    document.getElementById('stars_balance_top').textContent=f;
+}
+function toast(m,t){
+    var c=document.getElementById('toasts'),d=document.createElement('div');
+    d.className='toast'+(t==='success'?' success':'');
+    d.innerHTML='<div class="toast-icon">'+(t==='success'?'✓':'✕')+'</div><div>'+m+'</div>';
+    c.appendChild(d);
+    setTimeout(function(){d.className+=' hide';setTimeout(function(){d.remove();},250);},2500);
+}
 
 (function(){
-    const items=document.querySelectorAll('.nav-item');
-    const balanceBlock=document.querySelector('.current_balance');
-    const pages={'Заработок':document.getElementById('page-earn'),'Игры':document.getElementById('page-games'),'Лидеры':document.getElementById('page-leaders'),'Магазин':document.getElementById('page-shop'),'Профиль':document.getElementById('page-profile')};
-    function updateBalanceVisibility(s){const show=['Заработок','Магазин'].includes(s);if(balanceBlock)balanceBlock.style.display=show?'flex':'none';}
-    function activate(event){
-        if(event.type==='touchstart'){if(this._touchHandled)return;this._touchHandled=true;setTimeout(()=>{this._touchHandled=false;},100);}
+    var items=document.querySelectorAll('.nav-item');
+    var bb=document.querySelector('.current_balance');
+    var pg={'Заработок':document.getElementById('page-earn'),'Игры':document.getElementById('page-games'),'Лидеры':document.getElementById('page-leaders'),'Магазин':document.getElementById('page-shop'),'Профиль':document.getElementById('page-profile')};
+    function vis(s){if(bb)bb.style.display=['Заработок','Магазин'].indexOf(s)>=0?'flex':'none';}
+    function go(e){
+        if(e.type==='touchstart'){if(this._th)return;this._th=true;setTimeout(function(el){el._th=false;}.bind(null,this),100);}
         if(this.classList.contains('active'))return;
-        items.forEach(i=>i.classList.remove('active'));
+        for(var i=0;i<items.length;i++)items[i].classList.remove('active');
         this.classList.add('active');
-        const s=this.dataset.title;
-        Object.values(pages).forEach(p=>{if(p)p.classList.remove('active-page');});
-        const ap=pages[s];if(ap)ap.classList.add('active-page');
-        updateBalanceVisibility(s);
+        var t=this.getAttribute('data-title');
+        var keys=Object.keys(pg);
+        for(var i=0;i<keys.length;i++){var p=pg[keys[i]];if(p)p.classList.remove('active-page');}
+        if(pg[t])pg[t].classList.add('active-page');
+        vis(t);
     }
-    items.forEach(i=>{i._touchHandled=false;i.addEventListener('touchstart',activate,{passive:true});i.addEventListener('click',activate);});
-    const init=document.querySelector('.nav-item.active');
-    if(init){const s=init.dataset.title;Object.values(pages).forEach(p=>p.classList.remove('active-page'));const ip=pages[s];if(ip)ip.classList.add('active-page');updateBalanceVisibility(s);}
-    else updateBalanceVisibility('Заработок');
+    for(var i=0;i<items.length;i++){items[i]._th=false;items[i].addEventListener('touchstart',go,{passive:true});items[i].addEventListener('click',go);}
+    vis('Заработок');
 })();
 
 (function(){
-    document.querySelectorAll('.game-card').forEach(card=>{
-        card.addEventListener('click',()=>{
-            if(tg&&tg.HapticFeedback){try{tg.HapticFeedback.impactOccurred('light');}catch(e){}}
-            console.log('open game:',card.dataset.game);
-            // TODO: подключить экран для card.dataset.game
-        });
-    });
+    var c=document.getElementById('liveTicker');
+    if(!c)return;
+    var players=[
+        {n:'Артём К.',u:'@artem_k',c:'#e838c9'},{n:'Мария В.',u:'@masha_v',c:'#7b4cf5'},
+        {n:'Дмитрий С.',u:'@dmitry_s',c:'#3a86ff'},{n:'Елена П.',u:'@elena_p',c:'#ff6b6b'},
+        {n:'Сергей Н.',u:'@sergey_n',c:'#ffd60a'},{n:'Анна Л.',u:'@anna_l',c:'#30d158'},
+        {n:'Никита О.',u:'@nikita_o',c:'#ff9f0a'},{n:'Ольга М.',u:'@olga_m',c:'#bf5af2'},
+        {n:'Роман Т.',u:'@roman_t',c:'#64d2ff'},{n:'Ирина Д.',u:'@irina_d',c:'#ff375f'},
+        {n:'Максим Б.',u:'@maxim_b',c:'#ac8e68'},{n:'Татьяна В.',u:'@tatyana_v',c:'#ff453a'},
+        {n:'Андрей Г.',u:'@andrey_g',c:'#32d74b'},{n:'Виктория Е.',u:'@viktoria_e',c:'#5e5ce6'},
+        {n:'Егор З.',u:'@egor_z',c:'#ff9f0a'},{n:'Дарья И.',u:'@daria_i',c:'#ff375f'},
+        {n:'Кирилл К.',u:'@kirill_k',c:'#0a84ff'},{n:'Софья Р.',u:'@sofia_r',c:'#e838c9'},
+        {n:'Тимур А.',u:'@timur_a',c:'#30d158'},{n:'Ксения Ш.',u:'@ksenia_sh',c:'#ff6b6b'},
+        {n:'Захар Ю.',u:'@zakhar_yu',c:'#64d2ff'},{n:'Лев С.',u:'@lev_s',c:'#5e5ce6'},
+        {n:'Вера Ф.',u:'@vera_f',c:'#ff453a'},{n:'Ильяс Х.',u:'@ilyas_h',c:'#30d158'}
+    ];
+    if(U){players[0]={n:U.first_name+(U.last_name?' '+U.last_name:''),u:U.username?'@'+U.username:'@you',c:'#30d158'};}
+    var wins=[
+        ['выиграл в рулетке','🎡'],['схватил джекпот','🎰'],['открыл кейс','📦'],
+        ['умножил ставку','✨'],['забрал выигрыш','💸'],['поймал x10','🚀'],
+        ['выиграл в краше','💣'],['получил приз','🎁']
+    ];
+    var onl=Math.floor(Math.random()*600)+800;
+    document.getElementById('onlineCount').textContent=onl.toLocaleString('ru-RU')+' онлайн';
+    setInterval(function(){onl+=Math.floor(Math.random()*7)-3;if(onl<700)onl=700;if(onl<1200)onl+=Math.floor(Math.random()*5);document.getElementById('onlineCount').textContent=onl.toLocaleString('ru-RU')+' онлайн';},8000);
+    function rs(){var r=Math.random();if(r<.2)return Math.floor(Math.random()*100)+50;if(r<.5)return Math.floor(Math.random()*500)+100;if(r<.8)return Math.floor(Math.random()*2000)+500;return Math.floor(Math.random()*5000)+1000;}
+    function fmt(n){return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ');}
+    function pick(a){return a[Math.floor(Math.random()*a.length)];}
+    function mk(){
+        var p=pick(players),w=pick(wins),s=rs();
+        return '<div class="ticker-item"><div class="ticker-avatar" style="background:'+p.c+'">'+p.n[0]+'</div><div><div class="ticker-name">'+p.u+'</div><div class="ticker-act">'+w[1]+' '+w[0]+' <b>'+fmt(s)+' ⭐</b></div></div></div>';
+    }
+    function addWin(){
+        if(c.children.length>6){c.removeChild(c.firstChild);}
+        c.insertAdjacentHTML('beforeend',mk());
+        var delay=8000+Math.floor(Math.random()*25000);
+        setTimeout(addWin,delay);
+    }
+    setTimeout(addWin,3000+Math.floor(Math.random()*5000));
 })();
 
-(function(){
-    const screen=document.getElementById('withdrawScreen');
-    const openBtn=document.getElementById('openWithdraw');
-    const backBtn=document.getElementById('backBtn');
-    const errorBox=document.getElementById('errorBox');
-    const userBlock=document.getElementById('userBlock');
-    const input=document.getElementById('amountInput');
-    const btn=document.getElementById('btn');
-    const toastContainer=document.getElementById('toasts');
-    let hasUsername=true,currentToast=null,isSending=false;
-
-    if(!tgUser||!tgUser.username){
-        hasUsername=false;
-        errorBox.style.display='block';
-        userBlock.style.display='none';
-    }else{
-        document.getElementById('w-username').innerText='@'+tgUser.username;
-    }
-
-    openBtn.addEventListener('click',()=>{screen.classList.add('active');document.body.style.overflow='hidden';});
-    backBtn.addEventListener('click',()=>{screen.classList.remove('active');document.body.style.overflow='';});
-
-    input.addEventListener('focus',function(){if(input.value==='0')input.value='';});
-    input.addEventListener('blur',function(){if(input.value===''){input.value='0';btn.classList.remove('active');btn.innerText='Введите сумму';}});
-    input.addEventListener('input',function(){
-        input.style.width=(input.value.length+1)+'ch';
-        if(input.value.length>0&&hasUsername&&!isSending){btn.classList.add('active');btn.innerText='Вывести';}
-        else{btn.classList.remove('active');btn.innerText='Введите сумму';}
-    });
-
-    function showToast(text,type){
-        if(!type)type='error';
-        if(currentToast){currentToast.remove();currentToast=null;}
-        const t=document.createElement('div');
-        t.className='toast '+(type==='success'?'success':'');
-        const icon=type==='success'?'✓':'✕';
-        t.innerHTML='<div class="toast-icon">'+icon+'</div><div>'+text+'</div>';
-        toastContainer.appendChild(t);
-        currentToast=t;
-        setTimeout(()=>{t.classList.add('hide');setTimeout(()=>{if(t.parentNode)t.parentNode.removeChild(t);currentToast=null;},250);},2500);
-    }
-
-    btn.onclick=function(){
-        if(!hasUsername||isSending)return;
-        const value=parseInt(input.value);
-        if(!value||value<50){showToast('Минимальная сумма — 50 звезд');return;}
-        if(value>10000){showToast('Максимальная сумма — 10 000 звёзд');return;}
-        isSending=true;
-        btn.classList.remove('active');
-        btn.innerText='Отправка...';
-        showToast('Вывод в обработке. Это может занять до суток.','success');
-        setTimeout(()=>{
-            try{
-                if(tg&&tg.sendData){tg.sendData(JSON.stringify({action:'withdraw',amount:value}));}
-                else{showToast('Тестовый режим','success');}
-            }catch(e){
-                isSending=false;btn.classList.add('active');btn.innerText='Вывести';
-                showToast('Ошибка отправки');
-            }
-        },800);
-    };
-})();
+upd();
 </script>
 </body>
 </html>
-
