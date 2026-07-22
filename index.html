@@ -68,15 +68,15 @@ p{font-size:large}
 .pill-purple{background:linear-gradient(135deg,#7b4cf5,#4c26d2)}
 .pill-gray{background:#3a3a3d;margin-left:auto;gap:8px}
 .pill-star{width:16px;height:16px}
-.add-circle{width:20px;height:20px;border-radius:50%;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;line-height:1}
+.add-circle{width:20px;height:20px;border-radius:50%;background:#fff;color:#000;display:flex;justify-content:center;align-items:center;font-weight:900;font-size:14px;line-height:1}
 
-.game-card{border-radius:28px;padding:22px;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;-webkit-tap-highlight-color:transparent;cursor:pointer;transition:transform .15s ease,filter .15s ease}
+.game-card{border-radius:28px;padding:24px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;-webkit-tap-highlight-color:transparent;cursor:pointer;transition:transform .15s ease,filter .15s ease}
 .game-card:active{transform:scale(.98);filter:brightness(.92)}
 .game-card-text h3{font-size:25px;font-weight:800;margin:0 0 8px;display:flex;align-items:center;gap:8px;letter-spacing:-.01em}
-.game-card-text p{font-size:14.5px;color:rgba(255,255,255,.72);margin:0;line-height:1.3;max-width:190px;font-weight:500}
+.game-card-text p{font-size:14.5px;color:rgba(255,255,255,.72);margin:0;line-height:1.3;max-width:165px;font-weight:500}
 .game-badge-new{background:#fff;color:#000;font-size:12.5px;font-weight:700;padding:4px 12px;border-radius:12px}
-.game-icon{font-size:52px;flex-shrink:0;line-height:1}
-.game-icon-img{width:76px;height:76px;object-fit:contain;flex-shrink:0}
+.game-icon{font-size:68px;flex-shrink:0;line-height:1}
+.game-icon-img{width:104px;height:104px;object-fit:contain;flex-shrink:0}
 .game-card.free{background:linear-gradient(160deg,#2e2e32,#0f0f11)}
 .game-card.upgrade{background:linear-gradient(160deg,#e08a2e,#b5540f)}
 .game-card.roulette{background:linear-gradient(160deg,#d13030,#7a1010)}
@@ -90,10 +90,7 @@ p{font-size:large}
         <p id="stars_balance_top" style="margin-left:6px">0000,00</p>
     </div>
     <div id="page-earn" class="page-section active-page" data-page="Заработок"><h2 class="section-title">Заработок</h2></div>
-    <div id="page-games" class="page-section" data-page="Игры">
-        <div class="games-topbar">
-            <div class="clover-badge">🍀</div>
-        </div>
+    <div id="page-games" class="page-section" data-page="Игры" style="margin-top:64px">
         <div class="game-card free" data-game="free">
             <div class="game-card-text">
                 <h3>Бесплатно</h3>
