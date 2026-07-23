@@ -110,6 +110,44 @@ p{font-size:large}
 .gift-modal .buy-btn{background:#fff;color:#000;border:none;width:100%;padding:17px;border-radius:24px;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;box-shadow:0 4px 18px rgba(255,255,255,.08);transition:transform .12s ease}
 .gift-modal .buy-btn img{width:20px;height:20px}
 .gift-modal .buy-btn:active{transform:scale(.97)}
+
+.topup-screen{display:none;position:fixed;inset:0;background:#000;z-index:2200;overflow-y:auto;padding:64px 0 100px}
+.topup-screen.active{display:block}
+.topup-screen .wrap{padding:14px}
+.topup-screen .top{display:flex;justify-content:space-between;align-items:center}
+.topup-screen .back-btn{background:#2c2c2e;border:none;color:#fff;font-size:15px;padding:7px 14px;border-radius:16px;cursor:pointer}
+.topup-screen .balance{background:#2c2c2e;padding:7px 13px;border-radius:16px;display:flex;align-items:center;gap:5px;font-size:14px}
+.topup-screen .star-small{width:16px}
+.topup-screen .title{text-align:center;font-size:24px;font-weight:600;margin:18px 0 12px}
+.topup-screen .block{margin-top:12px;padding:16px;border-radius:22px;background:linear-gradient(180deg,#1c1c1e,#151517)}
+.topup-screen .subtext{text-align:center;color:#8e8e93;font-size:13px;margin-top:10px;line-height:1.35}
+.topup-screen .amount-center{display:flex;justify-content:center;align-items:center;height:95px}
+.topup-screen .amount-inner{display:flex;align-items:center}
+.topup-screen .amount-input{font-size:64px;font-weight:700;border:none;outline:none;background:transparent;color:#fff;text-align:right;width:2ch}
+.topup-screen input::-webkit-outer-spin-button,.topup-screen input::-webkit-inner-spin-button{-webkit-appearance:none}
+.topup-screen .star-big{width:46px;height:46px;margin-left:6px}
+.topup-screen .limits{text-align:center;color:#8e8e93;margin-top:4px;font-size:13px}
+.topup-screen .quick-amounts{display:flex;gap:8px;margin-top:14px;overflow-x:auto;scrollbar-width:none}
+.topup-screen .quick-amounts::-webkit-scrollbar{display:none}
+.topup-screen .quick-chip{flex:0 0 auto;background:#2c2c2e;border:none;color:#fff;padding:9px 16px;border-radius:16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px}
+.topup-screen .quick-chip img{width:14px;height:14px}
+.topup-screen .button{position:fixed;bottom:18px;left:14px;right:14px;background:#fff;color:#000;text-align:center;padding:16px;border-radius:26px;font-size:17px;font-weight:600;opacity:.4;pointer-events:none;transition:.2s;cursor:pointer}
+.topup-screen .button.active{opacity:1;pointer-events:auto}
+.topup-screen .error{background:#d92c2c;padding:14px 16px;border-radius:22px;margin-bottom:14px}
+.topup-screen .error-title{font-size:15px;font-weight:600;text-align:center}
+.topup-screen .topup-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:16px}
+.topup-screen .topup-tabs::-webkit-scrollbar{display:none}
+.topup-screen .topup-tab{flex:0 0 auto;background:#1c1c1e;border:none;color:#fff;padding:12px 16px;border-radius:18px;font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap}
+.topup-screen .topup-tab img{width:18px;height:18px}
+.topup-screen .topup-tab.active{background:#2c2c2e}
+.topup-screen .topup-tab .tab-badge{background:#fff;color:#000;font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px;margin-left:2px}
+.topup-screen .topup-panel{display:none}
+.topup-screen .topup-panel.active{display:block}
+.topup-screen .wallet-chip{background:#2c2c2e;border-radius:16px;padding:10px 14px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;margin-bottom:8px;width:fit-content;margin-left:auto;margin-right:auto}
+.topup-screen .wallet-chip button{background:#3a3a3c;border:none;color:#8e8e93;width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:11px}
+.topup-screen .gift-topup-block{text-align:center}
+.topup-screen .gift-topup-title{font-size:26px;font-weight:800;margin-bottom:6px}
+.topup-screen .send-gift-btn{background:#fff;color:#000;border:none;width:100%;padding:16px;border-radius:24px;font-size:17px;font-weight:700;margin-top:16px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -205,6 +243,7 @@ p{font-size:large}
     </div>
     <div class="button" id="btn">Введите сумму</div>
 </div>
+<div id="topupContainer"></div>
 <div class="toast-container" id="toasts"></div>
 <div class="gift-modal" id="giftModal">
     <div class="sheet">
@@ -268,6 +307,100 @@ function capitalizeGiftName(s){
     if(giftNameMap[s])return giftNameMap[s];
     return s.charAt(0).toUpperCase()+s.slice(1);
 }
+
+(function(){
+    const topupContainer=document.getElementById('topupContainer');
+    fetch('topup.html')
+        .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
+        .then(html=>{
+            topupContainer.innerHTML=html;
+            const screen=document.getElementById('topupScreen');
+            const backBtn=document.getElementById('topupBackBtn');
+            const starsInput=document.getElementById('topupAmountInput');
+            const tonInput=document.getElementById('topupAmountInputTon');
+            const btn=document.getElementById('topupBtn');
+            const errorBox=document.getElementById('topupError');
+            const starsSubtext=document.getElementById('starsSubtext');
+            const tonSubtext=document.getElementById('tonSubtext');
+            const tabs=document.querySelectorAll('.topup-tab');
+            const panels=document.querySelectorAll('.topup-panel');
+            let currentTab='stars';
+
+            function refresh(){
+                errorBox.style.display='none';
+                if(currentTab==='stars'){
+                    const val=parseInt(starsInput.value)||0;
+                    starsSubtext.textContent='Вы получите ~ '+(val*0.95).toLocaleString('ru-RU',{maximumFractionDigits:2}).replace('.',',')+' звезд';
+                    if(val<=0){btn.classList.remove('active');btn.textContent='Введите сумму';}
+                    else{btn.classList.add('active');btn.textContent='Пополнить';}
+                }else if(currentTab==='ton'){
+                    const val=parseInt(tonInput.value)||0;
+                    tonSubtext.textContent='~ '+(val/500*0.9).toLocaleString('ru-RU',{maximumFractionDigits:3}).replace('.',',')+' TON (дешевле на 10%)';
+                    if(val<=0){btn.classList.remove('active');btn.textContent='Введите сумму';}
+                    else{btn.classList.add('active');btn.textContent='Пополнить';}
+                }
+            }
+
+            tabs.forEach(tab=>{
+                tab.addEventListener('click',()=>{
+                    tabs.forEach(t=>t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentTab=tab.dataset.tab;
+                    panels.forEach(p=>p.classList.remove('active'));
+                    document.getElementById('panel-'+currentTab).classList.add('active');
+                    if(currentTab==='gifts'){
+                        btn.style.display='none';
+                    }else{
+                        btn.style.display='';
+                        refresh();
+                    }
+                    errorBox.style.display='none';
+                });
+            });
+
+            starsInput.addEventListener('input',refresh);
+            tonInput.addEventListener('input',refresh);
+            document.querySelectorAll('.quick-chip').forEach(chip=>{
+                chip.addEventListener('click',()=>{
+                    const target=chip.dataset.target;
+                    const inp=target==='stars'?starsInput:tonInput;
+                    inp.value=(parseInt(inp.value)||0)+parseInt(chip.dataset.amount);
+                    refresh();
+                });
+            });
+
+            btn.addEventListener('click',()=>{
+                if(!btn.classList.contains('active'))return;
+                const inp=currentTab==='stars'?starsInput:tonInput;
+                const val=parseInt(inp.value)||0;
+                if(val<50){
+                    errorBox.style.display='block';
+                    return;
+                }
+                errorBox.style.display='none';
+                screen.classList.remove('active');
+                document.body.style.overflow='';
+            });
+
+            document.getElementById('sendGiftBtn').addEventListener('click',()=>{
+                screen.classList.remove('active');
+                document.body.style.overflow='';
+            });
+
+            backBtn.addEventListener('click',()=>{
+                screen.classList.remove('active');
+                document.body.style.overflow='';
+            });
+            document.addEventListener('click',(e)=>{
+                if(e.target.closest('.add-circle')){
+                    screen.classList.add('active');
+                    document.body.style.overflow='hidden';
+                }
+            });
+            refresh();
+        })
+        .catch(e=>{console.error('Не удалось загрузить topup.html:',e);});
+})();
 
 (function(){
     const modal=document.getElementById('giftModal');

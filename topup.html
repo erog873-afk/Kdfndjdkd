@@ -1,0 +1,646 @@
+<div class="topup-screen" id="topupScreen">
+    <div class="wrap">
+        <div class="top">
+            <button class="back-btn" id="topupBackBtn">←</button>
+            <div class="balance"><img class="star-small" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span id="topup-balance" class="balance-value">0</span></div>
+        </div>
+        <div class="title">Пополнение баланса</div>
+        <div class="subtext" style="margin-bottom:16px">Пополненные звезды можно потратить только на игру</div>
+
+        <div id="topupError" class="error" style="display:none">
+            <div class="error-title">Минимальная сумма — 50 звезд</div>
+        </div>
+
+        <div class="topup-tabs">
+            <button class="topup-tab active" data-tab="stars"><img src="https://chimpbot.org/assets/stars-BaCoVmhq.svg">Звездами</button>
+            <button class="topup-tab" data-tab="ton"><img src="https://cryptologos.cc/logos/toncoin-ton-logo.png">TON<span class="tab-badge">Скидка 10%</span></button>
+            <button class="topup-tab" data-tab="gifts">Подарками<span class="tab-badge">Бонус 10%</span></button>
+        </div>
+
+        <div class="topup-panel active" id="panel-stars">
+            <div class="block">
+                <div class="amount-center"><div class="amount-inner">
+                    <input type="number" id="topupAmountInput" class="amount-input" value="0">
+                    <img class="star-big" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg">
+                </div></div>
+                <div class="limits" id="starsSubtext">Вы получите ~ 0 звезд</div>
+                <div class="quick-amounts">
+                    <button class="quick-chip" data-target="stars" data-amount="100">+ 100</button>
+                    <button class="quick-chip" data-target="stars" data-amount="500">+ 500</button>
+                    <button class="quick-chip" data-target="stars" data-amount="2500">+ 2 500</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="topup-panel" id="panel-ton">
+            <div class="block">
+                <div class="wallet-chip"><span id="walletAddr">UQAs..._N3J</span><button id="walletDisconnect">✕</button></div>
+                <div class="amount-center"><div class="amount-inner">
+                    <input type="number" id="topupAmountInputTon" class="amount-input" value="0">
+                    <img class="star-big" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg">
+                </div></div>
+                <div class="limits" id="tonSubtext">~ 0 TON (дешевле на 10%)</div>
+                <div class="quick-amounts">
+                    <button class="quick-chip" data-target="ton" data-amount="100">+ 100</button>
+                    <button class="quick-chip" data-target="ton" data-amount="500">+ 500</button>
+                    <button class="quick-chip" data-target="ton" data-amount="2500">+ 2 500</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="topup-panel" id="panel-gifts">
+            <div class="block gift-topup-block">
+                <div class="gift-topup-title">Пополните баланс подарком</div>
+                <div class="subtext">За него автоматически придут звезды на баланс</div>
+                <button class="send-gift-btn" id="sendGiftBtn">Отправить</button>
+            </div>
+            <div class="block">
+                <div class="gift-topup-title" style="font-size:22px">Поддерживаемые подарки</div>
+                <div class="subtext" style="margin-bottom:12px">Отправляйте нам только их!</div>
+                <div class="shop-grid">
+        <div class="shop-card" data-gift="adhesive">
+            <img src="https://storage.portal-market.com/portals-market/gifts/lunarsnake/models/png/adhesive.png" alt="">
+            <div class="shop-name">lunarsnake</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>348</span></div>
+        </div>
+        <div class="shop-card" data-gift="abandoned">
+            <img src="https://storage.portal-market.com/portals-market/gifts/xmasstocking/models/png/abandoned.png" alt="">
+            <div class="shop-name">xmasstocking</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>348</span></div>
+        </div>
+        <div class="shop-card" data-gift="pumpkinspice">
+            <img src="https://storage.portal-market.com/portals-market/gifts/vicecream/models/png/pumpkinspice.png" alt="">
+            <div class="shop-name">vicecream</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>348</span></div>
+        </div>
+        <div class="shop-card" data-gift="amberglitter">
+            <img src="https://storage.portal-market.com/portals-market/gifts/candycane/models/png/amberglitter.png" alt="">
+            <div class="shop-name">candycane</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>350</span></div>
+        </div>
+        <div class="shop-card" data-gift="aquarium">
+            <img src="https://storage.portal-market.com/portals-market/gifts/snakebox/models/png/aquarium.png" alt="">
+            <div class="shop-name">snakebox</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>350</span></div>
+        </div>
+        <div class="shop-card" data-gift="losangeles">
+            <img src="https://storage.portal-market.com/portals-market/gifts/chillflame/models/png/losangeles.png" alt="">
+            <div class="shop-name">chillflame</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>350</span></div>
+        </div>
+        <div class="shop-card" data-gift="banana">
+            <img src="https://storage.portal-market.com/portals-market/gifts/icecream/models/png/banana.png" alt="">
+            <div class="shop-name">icecream</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>359</span></div>
+        </div>
+        <div class="shop-card" data-gift="arcanebowl">
+            <img src="https://storage.portal-market.com/portals-market/gifts/instantramen/models/png/arcanebowl.png" alt="">
+            <div class="shop-name">instantramen</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>361</span></div>
+        </div>
+        <div class="shop-card" data-gift="andromeda">
+            <img src="https://storage.portal-market.com/portals-market/gifts/lolpop/models/png/andromeda.png" alt="">
+            <div class="shop-name">lolpop</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>368</span></div>
+        </div>
+        <div class="shop-card" data-gift="2048">
+            <img src="https://storage.portal-market.com/portals-market/gifts/bigyear/models/png/2048.png" alt="">
+            <div class="shop-name">bigyear</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>370</span></div>
+        </div>
+        <div class="shop-card" data-gift="airbunny">
+            <img src="https://storage.portal-market.com/portals-market/gifts/poolfloat/models/png/airbunny.png" alt="">
+            <div class="shop-name">poolfloat</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>375</span></div>
+        </div>
+        <div class="shop-card" data-gift="applemousse">
+            <img src="https://storage.portal-market.com/portals-market/gifts/holidaydrink/models/png/applemousse.png" alt="">
+            <div class="shop-name">holidaydrink</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>377</span></div>
+        </div>
+        <div class="shop-card" data-gift="applemousse2">
+            <img src="https://storage.portal-market.com/portals-market/gifts/holidaydrink/models/png/applemousse.png" alt="">
+            <div class="shop-name">holidaydrink</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>378</span></div>
+        </div>
+        <div class="shop-card" data-gift="bagend">
+            <img src="https://storage.portal-market.com/portals-market/gifts/whipcupcake/models/png/bagend.png" alt="">
+            <div class="shop-name">whipcupcake</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>382</span></div>
+        </div>
+        <div class="shop-card" data-gift="aquamarine">
+            <img src="https://storage.portal-market.com/portals-market/gifts/winterwreath/models/png/aquamarine.png" alt="">
+            <div class="shop-name">winterwreath</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>382</span></div>
+        </div>
+        <div class="shop-card" data-gift="albino">
+            <img src="https://storage.portal-market.com/portals-market/gifts/petsnake/models/png/albino.png" alt="">
+            <div class="shop-name">petsnake</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>387</span></div>
+        </div>
+        <div class="shop-card" data-gift="amphibian">
+            <img src="https://storage.portal-market.com/portals-market/gifts/hypnolollipop/models/png/amphibian.png" alt="">
+            <div class="shop-name">hypnolollipop</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>389</span></div>
+        </div>
+        <div class="shop-card" data-gift="alienattack">
+            <img src="https://storage.portal-market.com/portals-market/gifts/tamagadget/models/png/alienattack.png" alt="">
+            <div class="shop-name">tamagadget</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>392</span></div>
+        </div>
+        <div class="shop-card" data-gift="jesteraquarium">
+            <img src="https://storage.portal-market.com/portals-market/gifts/jesterhat/models/png/aquarium.png" alt="">
+            <div class="shop-name">jesterhat</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>394</span></div>
+        </div>
+        <div class="shop-card" data-gift="adam">
+            <img src="https://storage.portal-market.com/portals-market/gifts/gingercookie/models/png/adam.png" alt="">
+            <div class="shop-name">gingercookie</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>401</span></div>
+        </div>
+        <div class="shop-card" data-gift="4thofjuly">
+            <img src="https://storage.portal-market.com/portals-market/gifts/partysparkler/models/png/4thofjuly.png" alt="">
+            <div class="shop-name">partysparkler</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>406</span></div>
+        </div>
+        <div class="shop-card" data-gift="angelwings">
+            <img src="https://storage.portal-market.com/portals-market/gifts/moodpack/models/png/angelwings.png" alt="">
+            <div class="shop-name">moodpack</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>411</span></div>
+        </div>
+        <div class="shop-card" data-gift="absinthe">
+            <img src="https://storage.portal-market.com/portals-market/gifts/spicedwine/models/png/absinthe.png" alt="">
+            <div class="shop-name">spicedwine</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>413</span></div>
+        </div>
+        <div class="shop-card" data-gift="twinpeaks">
+            <img src="https://storage.portal-market.com/portals-market/gifts/freshsocks/models/png/twinpeaks.png" alt="">
+            <div class="shop-name">freshsocks</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>415</span></div>
+        </div>
+        <div class="shop-card" data-gift="animator">
+            <img src="https://storage.portal-market.com/portals-market/gifts/timelessbook/models/png/animator.png" alt="">
+            <div class="shop-name">timelessbook</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>425</span></div>
+        </div>
+        <div class="shop-card" data-gift="blobfish">
+            <img src="https://storage.portal-market.com/portals-market/gifts/happybrownie/models/png/blobfish.png" alt="">
+            <div class="shop-name">happybrownie</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>427</span></div>
+        </div>
+        <div class="shop-card" data-gift="80stv">
+            <img src="https://storage.portal-market.com/portals-market/gifts/santahat/models/png/80stv.png" alt="">
+            <div class="shop-name">santahat</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>429</span></div>
+        </div>
+        <div class="shop-card" data-gift="amethyst">
+            <img src="https://storage.portal-market.com/portals-market/gifts/hexpot/models/png/amethyst.png" alt="">
+            <div class="shop-name">hexpot</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>431</span></div>
+        </div>
+        <div class="shop-card" data-gift="alienscript">
+            <img src="https://storage.portal-market.com/portals-market/gifts/starnotepad/models/png/alienscript.png" alt="">
+            <div class="shop-name">starnotepad</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>452</span></div>
+        </div>
+        <div class="shop-card" data-gift="jacqueline">
+            <img src="https://cdn.tgmrkt.io/gifts/stickers/thumbnails/4c696265727479204669677572655f4a61637175656c696e65.webp" alt="">
+            <div class="shop-name">gift</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>459</span></div>
+        </div>
+        <div class="shop-card" data-gift="aliens">
+            <img src="https://storage.portal-market.com/portals-market/gifts/jackinthebox/models/png/aliens.png" alt="">
+            <div class="shop-name">jackinthebox</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>462</span></div>
+        </div>
+        <div class="shop-card" data-gift="alpinefern">
+            <img src="https://storage.portal-market.com/portals-market/gifts/snowmittens/models/png/alpinefern.png" alt="">
+            <div class="shop-name">snowmittens</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>472</span></div>
+        </div>
+        <div class="shop-card" data-gift="aegis">
+            <img src="https://storage.portal-market.com/portals-market/gifts/victorymedal/models/png/aegis.png" alt="">
+            <div class="shop-name">victorymedal</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>475</span></div>
+        </div>
+        <div class="shop-card" data-gift="broadside">
+            <img src="https://storage.portal-market.com/portals-market/gifts/moneypot/models/png/broadside.png" alt="">
+            <div class="shop-name">moneypot</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>484</span></div>
+        </div>
+        <div class="shop-card" data-gift="snowglobeamethyst">
+            <img src="https://storage.portal-market.com/portals-market/gifts/snowglobe/models/png/amethyst.png" alt="">
+            <div class="shop-name">snowglobe</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>485</span></div>
+        </div>
+        <div class="shop-card" data-gift="butterflies">
+            <img src="https://storage.portal-market.com/portals-market/gifts/moussecake/models/png/butterflies.png" alt="">
+            <div class="shop-name">moussecake</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>490</span></div>
+        </div>
+        <div class="shop-card" data-gift="affection">
+            <img src="https://storage.portal-market.com/portals-market/gifts/cookieheart/models/png/affection.png" alt="">
+            <div class="shop-name">cookieheart</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>492</span></div>
+        </div>
+        <div class="shop-card" data-gift="adulttasks">
+            <img src="https://storage.portal-market.com/portals-market/gifts/deskcalendar/models/png/adulttasks.png" alt="">
+            <div class="shop-name">deskcalendar</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>501</span></div>
+        </div>
+        <div class="shop-card" data-gift="matrix">
+            <img src="https://storage.portal-market.com/portals-market/gifts/cloverpin/models/png/matrix.png" alt="">
+            <div class="shop-name">cloverpin</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>504</span></div>
+        </div>
+        <div class="shop-card" data-gift="babyyoda">
+            <img src="https://storage.portal-market.com/portals-market/gifts/bowtie/models/png/babyyoda.png" alt="">
+            <div class="shop-name">bowtie</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>508</span></div>
+        </div>
+        <div class="shop-card" data-gift="restlessaquarium">
+            <img src="https://storage.portal-market.com/portals-market/gifts/restlessjar/models/png/aquarium.png" alt="">
+            <div class="shop-name">restlessjar</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>513</span></div>
+        </div>
+        <div class="shop-card" data-gift="missionuranus">
+            <img src="https://storage.portal-market.com/portals-market/gifts/stellarrocket/models/png/missionuranus.png" alt="">
+            <div class="shop-name">stellarrocket</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>514</span></div>
+        </div>
+        <div class="shop-card" data-gift="angelcake">
+            <img src="https://storage.portal-market.com/portals-market/gifts/homemadecake/models/png/angelcake.png" alt="">
+            <div class="shop-name">homemadecake</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>516</span></div>
+        </div>
+        <div class="shop-card" data-gift="baphomet">
+            <img src="https://storage.portal-market.com/portals-market/gifts/eternalcandle/models/png/baphomet.png" alt="">
+            <div class="shop-name">eternalcandle</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>518</span></div>
+        </div>
+        <div class="shop-card" data-gift="bronzetower">
+            <img src="https://storage.portal-market.com/portals-market/gifts/faithamulet/models/png/bronzetower.png" alt="">
+            <div class="shop-name">faithamulet</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>524</span></div>
+        </div>
+        <div class="shop-card" data-gift="afrodisco">
+            <img src="https://storage.portal-market.com/portals-market/gifts/snoopdogg/models/png/afrodisco.png" alt="">
+            <div class="shop-name">snoopdogg</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>532</span></div>
+        </div>
+        <div class="shop-card" data-gift="acidtrip">
+            <img src="https://storage.portal-market.com/portals-market/gifts/spyagaric/models/png/acidtrip.png" alt="">
+            <div class="shop-name">spyagaric</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>534</span></div>
+        </div>
+        <div class="shop-card" data-gift="cinema">
+            <img src="https://storage.portal-market.com/portals-market/gifts/prettyposy/models/png/cinema.png" alt="">
+            <div class="shop-name">prettyposy</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>534</span></div>
+        </div>
+        <div class="shop-card" data-gift="aeromancy">
+            <img src="https://storage.portal-market.com/portals-market/gifts/witchhat/models/png/aeromancy.png" alt="">
+            <div class="shop-name">witchhat</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>535</span></div>
+        </div>
+        <div class="shop-card" data-gift="anniversary">
+            <img src="https://storage.portal-market.com/portals-market/gifts/bdaycandle/models/png/anniversary.png" alt="">
+            <div class="shop-name">bdaycandle</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>558</span></div>
+        </div>
+        <div class="shop-card" data-gift="april20th">
+            <img src="https://storage.portal-market.com/portals-market/gifts/swagbag/models/png/april20th.png" alt="">
+            <div class="shop-name">swagbag</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>560</span></div>
+        </div>
+        <div class="shop-card" data-gift="bastet">
+            <img src="https://storage.portal-market.com/portals-market/gifts/springbasket/models/png/bastet.png" alt="">
+            <div class="shop-name">springbasket</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>585</span></div>
+        </div>
+        <div class="shop-card" data-gift="artichoke">
+            <img src="https://storage.portal-market.com/portals-market/gifts/lushbouquet/models/png/artichoke.png" alt="">
+            <div class="shop-name">lushbouquet</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>594</span></div>
+        </div>
+        <div class="shop-card" data-gift="angel">
+            <img src="https://storage.portal-market.com/portals-market/gifts/inputkey/models/png/angel.png" alt="">
+            <div class="shop-name">inputkey</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>596</span></div>
+        </div>
+        <div class="shop-card" data-gift="azurite">
+            <img src="https://storage.portal-market.com/portals-market/gifts/moonpendant/models/png/azurite.png" alt="">
+            <div class="shop-name">moonpendant</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>638</span></div>
+        </div>
+        <div class="shop-card" data-gift="lightswordabsinthe">
+            <img src="https://storage.portal-market.com/portals-market/gifts/lightsword/models/png/absinthe.png" alt="">
+            <div class="shop-name">lightsword</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>647</span></div>
+        </div>
+        <div class="shop-card" data-gift="artist">
+            <img src="https://storage.portal-market.com/portals-market/gifts/jollychimp/models/png/artist.png" alt="">
+            <div class="shop-name">jollychimp</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>686</span></div>
+        </div>
+        <div class="shop-card" data-gift="airysouffle">
+            <img src="https://storage.portal-market.com/portals-market/gifts/bunnymuffin/models/png/airysouffle.png" alt="">
+            <div class="shop-name">bunnymuffin</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>720</span></div>
+        </div>
+        <div class="shop-card" data-gift="biscuit">
+            <img src="https://storage.portal-market.com/portals-market/gifts/joyfulbundle/models/png/biscuit.png" alt="">
+            <div class="shop-name">joyfulbundle</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>726</span></div>
+        </div>
+        <div class="shop-card" data-gift="surgeboard">
+            <img src="https://portal-market.com/default_collections/surgeboard/image.webp" alt="">
+            <div class="shop-name">surgeboard</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>728</span></div>
+        </div>
+        <div class="shop-card" data-gift="arcticigloo">
+            <img src="https://storage.portal-market.com/portals-market/gifts/sleighbell/models/png/arcticigloo.png" alt="">
+            <div class="shop-name">sleighbell</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>731</span></div>
+        </div>
+        <div class="shop-card" data-gift="artificial">
+            <img src="https://storage.portal-market.com/portals-market/gifts/jellybunny/models/png/artificial.png" alt="">
+            <div class="shop-name">jellybunny</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>735</span></div>
+        </div>
+        <div class="shop-card" data-gift="antique">
+            <img src="https://storage.portal-market.com/portals-market/gifts/jinglebells/models/png/antique.png" alt="">
+            <div class="shop-name">jinglebells</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>745</span></div>
+        </div>
+        <div class="shop-card" data-gift="8ball">
+            <img src="https://storage.portal-market.com/portals-market/gifts/evileye/models/png/8ball.png" alt="">
+            <div class="shop-name">evileye</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>783</span></div>
+        </div>
+        <div class="shop-card" data-gift="alpha">
+            <img src="https://storage.portal-market.com/portals-market/gifts/berrybox/models/png/alpha.png" alt="">
+            <div class="shop-name">berrybox</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>806</span></div>
+        </div>
+        <div class="shop-card" data-gift="afterglow">
+            <img src="https://storage.portal-market.com/portals-market/gifts/lovecandle/models/png/afterglow.png" alt="">
+            <div class="shop-name">lovecandle</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>836</span></div>
+        </div>
+        <div class="shop-card" data-gift="advicedog">
+            <img src="https://storage.portal-market.com/portals-market/gifts/hangingstar/models/png/advicedog.png" alt="">
+            <div class="shop-name">hangingstar</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>850</span></div>
+        </div>
+        <div class="shop-card" data-gift="aetheris">
+            <img src="https://storage.portal-market.com/portals-market/gifts/sakuraflower/models/png/aetheris.png" alt="">
+            <div class="shop-name">sakuraflower</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>902</span></div>
+        </div>
+        <div class="shop-card" data-gift="abracadabra">
+            <img src="https://storage.portal-market.com/portals-market/gifts/tophat/models/png/abracadabra.png" alt="">
+            <div class="shop-name">tophat</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>986</span></div>
+        </div>
+        <div class="shop-card" data-gift="azalea">
+            <img src="https://storage.portal-market.com/portals-market/gifts/skullflower/models/png/azalea.png" alt="">
+            <div class="shop-name">skullflower</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>999</span></div>
+        </div>
+        <div class="shop-card" data-gift="cherry">
+            <img src="https://storage.portal-market.com/portals-market/gifts/valentinebox/models/png/cherry.png" alt="">
+            <div class="shop-name">valentinebox</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>1034</span></div>
+        </div>
+        <div class="shop-card" data-gift="berryblaster">
+            <img src="https://storage.portal-market.com/portals-market/gifts/flyingbroom/models/png/berryblaster.png" alt="">
+            <div class="shop-name">flyingbroom</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>1046</span></div>
+        </div>
+        <div class="shop-card" data-gift="beemovie">
+            <img src="https://storage.portal-market.com/portals-market/gifts/madpumpkin/models/png/beemovie.png" alt="">
+            <div class="shop-name">madpumpkin</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>1130</span></div>
+        </div>
+        <div class="shop-card" data-gift="acidjazz">
+            <img src="https://storage.portal-market.com/portals-market/gifts/recordplayer/models/png/acidjazz.png" alt="">
+            <div class="shop-name">recordplayer</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>1226</span></div>
+        </div>
+        <div class="shop-card" data-gift="amanita">
+            <img src="https://storage.portal-market.com/portals-market/gifts/crystalball/models/png/amanita.png" alt="">
+            <div class="shop-name">crystalball</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>1246</span></div>
+        </div>
+        <div class="shop-card" data-gift="america">
+            <img src="https://storage.portal-market.com/portals-market/gifts/snoopcigar/models/png/america.png" alt="">
+            <div class="shop-name">snoopcigar</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>1298</span></div>
+        </div>
+        <div class="shop-card" data-gift="aerogel">
+            <img src="https://storage.portal-market.com/portals-market/gifts/lovepotion/models/png/aerogel.png" alt="">
+            <div class="shop-name">lovepotion</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>1305</span></div>
+        </div>
+        <div class="shop-card" data-gift="abyssheart">
+            <img src="https://storage.portal-market.com/portals-market/gifts/trappedheart/models/png/abyssheart.png" alt="">
+            <div class="shop-name">trappedheart</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>1312</span></div>
+        </div>
+        <div class="shop-card" data-gift="ufcoriginal">
+            <img src="https://storage.portal-market.com/portals-market/gifts/ufcstrike/models/png/original.png" alt="">
+            <div class="shop-name">ufcstrike</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>1508</span></div>
+        </div>
+        <div class="shop-card" data-gift="barbiecore">
+            <img src="https://storage.portal-market.com/portals-market/gifts/ionicdryer/models/png/barbiecore.png" alt="">
+            <div class="shop-name">ionicdryer</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>1550</span></div>
+        </div>
+        <div class="shop-card" data-gift="aurora">
+            <img src="https://storage.portal-market.com/portals-market/gifts/skystilettos/models/png/aurora.png" alt="">
+            <div class="shop-name">skystilettos</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>1755</span></div>
+        </div>
+        <div class="shop-card" data-gift="bloodgem">
+            <img src="https://storage.portal-market.com/portals-market/gifts/cupidcharm/models/png/bloodgem.png" alt="">
+            <div class="shop-name">cupidcharm</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>2200</span></div>
+        </div>
+        <div class="shop-card" data-gift="adulttoy">
+            <img src="https://storage.portal-market.com/portals-market/gifts/blingbinky/models/png/adulttoy.png" alt="">
+            <div class="shop-name">blingbinky</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>2213</span></div>
+        </div>
+        <div class="shop-card" data-gift="azurespark">
+            <img src="https://storage.portal-market.com/portals-market/gifts/rarebird/models/png/azurespark.png" alt="">
+            <div class="shop-name">rarebird</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>2302</span></div>
+        </div>
+        <div class="shop-card" data-gift="3dglow">
+            <img src="https://storage.portal-market.com/portals-market/gifts/eternalrose/models/png/3dglow.png" alt="">
+            <div class="shop-name">eternalrose</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>2306</span></div>
+        </div>
+        <div class="shop-card" data-gift="autumn">
+            <img src="https://storage.portal-market.com/portals-market/gifts/khabibspapakha/models/png/autumn.png" alt="">
+            <div class="shop-name">khabibspapakha</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>2311</span></div>
+        </div>
+        <div class="shop-card" data-gift="badfortune">
+            <img src="https://storage.portal-market.com/portals-market/gifts/electricskull/models/png/badfortune.png" alt="">
+            <div class="shop-name">electricskull</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>2420</span></div>
+        </div>
+        <div class="shop-card" data-gift="acidgreen">
+            <img src="https://storage.portal-market.com/portals-market/gifts/diamondring/models/png/acidgreen.png" alt="">
+            <div class="shop-name">diamondring</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>2805</span></div>
+        </div>
+        <div class="shop-card" data-gift="blacknoir">
+            <img src="https://storage.portal-market.com/portals-market/gifts/signetring/models/png/blacknoir.png" alt="">
+            <div class="shop-name">signetring</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>3127</span></div>
+        </div>
+        <div class="shop-card" data-gift="aladdin">
+            <img src="https://storage.portal-market.com/portals-market/gifts/genielamp/models/png/aladdin.png" alt="">
+            <div class="shop-name">genielamp</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>3238</span></div>
+        </div>
+        <div class="shop-card" data-gift="aquagem">
+            <img src="https://storage.portal-market.com/portals-market/gifts/voodoodoll/models/png/aquagem.png" alt="">
+            <div class="shop-name">voodoodoll</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>3240</span></div>
+        </div>
+        <div class="shop-card" data-gift="aquaviolet">
+            <img src="https://storage.portal-market.com/portals-market/gifts/vintagecigar/models/png/aquaviolet.png" alt="">
+            <div class="shop-name">vintagecigar</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>3523</span></div>
+        </div>
+        <div class="shop-card" data-gift="alterego">
+            <img src="https://storage.portal-market.com/portals-market/gifts/toybear/models/png/alterego.png" alt="">
+            <div class="shop-name">toybear</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>3711</span></div>
+        </div>
+        <div class="shop-card" data-gift="acidpunch">
+            <img src="https://storage.portal-market.com/portals-market/gifts/nekohelmet/models/png/acidpunch.png" alt="">
+            <div class="shop-name">nekohelmet</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>3738</span></div>
+        </div>
+        <div class="shop-card" data-gift="anaconda">
+            <img src="https://storage.portal-market.com/portals-market/gifts/bondedring/models/png/anaconda.png" alt="">
+            <div class="shop-name">bondedring</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>3886</span></div>
+        </div>
+        <div class="shop-card" data-gift="bananapox">
+            <img src="https://storage.portal-market.com/portals-market/gifts/kissedfrog/models/png/bananapox.png" alt="">
+            <div class="shop-name">kissedfrog</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>3932</span></div>
+        </div>
+        <div class="shop-card" data-gift="acidwitch">
+            <img src="https://storage.portal-market.com/portals-market/gifts/sharptongue/models/png/acidwitch.png" alt="">
+            <div class="shop-name">sharptongue</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>3995</span></div>
+        </div>
+        <div class="shop-card" data-gift="amazon">
+            <img src="https://storage.portal-market.com/portals-market/gifts/swisswatch/models/png/amazon.png" alt="">
+            <div class="shop-name">swisswatch</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>4761</span></div>
+        </div>
+        <div class="shop-card" data-gift="alpinegold">
+            <img src="https://storage.portal-market.com/portals-market/gifts/lowrider/models/png/alpinegold.png" alt="">
+            <div class="shop-name">lowrider</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>4873</span></div>
+        </div>
+        <div class="shop-card" data-gift="agentorange">
+            <img src="https://storage.portal-market.com/portals-market/gifts/magicpotion/models/png/agentorange.png" alt="">
+            <div class="shop-name">magicpotion</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>4993</span></div>
+        </div>
+        <div class="shop-card" data-gift="bigcubus">
+            <img src="https://storage.portal-market.com/portals-market/gifts/artisanbrick/models/png/bigcubus.png" alt="">
+            <div class="shop-name">artisanbrick</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>5232</span></div>
+        </div>
+        <div class="shop-card" data-gift="8bitdiamond">
+            <img src="https://storage.portal-market.com/portals-market/gifts/gemsignet/models/png/8bitdiamond.png" alt="">
+            <div class="shop-name">gemsignet</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>5777</span></div>
+        </div>
+        <div class="shop-card" data-gift="actionfilm">
+            <img src="https://storage.portal-market.com/portals-market/gifts/minioscar/models/png/actionfilm.png" alt="">
+            <div class="shop-name">minioscar</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>6216</span></div>
+        </div>
+        <div class="shop-card" data-gift="iongemamethyst">
+            <img src="https://storage.portal-market.com/portals-market/gifts/iongem/models/png/amethyst.png" alt="">
+            <div class="shop-name">iongem</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>6319</span></div>
+        </div>
+        <div class="shop-card" data-gift="aurorajoy">
+            <img src="https://storage.portal-market.com/portals-market/gifts/perfumebottle/models/png/aurorajoy.png" alt="">
+            <div class="shop-name">perfumebottle</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>6376</span></div>
+        </div>
+        <div class="shop-card" data-gift="allin">
+            <img src="https://storage.portal-market.com/portals-market/gifts/westsidesign/models/png/allin.png" alt="">
+            <div class="shop-name">westsidesign</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>8261</span></div>
+        </div>
+        <div class="shop-card" data-gift="aquaring">
+            <img src="https://storage.portal-market.com/portals-market/gifts/nailbracelet/models/png/aquaring.png" alt="">
+            <div class="shop-name">nailbracelet</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>10265</span></div>
+        </div>
+        <div class="shop-card" data-gift="academic">
+            <img src="https://storage.portal-market.com/portals-market/gifts/lootbag/models/png/academic.png" alt="">
+            <div class="shop-name">lootbag</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>11109</span></div>
+        </div>
+        <div class="shop-card" data-gift="bicepcurls">
+            <img src="https://storage.portal-market.com/portals-market/gifts/mightyarm/models/png/bicepcurls.png" alt="">
+            <div class="shop-name">mightyarm</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>11334</span></div>
+        </div>
+        <div class="shop-card" data-gift="astralamethyst">
+            <img src="https://storage.portal-market.com/portals-market/gifts/astralshard/models/png/amethyst.png" alt="">
+            <div class="shop-name">astralshard</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>12558</span></div>
+        </div>
+        <div class="shop-card" data-gift="azukisiam">
+            <img src="https://storage.portal-market.com/portals-market/gifts/scaredcat/models/png/azukisiam.png" alt="">
+            <div class="shop-name">scaredcat</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>17695</span></div>
+        </div>
+        <div class="shop-card" data-gift="aegeansea">
+            <img src="https://storage.portal-market.com/portals-market/gifts/heroichelmet/models/png/aegeansea.png" alt="">
+            <div class="shop-name">heroichelmet</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>18754</span></div>
+        </div>
+        <div class="shop-card" data-gift="999karat">
+            <img src="https://storage.portal-market.com/portals-market/gifts/preciouspeach/models/png/999karat.png" alt="">
+            <div class="shop-name">preciouspeach</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>26792</span></div>
+        </div>
+        <div class="shop-card" data-gift="appleslice">
+            <img src="https://storage.portal-market.com/portals-market/gifts/durovscap/models/png/appleslice.png" alt="">
+            <div class="shop-name">durovscap</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>42189</span></div>
+        </div>
+        <div class="shop-card" data-gift="angelicpink">
+            <img src="https://storage.portal-market.com/portals-market/gifts/heartlocket/models/png/angelicpink.png" alt="">
+            <div class="shop-name">heartlocket</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>102256</span></div>
+        </div>
+        <div class="shop-card" data-gift="amalgam">
+            <img src="https://storage.portal-market.com/portals-market/gifts/plushpepe/models/png/amalgam.png" alt="">
+            <div class="shop-name">plushpepe</div>
+            <div class="shop-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span>584945</span></div>
+        </div>
+    </div>
+            </div>
+        </div>
+    </div>
+    <div class="button" id="topupBtn">Введите сумму</div>
+</div>
