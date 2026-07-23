@@ -358,16 +358,33 @@ function capitalizeGiftName(s){
                 });
             });
 
-            starsInput.addEventListener('input',()=>{
-                if(starsInput.value.length>1)starsInput.value=starsInput.value.replace(/^0+/,'')||'0';
-                if(starsInput.value==='')starsInput.value='0';
-                refresh();
-            });
-            tonInput.addEventListener('input',()=>{
-                if(tonInput.value.length>1)tonInput.value=tonInput.value.replace(/^0+/,'')||'0';
-                if(tonInput.value==='')tonInput.value='0';
-                refresh();
-            });
+            // Не даём стереть последнюю цифру (поле никогда не должно становиться пустым) —
+            // перехватываем ещё до того, как удаление применится, чтобы не было "мигания" пустоты.
+            function guardAmountInput(inp){
+                function moveCursorToEnd(){
+                    const len=inp.value.length;
+                    try{ inp.setSelectionRange(len,len); }catch(e){}
+                }
+                inp.addEventListener('focus',moveCursorToEnd);
+                inp.addEventListener('click',moveCursorToEnd);
+                inp.addEventListener('beforeinput',(e)=>{
+                    const isDelete = e.inputType && e.inputType.indexOf('delete')===0;
+                    if(isDelete && inp.value.replace(/[^0-9]/g,'').length<=1){
+                        e.preventDefault();
+                        inp.value='0';
+                        inp.dispatchEvent(new Event('input'));
+                    }
+                });
+                inp.addEventListener('input',()=>{
+                    inp.value=inp.value.replace(/[^0-9]/g,''); // только цифры
+                    if(inp.value.length>1)inp.value=inp.value.replace(/^0+/,'')||'0';
+                    if(inp.value==='')inp.value='0';
+                    moveCursorToEnd();
+                    refresh();
+                });
+            }
+            guardAmountInput(starsInput);
+            guardAmountInput(tonInput);
             [starsInput,tonInput].forEach(inp=>{
                 inp.addEventListener('blur',()=>{
                     if(inp.value==='')inp.value='0';
