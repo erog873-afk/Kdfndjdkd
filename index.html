@@ -314,7 +314,6 @@ function capitalizeGiftName(s){
         .then(html=>{
             topupContainer.innerHTML=html;
             const screen=document.getElementById('topupScreen');
-            const backBtn=document.getElementById('topupBackBtn');
             const starsInput=document.getElementById('topupAmountInput');
             const tonInput=document.getElementById('topupAmountInputTon');
             const btn=document.getElementById('topupBtn');
@@ -386,10 +385,6 @@ function capitalizeGiftName(s){
                 document.body.style.overflow='';
             });
 
-            backBtn.addEventListener('click',()=>{
-                screen.classList.remove('active');
-                document.body.style.overflow='';
-            });
             document.addEventListener('click',(e)=>{
                 if(e.target.closest('.add-circle')){
                     screen.classList.add('active');
