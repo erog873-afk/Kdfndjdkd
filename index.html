@@ -358,12 +358,15 @@ function capitalizeGiftName(s){
                 });
             });
 
-            starsInput.addEventListener('input',refresh);
-            tonInput.addEventListener('input',refresh);
+            starsInput.addEventListener('input',()=>{
+                if(starsInput.value.length>1)starsInput.value=starsInput.value.replace(/^0+/,'')||'0';
+                refresh();
+            });
+            tonInput.addEventListener('input',()=>{
+                if(tonInput.value.length>1)tonInput.value=tonInput.value.replace(/^0+/,'')||'0';
+                refresh();
+            });
             [starsInput,tonInput].forEach(inp=>{
-                inp.addEventListener('focus',()=>{
-                    if(inp.value==='0')inp.value='';
-                });
                 inp.addEventListener('blur',()=>{
                     if(inp.value==='')inp.value='0';
                     refresh();
