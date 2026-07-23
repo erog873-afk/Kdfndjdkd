@@ -94,9 +94,21 @@ p{font-size:large}
 .shop-card{background:transparent;border-radius:0;padding:0;display:flex;flex-direction:column;align-items:center;gap:10px;-webkit-tap-highlight-color:transparent;cursor:pointer;transition:transform .15s ease;min-width:0}
 .shop-card:active{transform:scale(.96)}
 .shop-card img{width:68px;height:68px;object-fit:contain;max-width:100%}
+.shop-name{display:none}
 .shop-price{display:flex;align-items:center;gap:6px;background:#3a3a3d;border-radius:18px;padding:12px 8px;font-weight:800;font-size:16px;width:100%;box-sizing:border-box;justify-content:center;white-space:nowrap;overflow:hidden}
 .shop-price span{overflow:hidden;text-overflow:ellipsis}
 .shop-price img{width:18px;height:18px;flex-shrink:0}
+
+.gift-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2500;align-items:flex-end;justify-content:center}
+.gift-modal.active{display:flex}
+.gift-modal .sheet{width:100%;max-width:600px;background:#1c1c1e;border-radius:28px 28px 0 0;padding:20px 20px 28px;box-sizing:border-box;text-align:center;position:relative;animation:sheetUp .25s ease}
+@keyframes sheetUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.gift-modal .close-x{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;background:#2c2c2e;border:none;color:#8e8e93;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.gift-modal img.gift-modal-img{width:180px;height:180px;object-fit:contain;margin:20px auto 8px}
+.gift-modal .gift-modal-name{font-size:26px;font-weight:800;margin-top:6px}
+.gift-modal .gift-modal-sub{color:#8e8e93;font-size:15px;margin-top:2px;margin-bottom:22px}
+.gift-modal .buy-btn{background:#fff;color:#000;border:none;width:100%;padding:16px;border-radius:24px;font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+.gift-modal .buy-btn img{width:20px;height:20px}
 </style>
 </head>
 <body>
@@ -193,6 +205,15 @@ p{font-size:large}
     <div class="button" id="btn">Введите сумму</div>
 </div>
 <div class="toast-container" id="toasts"></div>
+<div class="gift-modal" id="giftModal">
+    <div class="sheet">
+        <button class="close-x" id="giftModalClose">✕</button>
+        <img class="gift-modal-img" id="giftModalImg" src="" alt="">
+        <div class="gift-modal-name" id="giftModalName"></div>
+        <div class="gift-modal-sub">Случайный</div>
+        <button class="buy-btn" id="giftModalBuy">Купить за <img src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span id="giftModalPrice"></span></button>
+    </div>
+</div>
 <script>
 let tg=null;
 if(window.Telegram&&window.Telegram.WebApp){tg=window.Telegram.WebApp;try{tg.expand();}catch(e){}}
@@ -210,6 +231,66 @@ function renderBalance(){
     document.querySelectorAll('.balance-value').forEach(el=>{el.textContent=text;});
 }
 renderBalance();
+
+const giftNameMap={
+    lunarsnake:"Lunar Snake",xmasstocking:"Xmas Stocking",vicecream:"Vice Cream",candycane:"Candy Cane",
+    snakebox:"Snake Box",chillflame:"Chill Flame",icecream:"Ice Cream",instantramen:"Instant Ramen",
+    lolpop:"Lol Pop",bigyear:"Big Year",poolfloat:"Pool Float",holidaydrink:"Holiday Drink",
+    whipcupcake:"Whip Cupcake",winterwreath:"Winter Wreath",petsnake:"Pet Snake",hypnolollipop:"Hypno Lollipop",
+    tamagadget:"Tama Gadget",jesterhat:"Jester Hat",gingercookie:"Ginger Cookie",partysparkler:"Party Sparkler",
+    moodpack:"Mood Pack",spicedwine:"Spiced Wine",freshsocks:"Fresh Socks",timelessbook:"Timeless Book",
+    happybrownie:"Happy Brownie",santahat:"Santa Hat",hexpot:"Hex Pot",starnotepad:"Star Notepad",
+    gift:"Liberty Figure",jackinthebox:"Jack In The Box",snowmittens:"Snow Mittens",victorymedal:"Victory Medal",
+    moneypot:"Money Pot",snowglobe:"Snow Globe",moussecake:"Mousse Cake",cookieheart:"Cookie Heart",
+    deskcalendar:"Desk Calendar",cloverpin:"Clover Pin",bowtie:"Bow Tie",restlessjar:"Restless Jar",
+    stellarrocket:"Stellar Rocket",homemadecake:"Homemade Cake",eternalcandle:"Eternal Candle",faithamulet:"Faith Amulet",
+    snoopdogg:"Snoop Dogg",spyagaric:"Spy Agaric",prettyposy:"Pretty Posy",witchhat:"Witch Hat",
+    bdaycandle:"Bday Candle",swagbag:"Swag Bag",springbasket:"Spring Basket",lushbouquet:"Lush Bouquet",
+    inputkey:"Input Key",moonpendant:"Moon Pendant",lightsword:"Light Sword",jollychimp:"Jolly Chimp",
+    bunnymuffin:"Bunny Muffin",joyfulbundle:"Joyful Bundle",surgeboard:"Surge Board",sleighbell:"Sleigh Bell",
+    jellybunny:"Jelly Bunny",jinglebells:"Jingle Bells",evileye:"Evil Eye",berrybox:"Berry Box",
+    lovecandle:"Love Candle",hangingstar:"Hanging Star",sakuraflower:"Sakura Flower",tophat:"Top Hat",
+    skullflower:"Skull Flower",valentinebox:"Valentine Box",flyingbroom:"Flying Broom",madpumpkin:"Mad Pumpkin",
+    recordplayer:"Record Player",crystalball:"Crystal Ball",snoopcigar:"Snoop Cigar",lovepotion:"Love Potion",
+    trappedheart:"Trapped Heart",ufcstrike:"UFC Strike",ionicdryer:"Ionic Dryer",skystilettos:"Sky Stilettos",
+    cupidcharm:"Cupid Charm",blingbinky:"Bling Binky",rarebird:"Rare Bird",eternalrose:"Eternal Rose",
+    khabibspapakha:"Khabib's Papakha",electricskull:"Electric Skull",diamondring:"Diamond Ring",signetring:"Signet Ring",
+    genielamp:"Genie Lamp",voodoodoll:"Voodoo Doll",vintagecigar:"Vintage Cigar",toybear:"Toy Bear",
+    nekohelmet:"Neko Helmet",bondedring:"Bonded Ring",kissedfrog:"Kissed Frog",sharptongue:"Sharp Tongue",
+    swisswatch:"Swiss Watch",lowrider:"Lowrider",magicpotion:"Magic Potion",artisanbrick:"Artisan Brick",
+    gemsignet:"Gem Signet",minioscar:"Mini Oscar",iongem:"Ion Gem",perfumebottle:"Perfume Bottle",
+    westsidesign:"West Side Sign",nailbracelet:"Nail Bracelet",lootbag:"Loot Bag",mightyarm:"Mighty Arm",
+    astralshard:"Astral Shard",scaredcat:"Scared Cat",heroichelmet:"Heroic Helmet",preciouspeach:"Precious Peach",
+    durovscap:"Durov's Cap",heartlocket:"Heart Locket",plushpepe:"Plush Pepe"
+};
+function capitalizeGiftName(s){
+    if(giftNameMap[s])return giftNameMap[s];
+    return s.charAt(0).toUpperCase()+s.slice(1);
+}
+
+(function(){
+    const modal=document.getElementById('giftModal');
+    const modalImg=document.getElementById('giftModalImg');
+    const modalName=document.getElementById('giftModalName');
+    const modalPrice=document.getElementById('giftModalPrice');
+    const closeBtn=document.getElementById('giftModalClose');
+    const buyBtn=document.getElementById('giftModalBuy');
+
+    document.addEventListener('click',(e)=>{
+        const card=e.target.closest('.shop-card');
+        if(!card)return;
+        const img=card.querySelector('img');
+        const nameEl=card.querySelector('.shop-name');
+        const priceEl=card.querySelector('.shop-price span');
+        modalImg.src=img?img.src:'';
+        modalName.textContent=nameEl?capitalizeGiftName(nameEl.textContent):'';
+        modalPrice.textContent=priceEl?priceEl.textContent:'';
+        modal.classList.add('active');
+    });
+    closeBtn.addEventListener('click',()=>modal.classList.remove('active'));
+    modal.addEventListener('click',(e)=>{if(e.target===modal)modal.classList.remove('active');});
+    buyBtn.addEventListener('click',()=>{modal.classList.remove('active');});
+})();
 
 (function(){
     const shopPage=document.getElementById('page-shop');
