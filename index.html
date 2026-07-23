@@ -360,10 +360,12 @@ function capitalizeGiftName(s){
 
             starsInput.addEventListener('input',()=>{
                 if(starsInput.value.length>1)starsInput.value=starsInput.value.replace(/^0+/,'')||'0';
+                if(starsInput.value==='')starsInput.value='0';
                 refresh();
             });
             tonInput.addEventListener('input',()=>{
                 if(tonInput.value.length>1)tonInput.value=tonInput.value.replace(/^0+/,'')||'0';
+                if(tonInput.value==='')tonInput.value='0';
                 refresh();
             });
             [starsInput,tonInput].forEach(inp=>{
