@@ -328,11 +328,13 @@ function capitalizeGiftName(s){
                 errorBox.style.display='none';
                 if(currentTab==='stars'){
                     const val=parseInt(starsInput.value)||0;
+                    starsInput.style.width=Math.max(String(starsInput.value).length,1)+'ch';
                     starsSubtext.textContent='Вы получите ~ '+(val*0.95).toLocaleString('ru-RU',{maximumFractionDigits:2}).replace('.',',')+' звезд';
                     if(val<=0){btn.classList.remove('active');btn.textContent='Введите сумму';}
                     else{btn.classList.add('active');btn.textContent='Пополнить';}
                 }else if(currentTab==='ton'){
                     const val=parseInt(tonInput.value)||0;
+                    tonInput.style.width=Math.max(String(tonInput.value).length,1)+'ch';
                     tonSubtext.textContent='~ '+(val/500*0.9).toLocaleString('ru-RU',{maximumFractionDigits:3}).replace('.',',')+' TON (дешевле на 10%)';
                     if(val<=0){btn.classList.remove('active');btn.textContent='Введите сумму';}
                     else{btn.classList.add('active');btn.textContent='Пополнить';}
