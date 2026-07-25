@@ -481,24 +481,23 @@ function capitalizeGiftName(s){
 (function(){
     const shopPage=document.getElementById('page-shop');
     if(shopPage){
-        shopPage.innerHTML='<div class="shop-loading"><div class="spinner-ring"></div></div>';
         fetch('shop.html')
             .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
             .then(html=>{
-                const temp=document.createElement('div');
-                temp.innerHTML=html;
-                const imgs=Array.from(temp.querySelectorAll('img'));
-                const imagesReady=Promise.all(imgs.map(img=>new Promise(res=>{
-                    if(img.complete){res();return;}
-                    img.addEventListener('load',res);
-                    img.addEventListener('error',res);
-                })));
-                const minDelay=new Promise(res=>setTimeout(res,500));
-                const safetyTimeout=new Promise(res=>setTimeout(res,4000));
-                Promise.race([Promise.all([minDelay,imagesReady]),safetyTimeout]).then(()=>{
-                    shopPage.innerHTML=html;
-                    renderBalance();
-                });
+                shopPage.innerHTML=html;
+                renderBalance();
+                const grid=shopPage.querySelector('.shop-grid');
+                if(grid){
+                    const spinner=document.createElement('div');
+                    spinner.className='shop-loading';
+                    spinner.innerHTML='<div class="spinner-ring"></div>';
+                    grid.style.display='none';
+                    grid.parentNode.insertBefore(spinner,grid);
+                    setTimeout(()=>{
+                        spinner.remove();
+                        grid.style.display='';
+                    },1000);
+                }
             })
             .catch(e=>{
                 console.error('Не удалось загрузить shop.html:',e);
