@@ -82,8 +82,8 @@ p{font-size:large}
 .spin-loader{width:19px;height:19px;border-radius:50%;border:2px solid rgba(255,255,255,.32);position:relative;flex-shrink:0;margin-left:0!important;animation:spin-rotate 1.8s linear infinite}
 .spin-loader::after{content:'';position:absolute;top:-2px;left:50%;width:4px;height:4px;margin-left:-2px;background:#fff;border-radius:50%}
 @keyframes spin-rotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-.shop-loading{display:flex;justify-content:center;align-items:center;padding:80px 0}
-.spinner-ring{width:40px;height:40px;border-radius:50%;border:3px solid #2c2c2e;border-top-color:#8e8e93;animation:spinner-rotate .8s linear infinite}
+.shop-loading{display:flex;justify-content:center;align-items:center;padding:60px 0}
+.spinner-ring{width:26px;height:26px;border-radius:50%;border:2px solid #2c2c2e;border-top-color:#8e8e93;animation:spinner-rotate .8s linear infinite}
 @keyframes spinner-rotate{to{transform:rotate(360deg)}}
 .game-card.free{background:linear-gradient(160deg,#2e2e32,#0f0f11)}
 .game-card.upgrade{background:linear-gradient(160deg,#e08a2e,#b5540f)}
@@ -486,16 +486,16 @@ function capitalizeGiftName(s){
             .then(html=>{
                 shopPage.innerHTML=html;
                 renderBalance();
-                const container=shopPage.querySelector('.shop-container');
-                if(container){
+                const grid=shopPage.querySelector('.shop-grid');
+                if(grid){
                     const spinner=document.createElement('div');
                     spinner.className='shop-loading';
                     spinner.innerHTML='<div class="spinner-ring"></div>';
-                    container.style.display='none';
-                    container.parentNode.insertBefore(spinner,container);
+                    grid.style.display='none';
+                    grid.parentNode.insertBefore(spinner,grid);
                     setTimeout(()=>{
                         spinner.remove();
-                        container.style.display='';
+                        grid.style.display='';
                     },1000);
                 }
             })
