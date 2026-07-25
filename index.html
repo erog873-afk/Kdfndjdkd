@@ -486,16 +486,16 @@ function capitalizeGiftName(s){
             .then(html=>{
                 shopPage.innerHTML=html;
                 renderBalance();
-                const grid=shopPage.querySelector('.shop-grid');
-                if(grid){
+                const container=shopPage.querySelector('.shop-container');
+                if(container){
                     const spinner=document.createElement('div');
                     spinner.className='shop-loading';
                     spinner.innerHTML='<div class="spinner-ring"></div>';
-                    grid.style.display='none';
-                    grid.parentNode.insertBefore(spinner,grid);
+                    container.style.display='none';
+                    container.parentNode.insertBefore(spinner,container);
                     setTimeout(()=>{
                         spinner.remove();
-                        grid.style.display='';
+                        container.style.display='';
                     },1000);
                 }
             })
