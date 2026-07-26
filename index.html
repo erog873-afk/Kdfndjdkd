@@ -34,7 +34,8 @@ p{font-size:large}
 .game-cards-list{display:block}
 .case-card{background:#ffffff0d;border-radius:22px;padding:20px 16px;text-align:center;margin-top:8px}
 .case-card.menu-open{background:none;padding:0;border-radius:0}
-#caseMenu{display:flex;flex-direction:column;justify-content:center;min-height:calc(100vh - 260px)}
+#caseMenu{display:none;flex-direction:column;justify-content:center;min-height:calc(100vh - 240px - env(safe-area-inset-bottom))}
+#caseMenu.open{display:flex}
 .case-arrows-row{display:flex;justify-content:space-between;align-items:center;margin:0 -8px}
 .case-arrow{background:none;border:none;color:#8e8e93;font-size:44px;font-weight:300;line-height:1;cursor:pointer;padding:4px 10px}
 .case-bottom-wrap{position:fixed;left:0;right:0;bottom:0;background:#0c0c0e;padding:12px 16px calc(16px + env(safe-area-inset-bottom));box-sizing:border-box;z-index:1600}
@@ -238,7 +239,7 @@ p{font-size:large}
                 <div class="case-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg">0</div>
             </div>
 
-            <div id="caseMenu" style="display:none">
+            <div id="caseMenu">
                 <div class="case-arrows-row">
                     <button class="case-arrow">›</button>
                     <button class="case-arrow">‹</button>
@@ -625,8 +626,8 @@ function capitalizeGiftName(s){
     const caseMenu=document.getElementById('caseMenu');
     const bottomNav=document.querySelector('.bottom-nav');
     function closeCase(){
-        if(caseMenu.style.display==='block'){
-            caseMenu.style.display='none';
+        if(caseMenu.classList.contains('open')){
+            caseMenu.classList.remove('open');
             casePreview.style.display='block';
             caseCard.classList.remove('menu-open');
             return;
@@ -642,7 +643,7 @@ function capitalizeGiftName(s){
     casePreview.addEventListener('click',()=>{
         if(tg&&tg.HapticFeedback){try{tg.HapticFeedback.impactOccurred('light');}catch(e){}}
         casePreview.style.display='none';
-        caseMenu.style.display='block';
+        caseMenu.classList.add('open');
         caseCard.classList.add('menu-open');
     });
     document.querySelectorAll('.game-card').forEach(card=>{
@@ -653,7 +654,7 @@ function capitalizeGiftName(s){
                 caseCard.style.display='block';
                 caseCard.classList.remove('menu-open');
                 casePreview.style.display='block';
-                caseMenu.style.display='none';
+                caseMenu.classList.remove('open');
                 if(bottomNav)bottomNav.style.display='none';
                 if(tg&&tg.BackButton)tg.BackButton.show();
                 return;
