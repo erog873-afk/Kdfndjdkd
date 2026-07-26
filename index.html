@@ -35,9 +35,10 @@ p{font-size:large}
 .case-card{background:#ffffff0d;border-radius:22px;padding:20px 16px;text-align:center;margin-top:8px}
 .case-arrows-row{display:flex;justify-content:space-between;align-items:center;margin:16px -8px 0}
 .case-arrow{background:none;border:none;color:#8e8e93;font-size:44px;font-weight:300;line-height:1;cursor:pointer;padding:4px 10px}
-.case-bottom-btns{display:flex;gap:10px;margin-top:8px}
+.case-bottom-wrap{position:fixed;left:0;right:0;bottom:0;background:#0c0c0e;padding:12px 16px calc(16px + env(safe-area-inset-bottom));box-sizing:border-box;z-index:1600}
+.case-bottom-btns{display:flex;gap:10px;margin-top:0}
 .case-bottom-btn{flex:1;background:#2c2c2e;border:none;color:#fff;padding:16px;border-radius:20px;font-size:16px;font-weight:700;cursor:pointer}
-.case-timer-btn{width:100%;margin-top:14px;background:#9a9a9e;color:#000;border:none;padding:18px;border-radius:24px;font-size:18px;font-weight:700;cursor:pointer;opacity:.7;pointer-events:none}
+.case-timer-btn{width:100%;margin-top:10px;background:#9a9a9e;color:#000;border:none;padding:18px;border-radius:24px;font-size:18px;font-weight:700;cursor:pointer;opacity:.7;pointer-events:none}
 .case-timer-btn.available{background:#fff;opacity:1;pointer-events:auto}
 .case-card img{width:90px;height:90px;object-fit:contain;margin-bottom:12px}
 .case-card h3{font-size:19px;font-weight:800;margin:0 0 10px}
@@ -241,12 +242,13 @@ p{font-size:large}
                     <button class="case-arrow">‹</button>
                 </div>
 
-                <div class="case-bottom-btns">
-                    <button class="case-bottom-btn">Настройки</button>
-                    <button class="case-bottom-btn">Призы</button>
+                <div class="case-bottom-wrap">
+                    <div class="case-bottom-btns">
+                        <button class="case-bottom-btn">Настройки</button>
+                        <button class="case-bottom-btn">Призы</button>
+                    </div>
+                    <button class="case-timer-btn" id="caseTimerBtn">Открыть бесплатно</button>
                 </div>
-
-                <button class="case-timer-btn" id="caseTimerBtn">Открыть бесплатно</button>
             </div>
         </div>
     </div>
@@ -619,6 +621,7 @@ function capitalizeGiftName(s){
     const caseCard=document.getElementById('caseCard');
     const casePreview=document.getElementById('casePreview');
     const caseMenu=document.getElementById('caseMenu');
+    const bottomNav=document.querySelector('.bottom-nav');
     function closeCase(){
         if(caseMenu.style.display==='block'){
             caseMenu.style.display='none';
@@ -627,6 +630,7 @@ function capitalizeGiftName(s){
         }
         caseCard.style.display='none';
         gameCardsList.style.display='block';
+        if(bottomNav)bottomNav.style.display='';
         if(tg&&tg.BackButton)tg.BackButton.hide();
     }
     if(tg&&tg.BackButton){
@@ -645,6 +649,7 @@ function capitalizeGiftName(s){
                 caseCard.style.display='block';
                 casePreview.style.display='block';
                 caseMenu.style.display='none';
+                if(bottomNav)bottomNav.style.display='none';
                 if(tg&&tg.BackButton)tg.BackButton.show();
                 return;
             }
