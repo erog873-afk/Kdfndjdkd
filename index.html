@@ -31,20 +31,12 @@ p{font-size:large}
 .white_btn{background:#fff;color:#000}
 .flexer:last-child{margin-top:-4px}
 .withdraw-screen{display:none;position:fixed;inset:0;background:#000;z-index:2000;overflow-y:auto;padding:64px 0 100px}
-.case-screen{display:none;position:fixed;inset:0;background:#0c0c0e;z-index:2000;overflow-y:auto;padding:16px}
-.case-screen.active{display:block}
-.case-topbar{display:flex;align-items:center;gap:8px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
-.case-topbar::-webkit-scrollbar{display:none}
-.case-back{background:#1c1c1e;border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent}
-.pill-solid{display:flex;align-items:center;gap:8px;padding:12px 18px;border-radius:26px;font-weight:800;font-size:18px;color:#fff;white-space:nowrap;flex-shrink:0}
-.pill-solid.purple{background:linear-gradient(135deg,#6a4cf5,#3a1fb8)}
-.pill-solid.pink{background:linear-gradient(135deg,#e838c9,#9a1fb8)}
-.case-snake{font-size:28px;flex-shrink:0}
-.case-card{background:#ffffff0d;border-radius:26px;padding:40px 20px;text-align:center;margin-top:8px}
-.case-card img{width:150px;height:150px;object-fit:contain;margin-bottom:20px}
-.case-card h3{font-size:26px;font-weight:800;margin:0 0 16px}
-.case-price{display:inline-flex;align-items:center;gap:8px;background:#3a3a3d;padding:10px 20px;border-radius:22px;font-weight:800;font-size:17px;color:#fff}
-.case-price img{width:18px;height:18px;margin:0}
+.game-cards-list{display:block}
+.case-card{background:#ffffff0d;border-radius:22px;padding:20px 16px;text-align:center;margin-top:8px}
+.case-card img{width:90px;height:90px;object-fit:contain;margin-bottom:12px}
+.case-card h3{font-size:19px;font-weight:800;margin:0 0 10px}
+.case-price{display:inline-flex;align-items:center;gap:6px;background:#3a3a3d;padding:7px 14px;border-radius:18px;font-weight:800;font-size:14px;color:#fff}
+.case-price img{width:16px;height:16px;margin:0}
 .withdraw-screen.active{display:block}
 .withdraw-screen .wrap{padding:14px}
 .withdraw-screen .top{display:flex;justify-content:space-between;align-items:center}
@@ -183,6 +175,7 @@ p{font-size:large}
             <div class="spin-loader"></div>
             <div class="pill pill-gray" style="margin-left:0"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span class="balance-value">0</span><div class="add-circle">+</div></div>
         </div>
+        <div class="game-cards-list" id="gameCardsList">
         <div class="game-card free" data-game="free">
             <div class="game-card-text">
                 <h3>Бесплатно</h3>
@@ -211,6 +204,12 @@ p{font-size:large}
             </div>
             <img class="game-icon-img" src="https://i.postimg.cc/SstH9rhB/1000051679-removebg-preview-(1).png" alt="">
         </div>
+        </div>
+        <div class="case-card" id="caseCard" style="display:none">
+            <img src="https://storage.portal-market.com/portals-market/gifts/swisswatch/models/png/amazon.png" alt="">
+            <h3>Ежедневный кейс</h3>
+            <div class="case-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg">0</div>
+        </div>
     </div>
     <div id="page-leaders" class="page-section" data-page="Лидеры" style="margin-top:64px">
         <h2 class="section-title">Лидеры</h2>
@@ -237,22 +236,6 @@ p{font-size:large}
     <div class="nav-item" data-title="Магазин"><div class="nav-icon-container"><img src="market.png" class="nav-icon"></div><span class="nav-label">Магазин</span></div>
     <div class="nav-item" data-title="Профиль"><div class="nav-icon-container"><img src="profile.png" class="nav-icon"></div><span class="nav-label">Профиль</span></div>
 </nav>
-<div class="case-screen" id="caseScreen">
-    <div class="case-topbar">
-        <button class="case-back" id="caseBackBtn">✕</button>
-        <div class="live-badge"><span>LIVE</span></div>
-        <div class="spin-loader"></div>
-        <div class="pill-solid purple"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg">950</div>
-        <div class="pill-solid pink"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg">3 400</div>
-        <div class="case-snake">🐍</div>
-        <div class="pill pill-gray"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span class="balance-value">0</span><div class="add-circle">+</div></div>
-    </div>
-    <div class="case-card">
-        <img src="https://storage.portal-market.com/portals-market/gifts/swisswatch/models/png/amazon.png" alt="">
-        <h3>Ежедневный кейс</h3>
-        <div class="case-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg">0</div>
-    </div>
-</div>
 
 <div class="withdraw-screen" id="withdrawScreen">
     <div class="wrap">
@@ -576,25 +559,29 @@ function capitalizeGiftName(s){
 })();
 
 (function(){
-    const caseScreen=document.getElementById('caseScreen');
-    const caseBackBtn=document.getElementById('caseBackBtn');
+    const gameCardsList=document.getElementById('gameCardsList');
+    const caseCard=document.getElementById('caseCard');
+    function closeCase(){
+        caseCard.style.display='none';
+        gameCardsList.style.display='block';
+        if(tg&&tg.BackButton)tg.BackButton.hide();
+    }
+    if(tg&&tg.BackButton){
+        tg.BackButton.onClick(closeCase);
+    }
     document.querySelectorAll('.game-card').forEach(card=>{
         card.addEventListener('click',()=>{
             if(tg&&tg.HapticFeedback){try{tg.HapticFeedback.impactOccurred('light');}catch(e){}}
             if(card.dataset.game==='free'){
-                caseScreen.classList.add('active');
-                renderBalance();
+                gameCardsList.style.display='none';
+                caseCard.style.display='block';
+                if(tg&&tg.BackButton)tg.BackButton.show();
                 return;
             }
             console.log('open game:',card.dataset.game);
             // TODO: подключить экран для card.dataset.game
         });
     });
-    if(caseBackBtn){
-        caseBackBtn.addEventListener('click',()=>{
-            caseScreen.classList.remove('active');
-        });
-    }
 })();
 
 (function(){
