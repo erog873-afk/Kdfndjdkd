@@ -131,6 +131,18 @@ p{font-size:large}
 .gift-modal .buy-btn img{width:20px;height:20px}
 .gift-modal .buy-btn:active{transform:scale(.97)}
 
+.prizes-screen{display:none;position:fixed;inset:0;background:#0c0c0e;z-index:2200;overflow-y:auto;padding:64px 16px 110px;box-sizing:border-box}
+.prizes-screen.active{display:block}
+.prizes-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.prizes-header h2{font-size:27px;font-weight:800;margin:0;letter-spacing:-.01em}
+.prizes-close-x{width:34px;height:34px;border-radius:50%;background:#2c2c2e;border:none;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.prizes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.prize-cell{background:linear-gradient(160deg,#3d3d47,#232228);border-radius:22px;padding:22px 8px 18px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.prize-cell img{width:38px;height:38px;object-fit:contain}
+.prize-cell .prize-value{font-size:21px;font-weight:800;color:#fff}
+.prizes-bottom-wrap{position:fixed;left:0;right:0;bottom:0;background:#0c0c0e;padding:12px 16px calc(16px + env(safe-area-inset-bottom));box-sizing:border-box;z-index:2300}
+.prizes-close-btn{width:100%;background:#3a3a3d;color:#fff;border:none;padding:17px;border-radius:24px;font-size:17px;font-weight:700;cursor:pointer}
+
 #page-profile .container{background:#17171a}
 .invite-card{text-align:center;margin-top:16px}
 .invite-emoji{width:76px;height:76px;object-fit:contain;margin-bottom:10px}
@@ -248,7 +260,7 @@ p{font-size:large}
                 <div class="case-bottom-wrap">
                     <div class="case-bottom-btns">
                         <button class="case-bottom-btn">Настройки</button>
-                        <button class="case-bottom-btn">Призы</button>
+                        <button class="case-bottom-btn" id="prizesBtn">Призы</button>
                     </div>
                     <button class="case-timer-btn" id="caseTimerBtn">Открыть бесплатно</button>
                 </div>
@@ -328,6 +340,16 @@ p{font-size:large}
         <div class="gift-modal-name" id="giftModalName"></div>
         <div class="gift-modal-sub">Случайный</div>
         <button class="buy-btn" id="giftModalBuy">Купить за <img src="https://i.ibb.co/jsR8GmP/1000051863-removebg-preview-1.png"><span id="giftModalPrice"></span></button>
+    </div>
+</div>
+<div class="prizes-screen" id="prizesScreen">
+    <div class="prizes-header">
+        <h2>Возможные призы</h2>
+        <button class="prizes-close-x" id="prizesCloseX">✕</button>
+    </div>
+    <div class="prizes-grid" id="prizesGrid"></div>
+    <div class="prizes-bottom-wrap">
+        <button class="prizes-close-btn" id="prizesCloseBtn">Закрыть</button>
     </div>
 </div>
 <script>
@@ -767,6 +789,38 @@ function capitalizeGiftName(s){
             }
         },800);
     };
+})();
+
+(function(){
+    const prizesBtn=document.getElementById('prizesBtn');
+    const prizesScreen=document.getElementById('prizesScreen');
+    const prizesGrid=document.getElementById('prizesGrid');
+    const prizesCloseX=document.getElementById('prizesCloseX');
+    const prizesCloseBtn=document.getElementById('prizesCloseBtn');
+    if(!prizesBtn||!prizesScreen)return;
+
+    const prizeValues=[300,200,100,70,50,40,30,20,15,10,5,2,1,0.5,0.3,0.2,0.1,0.01];
+    const starIcon='https://chimpbot.org/assets/stars-BaCoVmhq.svg';
+
+    prizeValues.forEach(v=>{
+        const cell=document.createElement('div');
+        cell.className='prize-cell';
+        const valueText=String(v).replace('.',',');
+        cell.innerHTML=`<img src="${starIcon}" alt=""><div class="prize-value">${valueText}</div>`;
+        prizesGrid.appendChild(cell);
+    });
+
+    function openPrizes(){
+        if(tg&&tg.HapticFeedback){try{tg.HapticFeedback.impactOccurred('light');}catch(e){}}
+        prizesScreen.classList.add('active');
+    }
+    function closePrizes(){
+        prizesScreen.classList.remove('active');
+    }
+
+    prizesBtn.addEventListener('click',openPrizes);
+    if(prizesCloseX)prizesCloseX.addEventListener('click',closePrizes);
+    if(prizesCloseBtn)prizesCloseBtn.addEventListener('click',closePrizes);
 })();
 </script>
 </body>
