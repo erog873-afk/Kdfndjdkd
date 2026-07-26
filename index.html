@@ -33,6 +33,12 @@ p{font-size:large}
 .withdraw-screen{display:none;position:fixed;inset:0;background:#000;z-index:2000;overflow-y:auto;padding:64px 0 100px}
 .game-cards-list{display:block}
 .case-card{background:#ffffff0d;border-radius:22px;padding:20px 16px;text-align:center;margin-top:8px}
+.case-arrows-row{display:flex;justify-content:space-between;align-items:center;margin:16px -8px 0}
+.case-arrow{background:none;border:none;color:#8e8e93;font-size:44px;font-weight:300;line-height:1;cursor:pointer;padding:4px 10px}
+.case-bottom-btns{display:flex;gap:10px;margin-top:8px}
+.case-bottom-btn{flex:1;background:#2c2c2e;border:none;color:#fff;padding:16px;border-radius:20px;font-size:16px;font-weight:700;cursor:pointer}
+.case-timer-btn{width:100%;margin-top:14px;background:#9a9a9e;color:#000;border:none;padding:18px;border-radius:24px;font-size:18px;font-weight:700;cursor:pointer;opacity:.7;pointer-events:none}
+.case-timer-btn.available{background:#fff;opacity:1;pointer-events:auto}
 .case-card img{width:90px;height:90px;object-fit:contain;margin-bottom:12px}
 .case-card h3{font-size:19px;font-weight:800;margin:0 0 10px}
 .case-price{display:inline-flex;align-items:center;gap:6px;background:#3a3a3d;padding:7px 14px;border-radius:18px;font-weight:800;font-size:14px;color:#fff}
@@ -223,9 +229,25 @@ p{font-size:large}
         </div>
         </div>
         <div class="case-card" id="caseCard" style="display:none">
-            <img src="https://storage.portal-market.com/portals-market/gifts/swisswatch/models/png/amazon.png" alt="">
-            <h3>Ежедневный кейс</h3>
-            <div class="case-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg">0</div>
+            <div id="casePreview" style="cursor:pointer">
+                <img src="https://storage.portal-market.com/portals-market/gifts/swisswatch/models/png/amazon.png" alt="">
+                <h3>Ежедневный кейс</h3>
+                <div class="case-price"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg">0</div>
+            </div>
+
+            <div id="caseMenu" style="display:none">
+                <div class="case-arrows-row">
+                    <button class="case-arrow">›</button>
+                    <button class="case-arrow">‹</button>
+                </div>
+
+                <div class="case-bottom-btns">
+                    <button class="case-bottom-btn">Настройки</button>
+                    <button class="case-bottom-btn">Призы</button>
+                </div>
+
+                <button class="case-timer-btn" id="caseTimerBtn">Открыть бесплатно</button>
+            </div>
         </div>
     </div>
     <div id="page-leaders" class="page-section" data-page="Лидеры" style="margin-top:64px">
@@ -595,7 +617,14 @@ function capitalizeGiftName(s){
 (function(){
     const gameCardsList=document.getElementById('gameCardsList');
     const caseCard=document.getElementById('caseCard');
+    const casePreview=document.getElementById('casePreview');
+    const caseMenu=document.getElementById('caseMenu');
     function closeCase(){
+        if(caseMenu.style.display==='block'){
+            caseMenu.style.display='none';
+            casePreview.style.display='block';
+            return;
+        }
         caseCard.style.display='none';
         gameCardsList.style.display='block';
         if(tg&&tg.BackButton)tg.BackButton.hide();
@@ -603,12 +632,19 @@ function capitalizeGiftName(s){
     if(tg&&tg.BackButton){
         tg.BackButton.onClick(closeCase);
     }
+    casePreview.addEventListener('click',()=>{
+        if(tg&&tg.HapticFeedback){try{tg.HapticFeedback.impactOccurred('light');}catch(e){}}
+        casePreview.style.display='none';
+        caseMenu.style.display='block';
+    });
     document.querySelectorAll('.game-card').forEach(card=>{
         card.addEventListener('click',()=>{
             if(tg&&tg.HapticFeedback){try{tg.HapticFeedback.impactOccurred('light');}catch(e){}}
             if(card.dataset.game==='free'){
                 gameCardsList.style.display='none';
                 caseCard.style.display='block';
+                casePreview.style.display='block';
+                caseMenu.style.display='none';
                 if(tg&&tg.BackButton)tg.BackButton.show();
                 return;
             }
@@ -616,6 +652,45 @@ function capitalizeGiftName(s){
             // TODO: подключить экран для card.dataset.game
         });
     });
+})();
+
+(function(){
+    const COOLDOWN_MS=24*60*60*1000;
+    const STORAGE_KEY='lastCaseOpenTime';
+    const timerBtn=document.getElementById('caseTimerBtn');
+    if(!timerBtn)return;
+    let intervalId=null;
+
+    function formatTime(ms){
+        const totalSec=Math.max(0,Math.floor(ms/1000));
+        const h=String(Math.floor(totalSec/3600)).padStart(2,'0');
+        const m=String(Math.floor((totalSec%3600)/60)).padStart(2,'0');
+        const s=String(totalSec%60).padStart(2,'0');
+        return `${h}:${m}:${s}`;
+    }
+
+    function render(){
+        const last=parseInt(localStorage.getItem(STORAGE_KEY)||'0',10);
+        const remaining=last+COOLDOWN_MS-Date.now();
+        if(remaining<=0){
+            timerBtn.textContent='Открыть бесплатно';
+            timerBtn.classList.add('available');
+            if(intervalId){clearInterval(intervalId);intervalId=null;}
+        }else{
+            timerBtn.textContent='Через '+formatTime(remaining);
+            timerBtn.classList.remove('available');
+            if(!intervalId)intervalId=setInterval(render,1000);
+        }
+    }
+
+    timerBtn.addEventListener('click',()=>{
+        if(!timerBtn.classList.contains('available'))return;
+        localStorage.setItem(STORAGE_KEY,String(Date.now()));
+        // TODO: здесь позже подключим анимацию открытия и реальные подарки
+        render();
+    });
+
+    render();
 })();
 
 (function(){
