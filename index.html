@@ -133,13 +133,13 @@ p{font-size:large}
 
 .prizes-screen{display:none;position:fixed;inset:0;z-index:2200}
 .prizes-screen.active{display:block}
-.prizes-panel{position:absolute;top:78px;left:0;right:0;bottom:0;background:#0c0c0e;border-radius:28px 28px 0 0;overflow-y:auto;padding:26px 16px 110px;box-sizing:border-box}
+.prizes-panel{position:absolute;top:78px;left:0;right:0;bottom:0;background:#1c1a1f;border-radius:28px 28px 0 0;overflow-y:auto;padding:26px 16px 110px;box-sizing:border-box}
 .prizes-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
 .prizes-header h2{font-size:27px;font-weight:800;margin:0;letter-spacing:-.01em}
 .prizes-close-x{width:34px;height:34px;border-radius:50%;background:#2c2c2e;border:none;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 .prizes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.prize-cell{background:linear-gradient(160deg,#3d3d47,#232228);border-radius:22px;padding:22px 8px 18px;display:flex;flex-direction:column;align-items:center;gap:10px}
-.prize-cell img{width:38px;height:38px;object-fit:contain}
+.prize-cell{background:linear-gradient(135deg,#232228,#332f45);border-radius:22px;padding:22px 8px 18px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.prize-cell img{width:44px;height:44px;object-fit:contain}
 .prize-cell .prize-value{font-size:21px;font-weight:800;color:#fff}
 .prizes-bottom-wrap{position:fixed;left:0;right:0;bottom:0;background:#0c0c0e;padding:12px 16px calc(16px + env(safe-area-inset-bottom));box-sizing:border-box;z-index:2300}
 .prizes-close-btn{width:100%;background:#3a3a3d;color:#fff;border:none;padding:17px;border-radius:24px;font-size:17px;font-weight:700;cursor:pointer}
@@ -804,7 +804,7 @@ function capitalizeGiftName(s){
     if(!prizesBtn||!prizesScreen)return;
 
     const prizeValues=[300,200,100,70,50,40,30,20,15,10,5,2,1,0.5,0.3,0.2,0.1,0.01];
-    const starIcon='https://chimpbot.org/assets/stars-BaCoVmhq.svg';
+    const starIcon='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/2b50.png';
 
     prizeValues.forEach(v=>{
         const cell=document.createElement('div');
