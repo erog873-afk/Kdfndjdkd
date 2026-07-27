@@ -38,17 +38,15 @@ p{font-size:large}
 #caseMenu.open{display:flex}
 .case-reel-stage{position:relative;width:100%}
 .case-reel-viewport{width:100%;height:330px;overflow:hidden;position:relative}
-.case-reel-viewport::before,.case-reel-viewport::after{content:'';position:absolute;left:10%;right:10%;height:1px;background:rgba(255,255,255,.16);z-index:2}
-.case-reel-viewport::before{top:calc(50% - 44px)}
-.case-reel-viewport::after{top:calc(50% + 44px)}
+.case-reel.idle-anim{animation:caseReelIdleSway 3.6s ease-in-out infinite}
+@keyframes caseReelIdleSway{0%,100%{transform:translateY(0)}50%{transform:translateY(-56px)}}
 .case-reel{display:flex;flex-direction:column;align-items:center;gap:18px;position:absolute;left:0;right:0;top:0;will-change:transform}
-.case-reel.spinning{transition:transform 4.2s cubic-bezier(.11,.68,.1,1)}
 .case-reel-card{flex-shrink:0;width:53%;height:80px;border-radius:26px;background:#232228;display:flex;align-items:center;justify-content:center;gap:10px;font-size:26px;font-weight:800;color:#fff}
-.case-reel-card img{width:30px;height:30px;object-fit:contain}
+.case-reel-card img{width:22px;height:22px;object-fit:contain}
 .case-reel-card.highlight{background:linear-gradient(135deg,#7a3ff0,#3d1fa8)}
 .case-arrow{position:absolute;top:50%;transform:translateY(-50%);background:none;border:none;color:#8e8e93;font-size:40px;font-weight:300;line-height:1;cursor:pointer;padding:4px 8px;z-index:3}
-.case-arrow.arrow-left{left:6%}
-.case-arrow.arrow-right{right:6%}
+.case-arrow.arrow-left{left:14%}
+.case-arrow.arrow-right{right:14%}
 .case-bottom-wrap{position:fixed;left:0;right:0;bottom:0;background:#0c0c0e;padding:12px 16px calc(16px + env(safe-area-inset-bottom));box-sizing:border-box;z-index:1600}
 .case-bottom-btns{display:flex;gap:10px;margin-top:0}
 .case-bottom-btn{flex:1;background:#2c2c2e;border:none;color:#fff;padding:16px;border-radius:20px;font-size:16px;font-weight:700;cursor:pointer}
@@ -922,13 +920,15 @@ function pickWeightedPrize(){
         reel.style.transition='none';
         reel.style.transform='translateY(0)';
         for(let i=0;i<14;i++)reel.appendChild(makeCard(randomValue()));
+        reel.classList.add('idle-anim');
     }
     fillIdle();
 
-    // spin(onDone) — крутит барабан снизу вверх и останавливается на призе, выбранном по шансам
+    // spin(onDone) — крутит барабан снизу вверх и чётко останавливается на выигранном призе (без отскока)
     window.spinCaseReel=function(onDone){
         if(spinning)return;
         spinning=true;
+        reel.classList.remove('idle-anim');
         const won=pickWeightedPrize();
         reel.innerHTML='';
         reel.style.transition='none';
@@ -937,21 +937,20 @@ function pickWeightedPrize(){
         for(let i=0;i<REEL_LEN;i++){
             reel.appendChild(makeCard(i===targetIndex?won:randomValue()));
         }
-        // реальные размеры карточек берём из DOM — они адаптивные (% + aspect-ratio)
-        const targetCard=reel.children[targetIndex];
+        // реальные размеры карточек берём из DOM — они адаптивные
         const viewportH=viewport.clientHeight;
+        const targetCard=reel.children[targetIndex];
         const offset=targetCard.offsetTop+targetCard.offsetHeight/2-viewportH/2;
         // форсируем reflow, чтобы transition сработал
         void reel.offsetHeight;
         requestAnimationFrame(()=>{
-            reel.classList.add('spinning');
+            reel.style.transition='transform 4s cubic-bezier(.12,.7,.14,1)';
             reel.style.transform=`translateY(-${offset}px)`;
         });
         setTimeout(()=>{
-            reel.classList.remove('spinning');
             spinning=false;
             if(onDone)onDone(won);
-        },4300);
+        },4050);
     };
 })();
 
