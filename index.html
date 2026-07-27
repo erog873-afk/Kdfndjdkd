@@ -144,6 +144,23 @@ p{font-size:large}
 .prizes-bottom-wrap{position:fixed;left:0;right:0;bottom:0;background:#0c0c0e;padding:12px 16px calc(16px + env(safe-area-inset-bottom));box-sizing:border-box;z-index:2300}
 .prizes-close-btn{width:100%;background:#3a3a3d;color:#fff;border:none;padding:17px;border-radius:24px;font-size:17px;font-weight:700;cursor:pointer}
 
+.settings-screen{display:none;position:fixed;inset:0;z-index:2200;background:#0c0c0e}
+.settings-screen.active{display:block}
+.settings-panel{position:absolute;top:150px;left:0;right:0;bottom:0;background:#1c1a1f;border-radius:28px 28px 0 0;overflow-y:auto;padding:26px 16px 110px;box-sizing:border-box}
+.settings-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.settings-header h2{font-size:27px;font-weight:800;margin:0;letter-spacing:-.01em}
+.settings-close-x{width:34px;height:34px;border-radius:50%;background:#2c2c2e;border:none;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.settings-row{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#28262c;border-radius:20px;padding:16px 18px}
+.settings-row-text{flex:1}
+.settings-row-title{font-size:18px;font-weight:800;margin:0 0 4px}
+.settings-row-desc{font-size:13.5px;color:#8e8e93;line-height:1.35;margin:0}
+.toggle-switch{position:relative;width:50px;height:30px;flex-shrink:0;background:#3a3a3d;border-radius:16px;border:none;cursor:pointer;transition:background .2s ease}
+.toggle-switch::after{content:'';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .2s ease}
+.toggle-switch.on{background:#4cd964}
+.toggle-switch.on::after{transform:translateX(20px)}
+.settings-bottom-wrap{position:fixed;left:0;right:0;bottom:0;background:#0c0c0e;padding:12px 16px calc(16px + env(safe-area-inset-bottom));box-sizing:border-box;z-index:2300}
+.settings-close-btn{width:100%;background:#3a3a3d;color:#fff;border:none;padding:17px;border-radius:24px;font-size:17px;font-weight:700;cursor:pointer}
+
 
 #page-profile .container{background:#17171a}
 .invite-card{text-align:center;margin-top:16px}
@@ -261,7 +278,7 @@ p{font-size:large}
 
                 <div class="case-bottom-wrap">
                     <div class="case-bottom-btns">
-                        <button class="case-bottom-btn">Настройки</button>
+                        <button class="case-bottom-btn" id="caseSettingsBtn">Настройки</button>
                         <button class="case-bottom-btn" id="prizesBtn">Призы</button>
                     </div>
                     <button class="case-timer-btn" id="caseTimerBtn">Открыть бесплатно</button>
@@ -354,6 +371,24 @@ p{font-size:large}
     </div>
     <div class="prizes-bottom-wrap">
         <button class="prizes-close-btn" id="prizesCloseBtn">Закрыть</button>
+    </div>
+</div>
+<div class="settings-screen" id="caseSettingsScreen">
+    <div class="settings-panel">
+        <div class="settings-header">
+            <h2>Настройки кейса</h2>
+            <button class="settings-close-x" id="settingsCloseX">✕</button>
+        </div>
+        <div class="settings-row">
+            <div class="settings-row-text">
+                <p class="settings-row-title">Демо</p>
+                <p class="settings-row-desc">Все кейсы бесплатные, но призы не начисляются</p>
+            </div>
+            <button class="toggle-switch" id="demoToggle"></button>
+        </div>
+    </div>
+    <div class="settings-bottom-wrap">
+        <button class="settings-close-btn" id="settingsCloseBtn">Закрыть</button>
     </div>
 </div>
 <script>
@@ -694,9 +729,12 @@ function capitalizeGiftName(s){
 (function(){
     const COOLDOWN_MS=24*60*60*1000;
     const STORAGE_KEY='lastCaseOpenTime';
+    const DEMO_KEY='demoMode';
     const timerBtn=document.getElementById('caseTimerBtn');
     if(!timerBtn)return;
     let intervalId=null;
+
+    function isDemo(){return localStorage.getItem(DEMO_KEY)==='1';}
 
     function formatTime(ms){
         const totalSec=Math.max(0,Math.floor(ms/1000));
@@ -707,10 +745,16 @@ function capitalizeGiftName(s){
     }
 
     function render(){
+        if(isDemo()){
+            timerBtn.textContent='Открыть бесплатно';
+            timerBtn.classList.add('available');
+            if(intervalId){clearInterval(intervalId);intervalId=null;}
+            return;
+        }
         const last=parseInt(localStorage.getItem(STORAGE_KEY)||'0',10);
         const remaining=last+COOLDOWN_MS-Date.now();
         if(remaining<=0){
-            timerBtn.textContent='Открыть бесплатно';
+            timerBtn.textContent='Открыть';
             timerBtn.classList.add('available');
             if(intervalId){clearInterval(intervalId);intervalId=null;}
         }else{
@@ -722,10 +766,12 @@ function capitalizeGiftName(s){
 
     timerBtn.addEventListener('click',()=>{
         if(!timerBtn.classList.contains('available'))return;
-        localStorage.setItem(STORAGE_KEY,String(Date.now()));
+        if(!isDemo())localStorage.setItem(STORAGE_KEY,String(Date.now()));
         // TODO: здесь позже подключим анимацию открытия и реальные подарки
         render();
     });
+
+    window.addEventListener('demoModeChanged',render);
 
     render();
 })();
@@ -825,6 +871,49 @@ function capitalizeGiftName(s){
     prizesBtn.addEventListener('click',openPrizes);
     if(prizesCloseX)prizesCloseX.addEventListener('click',closePrizes);
     if(prizesCloseBtn)prizesCloseBtn.addEventListener('click',closePrizes);
+    prizesScreen.addEventListener('click',(e)=>{
+        if(e.target===prizesScreen)closePrizes();
+    });
+})();
+
+(function(){
+    const settingsBtn=document.getElementById('caseSettingsBtn');
+    const settingsScreen=document.getElementById('caseSettingsScreen');
+    const settingsCloseX=document.getElementById('settingsCloseX');
+    const settingsCloseBtn=document.getElementById('settingsCloseBtn');
+    const demoToggle=document.getElementById('demoToggle');
+    const DEMO_KEY='demoMode';
+    if(!settingsBtn||!settingsScreen||!demoToggle)return;
+
+    function isDemo(){return localStorage.getItem(DEMO_KEY)==='1';}
+    function renderToggle(){
+        demoToggle.classList.toggle('on',isDemo());
+    }
+
+    function openSettings(){
+        if(tg&&tg.HapticFeedback){try{tg.HapticFeedback.impactOccurred('light');}catch(e){}}
+        renderToggle();
+        settingsScreen.classList.add('active');
+    }
+    function closeSettings(){
+        settingsScreen.classList.remove('active');
+    }
+
+    demoToggle.addEventListener('click',()=>{
+        const next=!isDemo();
+        localStorage.setItem(DEMO_KEY,next?'1':'0');
+        renderToggle();
+        window.dispatchEvent(new Event('demoModeChanged'));
+    });
+
+    settingsBtn.addEventListener('click',openSettings);
+    if(settingsCloseX)settingsCloseX.addEventListener('click',closeSettings);
+    if(settingsCloseBtn)settingsCloseBtn.addEventListener('click',closeSettings);
+    settingsScreen.addEventListener('click',(e)=>{
+        if(e.target===settingsScreen)closeSettings();
+    });
+
+    renderToggle();
 })();
 </script>
 </body>
