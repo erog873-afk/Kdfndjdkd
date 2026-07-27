@@ -36,8 +36,19 @@ p{font-size:large}
 .case-card.menu-open{background:none;padding:0;border-radius:0}
 #caseMenu{display:none;flex-direction:column;justify-content:center;min-height:calc(100vh - 240px - env(safe-area-inset-bottom))}
 #caseMenu.open{display:flex}
-.case-arrows-row{display:flex;justify-content:space-between;align-items:center;margin:0 -8px}
-.case-arrow{background:none;border:none;color:#8e8e93;font-size:44px;font-weight:300;line-height:1;cursor:pointer;padding:4px 10px}
+.case-reel-stage{position:relative;width:100%}
+.case-reel-viewport{width:100%;height:330px;overflow:hidden;position:relative}
+.case-reel-viewport::before,.case-reel-viewport::after{content:'';position:absolute;left:10%;right:10%;height:1px;background:rgba(255,255,255,.16);z-index:2}
+.case-reel-viewport::before{top:calc(50% - 44px)}
+.case-reel-viewport::after{top:calc(50% + 44px)}
+.case-reel{display:flex;flex-direction:column;align-items:center;gap:18px;position:absolute;left:0;right:0;top:0;will-change:transform}
+.case-reel.spinning{transition:transform 4.2s cubic-bezier(.11,.68,.1,1)}
+.case-reel-card{flex-shrink:0;width:53%;height:80px;border-radius:26px;background:#232228;display:flex;align-items:center;justify-content:center;gap:10px;font-size:26px;font-weight:800;color:#fff}
+.case-reel-card img{width:30px;height:30px;object-fit:contain}
+.case-reel-card.highlight{background:linear-gradient(135deg,#7a3ff0,#3d1fa8)}
+.case-arrow{position:absolute;top:50%;transform:translateY(-50%);background:none;border:none;color:#8e8e93;font-size:40px;font-weight:300;line-height:1;cursor:pointer;padding:4px 8px;z-index:3}
+.case-arrow.arrow-left{left:6%}
+.case-arrow.arrow-right{right:6%}
 .case-bottom-wrap{position:fixed;left:0;right:0;bottom:0;background:#0c0c0e;padding:12px 16px calc(16px + env(safe-area-inset-bottom));box-sizing:border-box;z-index:1600}
 .case-bottom-btns{display:flex;gap:10px;margin-top:0}
 .case-bottom-btn{flex:1;background:#2c2c2e;border:none;color:#fff;padding:16px;border-radius:20px;font-size:16px;font-weight:700;cursor:pointer}
@@ -270,9 +281,12 @@ p{font-size:large}
             </div>
 
             <div id="caseMenu">
-                <div class="case-arrows-row">
-                    <button class="case-arrow">›</button>
-                    <button class="case-arrow">‹</button>
+                <div class="case-reel-stage">
+                    <button class="case-arrow arrow-left">›</button>
+                    <div class="case-reel-viewport">
+                        <div class="case-reel" id="caseReel"></div>
+                    </div>
+                    <button class="case-arrow arrow-right">‹</button>
                 </div>
 
                 <div class="case-bottom-wrap">
@@ -764,8 +778,20 @@ function capitalizeGiftName(s){
     timerBtn.addEventListener('click',()=>{
         if(!timerBtn.classList.contains('available'))return;
         if(!isDemo())localStorage.setItem(STORAGE_KEY,String(Date.now()));
-        // TODO: здесь позже подключим анимацию открытия и реальные подарки
-        render();
+        timerBtn.classList.remove('available');
+        timerBtn.disabled=true;
+        const prevText=timerBtn.textContent;
+        timerBtn.textContent='Открываем...';
+        if(window.spinCaseReel){
+            window.spinCaseReel((won)=>{
+                // TODO: здесь позже начислим реальный приз игроку
+                timerBtn.disabled=false;
+                render();
+            });
+        }else{
+            timerBtn.disabled=false;
+            render();
+        }
     });
 
     window.addEventListener('demoModeChanged',render);
@@ -838,6 +864,97 @@ function capitalizeGiftName(s){
     };
 })();
 
+// Значение приза -> вес (шанс). Чем меньше приз, тем выше шанс выпадения.
+const PRIZE_WEIGHTS=[
+    {value:300,weight:0.005},
+    {value:200,weight:0.015},
+    {value:100,weight:0.03},
+    {value:70, weight:0.1},
+    {value:50, weight:0.15},
+    {value:40, weight:0.2},
+    {value:30, weight:0.3},
+    {value:20, weight:0.5},
+    {value:15, weight:0.7},
+    {value:10, weight:1},
+    {value:5,  weight:1.5},
+    {value:2,  weight:3},
+    {value:1,  weight:5},
+    {value:0.5,weight:7},
+    {value:0.3,weight:10},
+    {value:0.2,weight:15},
+    {value:0.1,weight:20},
+    {value:0.01,weight:35},
+];
+const PRIZE_VALUES=PRIZE_WEIGHTS.map(p=>p.value);
+const STAR_ICON='https://chimpbot.org/assets/stars-BaCoVmhq.svg';
+const TOTAL_WEIGHT=PRIZE_WEIGHTS.reduce((s,p)=>s+p.weight,0);
+
+function pickWeightedPrize(){
+    let r=Math.random()*TOTAL_WEIGHT;
+    for(const p of PRIZE_WEIGHTS){
+        if(r<p.weight)return p.value;
+        r-=p.weight;
+    }
+    return PRIZE_WEIGHTS[PRIZE_WEIGHTS.length-1].value;
+}
+
+(function(){
+    const viewport=document.querySelector('.case-reel-viewport');
+    const reel=document.getElementById('caseReel');
+    if(!reel||!viewport)return;
+    const HIGHLIGHT_FROM=50;
+    const REEL_LEN=36; // сколько карточек прокручиваем перед остановкой
+    let spinning=false;
+
+    function randomValue(){
+        return PRIZE_VALUES[Math.floor(Math.random()*PRIZE_VALUES.length)];
+    }
+    function makeCard(v){
+        const card=document.createElement('div');
+        card.className='case-reel-card'+(v>=HIGHLIGHT_FROM?' highlight':'');
+        const valueText=String(v).replace('.',',');
+        card.innerHTML=`<img src="${STAR_ICON}" alt="">${valueText}`;
+        return card;
+    }
+
+    function fillIdle(){
+        reel.innerHTML='';
+        reel.style.transition='none';
+        reel.style.transform='translateY(0)';
+        for(let i=0;i<14;i++)reel.appendChild(makeCard(randomValue()));
+    }
+    fillIdle();
+
+    // spin(onDone) — крутит барабан снизу вверх и останавливается на призе, выбранном по шансам
+    window.spinCaseReel=function(onDone){
+        if(spinning)return;
+        spinning=true;
+        const won=pickWeightedPrize();
+        reel.innerHTML='';
+        reel.style.transition='none';
+        reel.style.transform='translateY(0)';
+        const targetIndex=REEL_LEN-4;
+        for(let i=0;i<REEL_LEN;i++){
+            reel.appendChild(makeCard(i===targetIndex?won:randomValue()));
+        }
+        // реальные размеры карточек берём из DOM — они адаптивные (% + aspect-ratio)
+        const targetCard=reel.children[targetIndex];
+        const viewportH=viewport.clientHeight;
+        const offset=targetCard.offsetTop+targetCard.offsetHeight/2-viewportH/2;
+        // форсируем reflow, чтобы transition сработал
+        void reel.offsetHeight;
+        requestAnimationFrame(()=>{
+            reel.classList.add('spinning');
+            reel.style.transform=`translateY(-${offset}px)`;
+        });
+        setTimeout(()=>{
+            reel.classList.remove('spinning');
+            spinning=false;
+            if(onDone)onDone(won);
+        },4300);
+    };
+})();
+
 (function(){
     const prizesBtn=document.getElementById('prizesBtn');
     const prizesScreen=document.getElementById('prizesScreen');
@@ -846,8 +963,8 @@ function capitalizeGiftName(s){
     const prizesCloseBtn=document.getElementById('prizesCloseBtn');
     if(!prizesBtn||!prizesScreen)return;
 
-    const prizeValues=[300,200,100,70,50,40,30,20,15,10,5,2,1,0.5,0.3,0.2,0.1,0.01];
-    const starIcon='https://chimpbot.org/assets/stars-BaCoVmhq.svg';
+    const prizeValues=PRIZE_VALUES;
+    const starIcon=STAR_ICON;
 
     prizeValues.forEach(v=>{
         const cell=document.createElement('div');
