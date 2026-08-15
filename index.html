@@ -36,7 +36,7 @@
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:14px;
-    padding:16px;
+    padding:70px 16px 16px;
   }
   .gift-card{
     background:var(--card);
@@ -94,18 +94,18 @@
 </div>
 
 <script>
-  const ICON_URL = "https://telegifter.ru/wp-content/themes/gifts/assets/img/gifts/noupdate/Christmas%20Tree.webp";
+  const DEFAULT_ICON = "https://telegifter.ru/wp-content/themes/gifts/assets/img/gifts/noupdate/Christmas%20Tree.webp";
   const GIFTS = [
     { name: "Мишка Чемпионата мира" },
-    { name: "Новогодний мишка" },
-    { name: "Пасха" },
+    { name: "Новогодний мишка", icon: "https://telegifter.ru/wp-content/themes/gifts/assets/img/gifts/noupdate/Bear%20New%20Year.webp" },
+    { name: "Пасха", icon: "https://telegifter.ru/wp-content/themes/gifts/assets/img/gifts/noupdate/Easter%20Bear.webp" },
     { name: "Сердце 14 февраля" },
     { name: "Ёлка" },
-    { name: "Мишка 1 апреля" },
-    { name: "Мишка 1 мая" },
-    { name: "Мишка 14 февраля" },
+    { name: "Мишка 1 апреля", icon: "https://telegifter.ru/wp-content/themes/gifts/assets/img/gifts/noupdate/Clown%20Bear.webp" },
+    { name: "Мишка 1 мая", icon: "https://telegifter.ru/wp-content/themes/gifts/assets/img/gifts/noupdate/May%20Bear.webp" },
+    { name: "Мишка 14 февраля", icon: "https://telegifter.ru/wp-content/themes/gifts/assets/img/gifts/noupdate/Polar%20Bear.webp" },
     { name: "Мишка 17 марта" },
-    { name: "Мишка 8 марта" },
+    { name: "Мишка 8 марта", icon: "https://telegifter.ru/wp-content/themes/gifts/assets/img/gifts/noupdate/Pink%20Bear.webp" },
   ];
   const PRICE = 550;
 
@@ -114,7 +114,7 @@
     const card = document.createElement("div");
     card.className = "gift-card";
     card.innerHTML = `
-      <div class="gift-icon"><img src="${ICON_URL}" alt="${g.name}"></div>
+      <div class="gift-icon"><img src="${g.icon || DEFAULT_ICON}" alt="${g.name}"></div>
       <div class="gift-name">${g.name}</div>
       <div class="gift-price">${PRICE} ₸</div>
       <button class="buy-btn">Купить</button>
