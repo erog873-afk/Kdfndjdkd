@@ -88,6 +88,57 @@ p{font-size:large}
 .game-card.roulette{background:linear-gradient(160deg,#d13030,#7a1010)}
 .game-card.crash{background:linear-gradient(160deg,#4a3aeb,#1a1268)}
 
+.crash-screen{display:none;position:fixed;inset:0;background:#050506;z-index:2100;overflow-y:auto;padding:16px 16px 190px;box-sizing:border-box}
+.crash-screen.active{display:block}
+.crash-topbar{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.crash-stage{position:relative;height:340px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.crash-stage-dot{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.5)}
+.crash-number{font-size:76px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.crash-number.flying{color:#fff}
+.crash-number.crashed{color:#ff4545}
+.crash-sub{color:#8e8e93;font-size:15px;margin-top:8px;font-weight:600}
+.crash-plane-img{display:none;width:200px;max-width:65%;object-fit:contain;margin-top:10px}
+.crash-plane-img.show{display:block;animation:crashPlaneFloat 1.4s ease-in-out infinite}
+.crash-plane-img.crashed{animation:none;filter:none}
+@keyframes crashPlaneFloat{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-14px) rotate(-3deg)}}
+.crash-history{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:8px 0 14px;padding-bottom:2px}
+.crash-history::-webkit-scrollbar{display:none}
+.crash-history-pill{flex-shrink:0;padding:12px 20px;border-radius:26px;font-weight:800;font-size:17px;background:#26262a;color:#fff}
+.crash-history-pill.waiting{background:#fff;color:#000}
+.crash-history-pill.low{background:#26262a;color:#fff}
+.crash-history-pill.mid{background:linear-gradient(135deg,#7b4cf5,#4c26d2)}
+.crash-history-pill.high{background:linear-gradient(135deg,#e84545,#8a1010)}
+.crash-bets-panel{background:#ffffff0d;border-radius:26px;min-height:180px;padding:16px}
+.crash-bets-empty{color:#8e8e93;text-align:center;padding:40px 0;font-size:16px}
+.crash-bet-row{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid #ffffff0f}
+.crash-bet-row:last-child{border-bottom:none}
+.crash-bet-avatar{width:32px;height:32px;border-radius:50%;background:#3a3a3d;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;overflow:hidden}
+.crash-bet-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.crash-bet-name{flex:1;font-size:14.5px;font-weight:600;color:#e6e6e6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.crash-bet-amount{display:flex;align-items:center;gap:5px;font-weight:800;font-size:14.5px}
+.crash-bet-amount img{width:14px;height:14px}
+.crash-bet-mult{font-size:13px;font-weight:700;color:#4cd964;margin-left:8px}
+.crash-bet-mult.busted{color:#ff5a5a}
+.crash-bottom-wrap{position:fixed;left:0;right:0;bottom:0;background:#0c0c0e;padding:12px 16px calc(16px + env(safe-area-inset-bottom));box-sizing:border-box;z-index:2200}
+.crash-amount-row{display:flex;align-items:center;gap:10px;background:#1c1c1e;border-radius:22px;padding:8px 8px 8px 18px;margin-bottom:10px}
+.crash-amount-row span{font-size:20px;font-weight:800;flex:1}
+.crash-amt-btn{width:38px;height:38px;border-radius:50%;background:#3a3a3d;border:none;color:#fff;font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.crash-submit-btn{width:100%;background:#fff;color:#000;border:none;padding:18px;border-radius:24px;font-size:18px;font-weight:800;cursor:pointer}
+.crash-submit-btn.flying{background:#4cd964;color:#000}
+.crash-submit-btn:disabled{opacity:.5;pointer-events:none}
+
+.crash-amt-sheet{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2300;align-items:flex-end;justify-content:center}
+.crash-amt-sheet.active{display:flex}
+.crash-amt-panel{width:100%;max-width:600px;background:#1e1c1f;border-radius:28px 28px 0 0;padding:22px 18px calc(20px + env(safe-area-inset-bottom));box-sizing:border-box}
+.crash-amt-title{text-align:center;font-size:19px;font-weight:800;margin-bottom:20px}
+.crash-amt-stepper{display:flex;align-items:center;justify-content:center;gap:22px;margin-bottom:18px}
+.crash-amt-stepper span{font-size:42px;font-weight:800;min-width:120px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px}
+.crash-amt-stepper span img{width:32px;height:32px}
+.crash-amt-quick{display:flex;gap:8px;margin-bottom:20px}
+.crash-amt-quick button{flex:1;background:#3a3a3d;border:none;color:#fff;padding:12px 0;border-radius:16px;font-size:15px;font-weight:700;cursor:pointer}
+.crash-amt-quick button.active{background:#fff;color:#000}
+.crash-amt-confirm{width:100%;background:#fff;color:#000;border:none;padding:17px;border-radius:24px;font-size:17px;font-weight:800;cursor:pointer}
+
 
 
 
@@ -189,6 +240,22 @@ p{font-size:large}
     <div id="page-leaders" class="page-section" data-page="Лидеры" style="margin-top:64px">
         <h2 class="section-title">Лидеры</h2>
     </div>
+    <div class="crash-screen" id="crashScreen">
+        <div class="crash-topbar">
+            <div class="live-badge"><span>LIVE</span></div>
+            <div class="pill pill-gray"><img class="pill-star" src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span class="balance-value">0</span><div class="add-circle">+</div></div>
+        </div>
+        <div class="crash-stage" id="crashStage">
+            <div class="crash-number" id="crashNumber">10</div>
+            <div class="crash-sub" id="crashSub">до начала раунда</div>
+            <img class="crash-plane-img" id="crashPlaneImg" alt="">
+        </div>
+        <div class="crash-history" id="crashHistory"></div>
+        <div class="crash-bets-panel">
+            <div class="crash-bets-empty" id="crashBetsEmpty">Сделайте первую ставку!</div>
+            <div class="crash-bets-list" id="crashBetsList"></div>
+        </div>
+    </div>
     <div id="page-profile" class="page-section" data-page="Профиль" style="padding-bottom:100px">
         <div class="container" style="margin-top:64px">
             <div class="flexer" style="margin-bottom:4px">
@@ -247,6 +314,26 @@ p{font-size:large}
         </div>
     </div>
     <div class="button" id="btn">Введите сумму</div>
+</div>
+<div class="crash-bottom-wrap" id="crashBottomWrap" style="display:none">
+    <button class="crash-submit-btn" id="crashSubmitBtn">Сделать ставку</button>
+</div>
+<div class="crash-amt-sheet" id="crashAmtSheet">
+    <div class="crash-amt-panel">
+        <div class="crash-amt-title">Сумма ставки</div>
+        <div class="crash-amt-stepper">
+            <button class="crash-amt-btn" id="crashAmtMinus">−</button>
+            <span><img src="https://chimpbot.org/assets/stars-BaCoVmhq.svg"><span id="crashAmtValue">10</span></span>
+            <button class="crash-amt-btn" id="crashAmtPlus">+</button>
+        </div>
+        <div class="crash-amt-quick">
+            <button data-amt="10">10</button>
+            <button data-amt="50">50</button>
+            <button data-amt="100">100</button>
+            <button data-amt="500">500</button>
+        </div>
+        <button class="crash-amt-confirm" id="crashAmtConfirm">Поставить</button>
+    </div>
 </div>
 <div id="topupContainer"></div>
 <div class="toast-container" id="toasts"></div>
@@ -430,13 +517,282 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
 })();
 
 (function(){
+    const crashScreen=document.getElementById('crashScreen');
+    const crashBottomWrap=document.getElementById('crashBottomWrap');
+    const bottomNav=document.querySelector('.bottom-nav');
+
+    function openCrash(){
+        crashScreen.classList.add('active');
+        crashBottomWrap.style.display='block';
+        if(bottomNav)bottomNav.style.display='none';
+        if(tg&&tg.BackButton)tg.BackButton.show();
+        if(window.startCrashGame)window.startCrashGame();
+    }
+    function closeCrash(){
+        crashScreen.classList.remove('active');
+        crashBottomWrap.style.display='none';
+        if(bottomNav)bottomNav.style.display='';
+        if(tg&&tg.BackButton)tg.BackButton.hide();
+        if(window.stopCrashGame)window.stopCrashGame();
+    }
+    if(tg&&tg.BackButton){tg.BackButton.onClick(closeCrash);}
+
     document.querySelectorAll('.game-card').forEach(card=>{
         card.addEventListener('click',()=>{
             if(tg&&tg.HapticFeedback){try{tg.HapticFeedback.impactOccurred('light');}catch(e){}}
+            if(card.dataset.game==='crash'){openCrash();return;}
             console.log('open game:',card.dataset.game);
             // TODO: подключить экран для card.dataset.game
         });
     });
+})();
+
+// ===== Краш (Aviator-style) =====
+// Момент краша определяется честным случайным алгоритмом (стандартная формула
+// crash-игр с домашним преимуществом house edge), НЕ зависит от суммы ставок
+// пользователей и не подстраивается под них.
+(function(){
+    const numberEl=document.getElementById('crashNumber');
+    const subEl=document.getElementById('crashSub');
+    const planeImg=document.getElementById('crashPlaneImg');
+    const historyEl=document.getElementById('crashHistory');
+    const betsEmptyEl=document.getElementById('crashBetsEmpty');
+    const betsListEl=document.getElementById('crashBetsList');
+    const submitBtn=document.getElementById('crashSubmitBtn');
+    const amtSheet=document.getElementById('crashAmtSheet');
+    const amtValueEl=document.getElementById('crashAmtValue');
+    const amtMinusBtn=document.getElementById('crashAmtMinus');
+    const amtPlusBtn=document.getElementById('crashAmtPlus');
+    const amtConfirmBtn=document.getElementById('crashAmtConfirm');
+    const amtQuickBtns=document.querySelectorAll('.crash-amt-quick button');
+    if(!numberEl)return;
+
+    // Картинки самолёта/краша — замени на свои (например PN4.webp и crash.webp),
+    // просто подставь свои ссылки/пути сюда.
+    const PLANE_IMG_FLYING='https://i.postimg.cc/SstH9rhB/1000051679-removebg-preview-(1).png';
+    const PLANE_IMG_CRASHED='https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f4a5.png';
+
+    const WAIT_SECONDS=10;
+    const HOUSE_EDGE=0.04;
+    const MAX_MULTIPLIER=2.00; // раунды честно случайны, но ограничены сверху x2
+    const FAKE_NAMES=['Alex','Nikita','Maria','Dmitry','Anna','Ivan','Olga','Sergey','Elena','Pavel','Kirill','Vika'];
+
+    const myAvatarHtml=(tgUser&&tgUser.photo_url)
+        ?`<img src="${tgUser.photo_url}" alt="">`
+        :((tgUser&&tgUser.first_name)?tgUser.first_name[0].toUpperCase():'Я');
+    const myName=(tgUser&&tgUser.first_name)?tgUser.first_name:'Вы';
+
+    let betAmount=10;
+    let phase='waiting'; // waiting | flying | crashed
+    let waitRemaining=WAIT_SECONDS;
+    let waitTimerId=null;
+    let flightStart=0;
+    let rafId=null;
+    let crashPoint=1;
+    let currentMult=1;
+    let userBetPlaced=false;
+    let userCashedOut=false;
+    let running=false;
+    let activeHistoryPill=null;
+
+    function renderAmount(){amtValueEl.textContent=betAmount;}
+    amtMinusBtn.addEventListener('click',()=>{betAmount=Math.max(1,betAmount-5);renderAmount();});
+    amtPlusBtn.addEventListener('click',()=>{betAmount=Math.min(Math.floor(starsBalance||9999),betAmount+5);renderAmount();});
+    amtQuickBtns.forEach(b=>{
+        b.addEventListener('click',()=>{
+            betAmount=parseInt(b.dataset.amt,10);
+            renderAmount();
+            amtQuickBtns.forEach(x=>x.classList.remove('active'));
+            b.classList.add('active');
+        });
+    });
+    renderAmount();
+
+    function openAmtSheet(){amtSheet.classList.add('active');}
+    function closeAmtSheet(){amtSheet.classList.remove('active');}
+    amtSheet.addEventListener('click',(e)=>{if(e.target===amtSheet)closeAmtSheet();});
+
+    // Честная генерация точки краша — не учитывает ставки игроков,
+    // просто ограничена сверху для демо-раундов (MAX_MULTIPLIER).
+    function generateCrashPoint(){
+        const r=Math.random();
+        if(r<HOUSE_EDGE)return 1.00;
+        const point=(1-HOUSE_EDGE)/(1-r);
+        return Math.min(MAX_MULTIPLIER,Math.max(1,Math.round(point*100)/100));
+    }
+
+    function pushHistoryPill(mult,isWaiting){
+        const pill=document.createElement('div');
+        if(isWaiting){
+            pill.className='crash-history-pill waiting';
+            pill.textContent='Ожидание';
+        }else{
+            pill.className='crash-history-pill '+(mult>=10?'high':mult>=2?'mid':'low');
+            pill.textContent='x'+mult.toFixed(2);
+        }
+        historyEl.insertBefore(pill,historyEl.firstChild);
+        while(historyEl.children.length>12)historyEl.removeChild(historyEl.lastChild);
+        return pill;
+    }
+
+    function clearBets(){
+        betsListEl.innerHTML='';
+        betsEmptyEl.style.display='block';
+    }
+
+    function addFakeBet(){
+        betsEmptyEl.style.display='none';
+        const name=FAKE_NAMES[Math.floor(Math.random()*FAKE_NAMES.length)];
+        const amount=Math.round((Math.random()*90+5));
+        const row=document.createElement('div');
+        row.className='crash-bet-row';
+        row.innerHTML=`<div class="crash-bet-avatar">${name[0]}</div><div class="crash-bet-name">${name}</div><div class="crash-bet-amount"><img src="https://chimpbot.org/assets/stars-BaCoVmhq.svg">${amount}</div>`;
+        betsListEl.appendChild(row);
+    }
+
+    function markBetResult(row,mult,busted){
+        const tag=document.createElement('span');
+        tag.className='crash-bet-mult'+(busted?' busted':'');
+        tag.textContent=busted?'×':'x'+mult.toFixed(2);
+        row.appendChild(tag);
+    }
+
+    function startWaiting(){
+        phase='waiting';
+        userBetPlaced=false;
+        userCashedOut=false;
+        waitRemaining=WAIT_SECONDS;
+        currentMult=1;
+        submitBtn.textContent='Сделать ставку';
+        submitBtn.classList.remove('flying');
+        submitBtn.disabled=false;
+        numberEl.className='crash-number';
+        numberEl.style.display='block';
+        numberEl.textContent=waitRemaining;
+        subEl.textContent='до начала раунда';
+        planeImg.classList.remove('show','crashed');
+        clearBets();
+        activeHistoryPill=pushHistoryPill(0,true);
+
+        let fakeBetCount=0;
+        waitTimerId=setInterval(()=>{
+            waitRemaining--;
+            numberEl.textContent=Math.max(waitRemaining,0);
+            if(fakeBetCount<6&&Math.random()<0.7){addFakeBet();fakeBetCount++;}
+            if(waitRemaining<=0){
+                clearInterval(waitTimerId);
+                startFlight();
+            }
+        },1000);
+    }
+
+    function startFlight(){
+        phase='flying';
+        crashPoint=generateCrashPoint();
+        flightStart=performance.now();
+        numberEl.style.display='none';
+        subEl.textContent='летит';
+        planeImg.src=PLANE_IMG_FLYING;
+        planeImg.classList.add('show');
+        planeImg.classList.remove('crashed');
+        if(activeHistoryPill){activeHistoryPill.className='crash-history-pill low';activeHistoryPill.textContent='x1.00';}
+        if(userBetPlaced){
+            submitBtn.disabled=false;
+            submitBtn.classList.add('flying');
+        }else{
+            submitBtn.textContent='Ставки закрыты';
+            submitBtn.disabled=true;
+        }
+        tick();
+    }
+
+    function tick(){
+        const elapsedSec=(performance.now()-flightStart)/1000;
+        currentMult=Math.exp(elapsedSec*0.16);
+        if(currentMult>=crashPoint){
+            currentMult=crashPoint;
+            crash();
+            return;
+        }
+        if(activeHistoryPill){
+            activeHistoryPill.className='crash-history-pill '+(currentMult>=1.6?'mid':'low');
+            activeHistoryPill.textContent='x'+currentMult.toFixed(2);
+        }
+        if(userBetPlaced&&!userCashedOut){
+            submitBtn.textContent='Заберите x'+currentMult.toFixed(2);
+        }
+        rafId=requestAnimationFrame(tick);
+    }
+
+    function crash(){
+        if(rafId)cancelAnimationFrame(rafId);
+        phase='crashed';
+        subEl.textContent='краш!';
+        planeImg.src=PLANE_IMG_CRASHED;
+        planeImg.classList.add('crashed');
+        if(activeHistoryPill){
+            activeHistoryPill.className='crash-history-pill '+(crashPoint>=10?'high':crashPoint>=2?'mid':'low');
+            activeHistoryPill.textContent='x'+crashPoint.toFixed(2);
+        }
+        Array.from(betsListEl.children).forEach(row=>{
+            if(row.querySelector('.crash-bet-mult'))return;
+            const cashOutAt=1+Math.random()*(crashPoint-1);
+            const busted=cashOutAt>=crashPoint-0.05;
+            markBetResult(row,cashOutAt,busted);
+        });
+        if(userBetPlaced&&!userCashedOut){
+            submitBtn.textContent='Не успели';
+            submitBtn.classList.remove('flying');
+            submitBtn.disabled=true;
+        }
+        setTimeout(()=>{ if(running)startWaiting(); },2200);
+    }
+
+    submitBtn.addEventListener('click',()=>{
+        if(tg&&tg.HapticFeedback){try{tg.HapticFeedback.impactOccurred('light');}catch(e){}}
+        if(phase==='waiting'&&!userBetPlaced){
+            openAmtSheet();
+        }else if(phase==='flying'&&userBetPlaced&&!userCashedOut){
+            userCashedOut=true;
+            const won=Math.round(betAmount*currentMult*100)/100;
+            starsBalance+=won;
+            renderBalance();
+            submitBtn.textContent='Забрано x'+currentMult.toFixed(2);
+            submitBtn.classList.remove('flying');
+            submitBtn.disabled=true;
+            const myRow=document.getElementById('crashMyBetRow');
+            if(myRow)markBetResult(myRow,currentMult,false);
+        }
+    });
+
+    amtConfirmBtn.addEventListener('click',()=>{
+        if(phase!=='waiting'||userBetPlaced)return;
+        if(betAmount>starsBalance){closeAmtSheet();return;}
+        userBetPlaced=true;
+        starsBalance-=betAmount;
+        renderBalance();
+        closeAmtSheet();
+        submitBtn.textContent='Ставка принята';
+        submitBtn.disabled=true;
+        betsEmptyEl.style.display='none';
+        const row=document.createElement('div');
+        row.className='crash-bet-row';
+        row.id='crashMyBetRow';
+        row.innerHTML=`<div class="crash-bet-avatar">${myAvatarHtml}</div><div class="crash-bet-name">${myName}</div><div class="crash-bet-amount"><img src="https://chimpbot.org/assets/stars-BaCoVmhq.svg">${betAmount}</div>`;
+        betsListEl.insertBefore(row,betsListEl.firstChild);
+    });
+
+    window.startCrashGame=function(){
+        if(running)return;
+        running=true;
+        startWaiting();
+    };
+    window.stopCrashGame=function(){
+        running=false;
+        if(waitTimerId)clearInterval(waitTimerId);
+        if(rafId)cancelAnimationFrame(rafId);
+        closeAmtSheet();
+    };
 })();
 
 (function(){
