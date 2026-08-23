@@ -1,385 +1,398 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aviator Telegram</title>
-<style>
-body{
-    margin:0;
-    background:#0b1422;
-    color:white;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    text-align:center;
-    padding-bottom: 100px;
-    box-sizing: border-box;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aviator — ⭐ ставка x множитель → ⭐ выигрыш</title>
+    <style>
+        body {
+            margin: 0;
+            background: #0b1422;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
 
-.timer-container {
-    position: relative;
-    width: 200px;
-    height: 100px;
-    margin: 80px auto 0;
-}
+        .balance-bar {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+        }
 
-.timer{
-    font-size:80px;
-    line-height:100px;
-    position: absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    font-weight: 600;
-    text-shadow: 0 0 15px #2f7cff;
-}
+        .balance-value {
+            font-size: 20px;
+            font-weight: 600;
+        }
 
-#sticker-container img{
-    position: absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    display:none; /* скрыт до нуля */
-    object-fit: contain;
-}
+        .add-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            background: #2f7cff;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
 
-.status{
-    margin-top:10px;
-    opacity:0.8;
-    font-size: 18px;
-    letter-spacing: 1px;
-}
+        .timer-container {
+            width: 100%;
+            margin-top: 100px;
+            text-align: center;
+            position: relative;
+        }
 
-.bet-list{
-    width:90%;
-    margin:30px auto;
-    padding:20px;
-    background:rgba(255,255,255,0.08);
-    border-radius:20px;
-    min-height:80px;
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255,255,255,0.1);
-}
+        .timer {
+            font-size: 90px;
+            height: 200px;
+            line-height: 200px;
+            font-weight: bold;
+        }
 
-.bet-item{
-    display:flex;
-    justify-content:space-between;
-    padding:6px 0;
-    border-bottom: 1px dashed rgba(255,255,255,0.1);
-}
-.bet-item:last-child {
-    border-bottom: none;
-}
+        .plane {
+            display: none;
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+        }
 
-button{
-    position:fixed;
-    bottom:20px;
-    left:5%;
-    width:90%;
-    height:60px;
-    border:none;
-    border-radius:60px;
-    font-size:22px;
-    background:#2f7cff;
-    color:white;
-    font-weight: bold;
-    box-shadow: 0 5px 20px rgba(47,124,255,0.4);
-    cursor: pointer;
-    transition: 0.2s;
-}
-button:active {
-    transform: scale(0.97);
-    background: #1a5fd0;
-}
-button:disabled {
-    opacity: 0.5;
-    pointer-events: none;
-    filter: grayscale(0.6);
-}
+        .bottom-bar {
+            display: flex;
+            gap: 10px;
+            padding: 12px;
+            overflow-x: auto;
+        }
 
-/* История коэффициентов */
-.history-box {
-    width: 90%;
-    margin: 10px auto;
-    padding: 12px 0;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 40px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    border: 1px solid #2f7cff40;
-    backdrop-filter: blur(4px);
-}
-.history-label {
-    color: #9aa5b8;
-    font-size: 16px;
-    margin-right: 5px;
-}
-.history-coeff {
-    background: #1e293b;
-    padding: 6px 14px;
-    border-radius: 30px;
-    font-weight: 700;
-    font-size: 18px;
-    color: #ffd966;
-    box-shadow: inset 0 -2px 0 #00000055;
-    border: 1px solid #3f4e6b;
-}
-.history-coeff.win {
-    color: #8affb9;
-    text-shadow: 0 0 5px #00b347;
-}
-</style>
+        .bottom-item {
+            padding: 10px 22px;
+            border-radius: 25px;
+            font-weight: 700;
+            background: #1e2a47;
+            color: #c8d4ea;
+        }
+
+        .bottom-item.active {
+            background: white;
+            color: black;
+        }
+
+        .bet-list {
+            position: relative;
+            width: 90%;
+            margin: 20px auto;
+            padding: 40px 20px 20px 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            min-height: 140px;
+        }
+
+        .bet-title-left {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            font-weight: bold;
+            display: none;
+            font-size: 14px;
+            color: #a0b5d9;
+        }
+
+        .bet-title-right {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-weight: bold;
+            display: none;
+            font-size: 14px;
+            color: #a0b5d9;
+        }
+
+        .bet-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #253656;
+        }
+        .bet-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Левая часть: ставка в формате "⭐ 50 x1.00" */
+        .bet-stars-multiplier {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            font-weight: 700;
+        }
+        .stars-icon {
+            color: #ffd966;
+            font-size: 20px;
+            margin-right: 4px;
+        }
+        .bet-stars-amount {
+            color: #ffd966;
+            font-size: 20px;
+            font-weight: 800;
+        }
+        .bet-x {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+        .bet-multiplier-value {
+            color: #b3e0ff;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Правая часть: только звёзды возможного приза */
+        .possible-win {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .possible-stars {
+            color: #ffd966;
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .main-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 5%;
+            width: 90%;
+            height: 60px;
+            border: none;
+            border-radius: 15px;
+            font-size: 20px;
+            background: #2f7cff;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .main-btn:active {
+            background: #1e5fd9;
+        }
+    </style>
 </head>
-
 <body>
 
+<div class="balance-bar">
+    <span class="balance-value">⭐0</span>
+    <button class="add-btn" id="addBalance">+</button>
+</div>
+
 <div class="timer-container">
-    <div class="timer" id="timer">10</div>
-    <div id="sticker-container">
-        <!-- временно заменим на эмоджи-стикер, т.к. PN 4.webp может не быть -->
-        <span id="sticker" style="font-size: 80px; line-height: 100px; display: none;">🚀</span>
-    </div>
+    <div class="timer" id="timer"></div>
+    <img id="planeImage" class="plane" src="PN4.webp" />
+    <div class="bottom-bar" id="bottomBar"></div>
 </div>
 
-<div class="status" id="status">Ожидание</div>
-
-<!-- Блок истории коэффициентов -->
-<div class="history-box" id="historyContainer">
-    <span class="history-label">📊 История:</span>
-    <!-- сюда будут добавляться коэффициенты -->
+<div class="bet-list">
+    <div class="bet-title-left" id="titleLeft">Ставка</div>
+    <div class="bet-title-right" id="titleRight">Возможн. приз</div>
+    <div id="bets" style="text-align:center;">Ставок еще нет</div>
 </div>
 
-<div class="bet-list" id="bets">
-    Ставок еще нет
-</div>
-
-<button id="betBtn">Сделать ставку ⭐</button>
+<button class="main-btn" id="betBtn">Сделать ставку ⭐50</button>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+    let balance = localStorage.getItem("balance") 
+        ? parseInt(localStorage.getItem("balance")) 
+        : 0;
 
-    let time = 10;                 // секунд до старта
-    let bets = [];
-    let waiting = true;            // true = фаза ожидания (прием ставок), false = полёт (коэффициент растёт)
-    let roundActive = false;       // чтобы не накладывать интервалы
-
-    // История коэффициентов (максимум 5 значений)
-    let historyCoeffs = [];
-
+    const balanceEl = document.querySelector(".balance-value");
+    const addBalanceBtn = document.getElementById("addBalance");
     const timerEl = document.getElementById("timer");
-    const stickerEl = document.getElementById("sticker");
-    const statusEl = document.getElementById("status");
+    const imageEl = document.getElementById("planeImage");
+    const bottomBar = document.getElementById("bottomBar");
     const betsEl = document.getElementById("bets");
     const betBtn = document.getElementById("betBtn");
-    const historyContainer = document.getElementById("historyContainer");
+    const titleLeft = document.getElementById("titleLeft");
+    const titleRight = document.getElementById("titleRight");
 
-    // Для теста — юзернейм, можно поменять
-    const TelegramUser = { username: "Player" + Math.floor(Math.random()*100) };
+    // Данные ставки
+    let initialBetStars = 0;          // сколько поставили (чистыми звёздами, например 50)
+    let currentMultiplier = 1.00;      // текущий множитель
 
-    // Обновление списка ставок
-    function updateBetsDisplay(){
-        if(bets.length === 0){
+    balanceEl.innerText = "⭐" + balance;
+
+    function saveBalance() {
+        localStorage.setItem("balance", balance);
+        balanceEl.innerText = "⭐" + balance;
+    }
+
+    addBalanceBtn.addEventListener("click", () => {
+        balance += 100;
+        saveBalance();
+    });
+
+    let time = 10;
+    let waiting = true;
+    let history = [];
+    let growthInterval;
+
+    function renderBottom(activeText = null) {
+        bottomBar.innerHTML = "";
+        if (activeText) {
+            bottomBar.innerHTML += `<div class="bottom-item active">${activeText}</div>`;
+        }
+        history.forEach(h => {
+            bottomBar.innerHTML += `<div class="bottom-item">${h}</div>`;
+        });
+    }
+
+    function updateBets() {
+        if (initialBetStars === 0) {
+            betsEl.style.textAlign = "center";
             betsEl.innerHTML = "Ставок еще нет";
+            titleLeft.style.display = "none";
+            titleRight.style.display = "none";
             return;
         }
+
         betsEl.innerHTML = "";
-        bets.forEach(b=>{
-            betsEl.innerHTML += `
-                <div class="bet-item">
-                    <span>@${b.username}</span>
-                    <span>${b.stars} ⭐</span>
+        titleLeft.style.display = "block";
+        titleRight.style.display = "block";
+
+        // Текущее количество звёзд (начальная ставка * множитель, округлённое)
+        let currentStars = Math.floor(initialBetStars * currentMultiplier);
+        if (currentStars < initialBetStars) currentStars = initialBetStars; // защита от 0.99
+
+        // Возможный выигрыш = текущие звёзды
+        let possibleWin = currentStars;
+
+        // Формируем левую часть: ⭐ 50 x1.00
+        // Правую часть: ⭐ 65  (просто число, без x)
+        betsEl.innerHTML = `
+            <div class="bet-item">
+                <div class="bet-stars-multiplier">
+                    <span class="stars-icon">⭐</span>
+                    <span class="bet-stars-amount">${initialBetStars}</span>
+                    <span class="bet-x">x</span>
+                    <span class="bet-multiplier-value">${currentMultiplier.toFixed(2)}</span>
                 </div>
-            `;
-        });
+                <div class="possible-win">
+                    <span class="stars-icon">⭐</span>
+                    <span class="possible-stars">${possibleWin}</span>
+                </div>
+            </div>
+        `;
     }
 
-    // Добавить коэффициент в историю (слева новые)
-    function addHistoryCoeff(value) {
-        // value — число (например 12.42)
-        let formatted = value.toFixed(2);
-        // Добавляем в начало массива
-        historyCoeffs.unshift(formatted);
-        // Оставляем только последние 5
-        if (historyCoeffs.length > 5) historyCoeffs.pop();
-
-        // Перестроить визуал
-        renderHistory();
-    }
-
-    function renderHistory() {
-        // Очищаем, оставляем только лейбл
-        historyContainer.innerHTML = '<span class="history-label">📊 История:</span>';
-        historyCoeffs.forEach(coeff => {
-            const span = document.createElement('span');
-            span.className = 'history-coeff';
-            // если больше 10 — подсветка (условно большой коэффициент)
-            if (parseFloat(coeff) >= 10.0) span.classList.add('win');
-            span.textContent = `x${coeff}`;
-            historyContainer.appendChild(span);
-        });
-        // Если история пустая, покажем плейсхолдер
-        if (historyCoeffs.length === 0) {
-            let emptyHint = document.createElement('span');
-            emptyHint.style.opacity = '0.5';
-            emptyHint.style.marginLeft = '8px';
-            emptyHint.textContent = 'скоро будут';
-            historyContainer.appendChild(emptyHint);
-        }
-    }
-
-    // Функция ставки (доступно только в ожидании)
-    function makeBet(){
-        if(!waiting) {
-            // попытка ставки не в окно — можно проигнорить или показать предупреждение
-            statusEl.innerText = "Дождись нового раунда!";
-            setTimeout(() => { if(waiting) statusEl.innerText = "Ожидание"; }, 800);
+    betBtn.addEventListener("click", () => {
+        if (!waiting) {
+            alert("Сейчас идёт игра, дождитесь нового раунда");
             return;
         }
-        // рандом звёзд 1-50
-        let stars = Math.floor(Math.random()*50)+1;
-        bets.push({username: TelegramUser.username, stars: stars});
-        updateBetsDisplay();
-    }
 
-    betBtn.addEventListener("click", makeBet);
+        let betAmount = 50;
 
-    // Функция, запускающая фазу "Ожидание" (перед новым раундом)
-    function startWaiting(){
-        if (roundActive) {
-            // если вдруг старый интервал ещё работает, но мы перезапускаем — очистим позже.
+        if (balance < betAmount) {
+            alert("Недостаточно звёзд ⭐");
+            return;
         }
-        waiting = true;
-        roundActive = false;  // полёт не активен
-        time = 10;            // 10 секунд ожидания
-        bets = [];            // сбрасываем ставки (в реальном приложении можно сохранять, но по логике новый раунд)
-        updateBetsDisplay();
-        statusEl.innerText = "👀 Ожидание (делайте ставки)";
-        stickerEl.style.display = "none"; 
-        timerEl.style.display = "block";
-        timerEl.innerText = time;
 
-        // Блокируем кнопку? нет, оставляем активной, но проверка waiting есть.
-        // Запускаем обратный отсчёт
+        balance -= betAmount;
+        saveBalance();
+
+        initialBetStars = betAmount;
+        currentMultiplier = 1.00;   // множитель в момент ставки = 1.0
+
+        updateBets();
+    });
+
+    function startWaiting() {
+        waiting = true;
+        time = 10;
+        // Ставка сбрасывается (по логике авиатора после краша ставки обнуляются)
+        initialBetStars = 0;
+        updateBets();
+
+        timerEl.innerText = time;
+        imageEl.style.display = "none";
+        timerEl.style.display = "block";
+
+        renderBottom("Ожидание");
+
         const interval = setInterval(() => {
-            if (!waiting) { 
-                // если по какой-то причине вышли из ожидания раньше
+            time--;
+            if (time <= 0) {
                 clearInterval(interval);
+                startRound();
                 return;
             }
-            time--;
-            timerEl.innerText = time >= 0 ? time : 0;
-
-            if (time < 0) {
-                clearInterval(interval);
-                // если всё ещё в ожидании, переходим к полёту
-                if (waiting) {
-                    startFlight();
-                }
-            }
+            timerEl.innerText = time;
         }, 1000);
     }
 
-    // ФАЗА ПОЛЁТА: коэффициент растет от 1.00 до 100.00
-    function startFlight() {
+    function startRound() {
         waiting = false;
-        roundActive = true;
-        // Скрываем таймер, показываем ракету/стикер
+        currentMultiplier = 1.00;
+
         timerEl.style.display = "none";
-        stickerEl.style.display = "block";
-        stickerEl.textContent = "🚀"; // заглушка вместо PN 4.webp
+        imageEl.style.display = "block";
+        imageEl.src = "PN4.webp";  // замените на свой файл
 
-        // Запоминаем время старта для роста коэф.
-        let coeff = 1.00;
-        const flightDuration = 15000; // 15 сек расти до 100 (макс)
-        const startTime = Date.now();
-        const maxCoeff = 100.00;
+        // Если есть активная ставка, запускаем рост
+        if (initialBetStars > 0) {
+            growthInterval = setInterval(() => {
+                currentMultiplier += 0.03;
+                updateBets();
+                renderBottom("x" + currentMultiplier.toFixed(2));
 
-        statusEl.innerText = "✈️ Полёт... коэффициент растёт";
+                // Случайный краш (как в оригинале)
+                if (currentMultiplier >= 5 + Math.random() * 15) {
+                    clearInterval(growthInterval);
 
-        // Обновление коэффициента каждые 50 мс (плавно)
-        const flightInterval = setInterval(() => {
-            if (!roundActive) {
-                clearInterval(flightInterval);
-                return;
-            }
-            const elapsed = Date.now() - startTime;
-            // прогресс от 0 до 1
-            let progress = Math.min(elapsed / flightDuration, 1);
-            // коэффициент от 1 до 100 по квадратичной функции (для интереса)
-            // можно линейно: coeff = 1 + progress * 99;
-            coeff = 1 + Math.pow(progress, 1.5) * 99; // небольшое ускорение к концу
-            if (coeff >= maxCoeff) coeff = maxCoeff;
+                    let crashValue = currentMultiplier.toFixed(2);
+                    history.unshift("x" + crashValue);
+                    if (history.length > 10) history.pop();
 
-            // отображаем в статусе текущий коэффициент
-            statusEl.innerText = `✈️ Коэффициент: x${coeff.toFixed(2)}`;
+                    imageEl.src = "crash.webp";  // замените на свой файл
 
-            // Если достигли максимума или прошло достаточно времени - завершаем раунд
-            if (coeff >= maxCoeff || elapsed >= flightDuration + 200) {
-                // раунд окончен, фиксируем коэффициент
-                clearInterval(flightInterval);
-                if (roundActive) {
-                    endRound(coeff);
+                    // Здесь можно было бы начислить выигрыш, но оставим как в демо
+
+                    setTimeout(() => {
+                        startWaiting();
+                    }, 1500);
                 }
-            }
-        }, 60);
+            }, 50);
+        } else {
+            // Если ставки нет, просто летим с пустым множителем
+            growthInterval = setInterval(() => {
+                currentMultiplier += 0.03;
+                renderBottom("x" + currentMultiplier.toFixed(2));
 
-        // Дополнительно: если никто не завершил, через 16 секунд принудительно
-        setTimeout(() => {
-            if (roundActive) {
-                clearInterval(flightInterval);
-                endRound(coeff);
-            }
-        }, flightDuration + 300);
-    }
-
-    // Завершение раунда, добавление истории, переход к ожиданию
-    function endRound(finalCoeff) {
-        if (!roundActive) return;
-        roundActive = false;
-        waiting = false;
-
-        // фиксируем итоговый коэффициент (не больше 100)
-        finalCoeff = Math.min(finalCoeff, 100.00);
-        // Добавляем в историю
-        addHistoryCoeff(finalCoeff);
-
-        // обновляем статус
-        statusEl.innerText = `🏁 Раунд окончен: x${finalCoeff.toFixed(2)}`;
-
-        // гасим стикер, показываем "00" или просто таймер позже
-        stickerEl.style.display = "none";
-        timerEl.style.display = "block";
-        timerEl.innerText = "0";
-
-        // Через небольшую паузу запускаем новое ожидание
-        setTimeout(() => {
-            startWaiting();
-        }, 2000);
-    }
-
-    // Первоначальный запуск
-    startWaiting();
-    renderHistory(); // пустая история при старте
-
-    // Также имитация: в тестовых целях добавим парочку исторических коэфов (можно убрать)
-    // это просто чтобы показать, как выглядит история. при желании удалить или оставить.
-    setTimeout(() => {
-        // добавим демо-историю (для красоты), но если хотите чистый старт, закомментируйте.
-        if (historyCoeffs.length === 0) {
-            addHistoryCoeff(2.13);
-            addHistoryCoeff(13.42);
-            addHistoryCoeff(1.63);
-            addHistoryCoeff(2.28);
-            addHistoryCoeff(3.48);
-            // они появятся в истории сразу (до первого раунда)
+                if (currentMultiplier >= 5 + Math.random() * 15) {
+                    clearInterval(growthInterval);
+                    let crashValue = currentMultiplier.toFixed(2);
+                    history.unshift("x" + crashValue);
+                    if (history.length > 10) history.pop();
+                    imageEl.src = "crash.webp";
+                    setTimeout(() => {
+                        startWaiting();
+                    }, 1500);
+                }
+            }, 50);
         }
-    }, 500);
+    }
+
+    // Старт
+    startWaiting();
 });
 </script>
-
 </body>
 </html>
