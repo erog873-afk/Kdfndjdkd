@@ -1,398 +1,2192 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aviator — ⭐ ставка x множитель → ⭐ выигрыш</title>
-    <style>
-        body {
-            margin: 0;
-            background: #0b1422;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0,
+               maximum-scale=1.0, user-scalable=no">
 
-        .balance-bar {
-            position: fixed;
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.1);
-            padding: 8px 16px;
-            border-radius: 25px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            backdrop-filter: blur(8px);
-            z-index: 1000;
-        }
+<title>Frog Crash</title>
 
-        .balance-value {
-            font-size: 20px;
-            font-weight: 600;
-        }
+<script src="/socket.io/socket.io.js"></script>
 
-        .add-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: none;
-            background: #2f7cff;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-        }
+<style>
+:root{
+  --bg:#050607;
+  --panel:#1b1b1c;
+  --panel2:#242425;
+  --text:#f5f5f7;
+  --muted:#858589;
+  --green:#38e07b;
+  --red:#ff4d5e;
+  --purple:#7657ff;
+  --purple2:#9a80ff;
+}
 
-        .timer-container {
-            width: 100%;
-            margin-top: 100px;
-            text-align: center;
-            position: relative;
-        }
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
 
-        .timer {
-            font-size: 90px;
-            height: 200px;
-            line-height: 200px;
-            font-weight: bold;
-        }
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#000;
+  color:var(--text);
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+}
 
-        .plane {
-            display: none;
-            width: 100%;
-            height: 200px;
-            object-fit: contain;
-        }
+button{
+  font:inherit;
+}
 
-        .bottom-bar {
-            display: flex;
-            gap: 10px;
-            padding: 12px;
-            overflow-x: auto;
-        }
+#app{
+  position:relative;
+  width:100%;
+  height:100dvh;
+  overflow:hidden;
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(35,90,30,.14),
+      transparent 25%
+    ),
+    #000;
+}
 
-        .bottom-item {
-            padding: 10px 22px;
-            border-radius: 25px;
-            font-weight: 700;
-            background: #1e2a47;
-            color: #c8d4ea;
-        }
+/* =========================
+   STAR BACKGROUND
+========================= */
 
-        .bottom-item.active {
-            background: white;
-            color: black;
-        }
+#stars{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+}
 
-        .bet-list {
-            position: relative;
-            width: 90%;
-            margin: 20px auto;
-            padding: 40px 20px 20px 20px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            min-height: 140px;
-        }
+.star{
+  position:absolute;
+  width:2px;
+  height:2px;
+  border-radius:50%;
+  background:white;
+  opacity:.2;
+  animation:twinkle var(--duration) infinite ease-in-out;
+}
 
-        .bet-title-left {
-            position: absolute;
-            top: 15px;
-            left: 20px;
-            font-weight: bold;
-            display: none;
-            font-size: 14px;
-            color: #a0b5d9;
-        }
+@keyframes twinkle{
+  0%,100%{
+    opacity:.1;
+    transform:scale(1);
+  }
 
-        .bet-title-right {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-weight: bold;
-            display: none;
-            font-size: 14px;
-            color: #a0b5d9;
-        }
+  50%{
+    opacity:.8;
+    transform:scale(1.5);
+  }
+}
 
-        .bet-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #253656;
-        }
-        .bet-item:last-child {
-            border-bottom: none;
-        }
+/* =========================
+   TOP
+========================= */
 
-        /* Левая часть: ставка в формате "⭐ 50 x1.00" */
-        .bet-stars-multiplier {
-            display: flex;
-            align-items: baseline;
-            gap: 6px;
-            font-weight: 700;
-        }
-        .stars-icon {
-            color: #ffd966;
-            font-size: 20px;
-            margin-right: 4px;
-        }
-        .bet-stars-amount {
-            color: #ffd966;
-            font-size: 20px;
-            font-weight: 800;
-        }
-        .bet-x {
-            color: white;
-            font-size: 18px;
-            font-weight: 600;
-            opacity: 0.9;
-        }
-        .bet-multiplier-value {
-            color: #b3e0ff;
-            font-size: 18px;
-            font-weight: 600;
-        }
+.top{
+  position:relative;
+  z-index:5;
 
-        /* Правая часть: только звёзды возможного приза */
-        .possible-win {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .possible-stars {
-            color: #ffd966;
-            font-size: 24px;
-            font-weight: 800;
-        }
+  height:72px;
 
-        .main-btn {
-            position: fixed;
-            bottom: 20px;
-            left: 5%;
-            width: 90%;
-            height: 60px;
-            border: none;
-            border-radius: 15px;
-            font-size: 20px;
-            background: #2f7cff;
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-        .main-btn:active {
-            background: #1e5fd9;
-        }
-    </style>
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  padding:0 16px;
+}
+
+.game-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  font-size:18px;
+  font-weight:750;
+}
+
+.frog{
+  width:27px;
+  height:27px;
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:#20212a;
+
+  font-size:15px;
+}
+
+.back{
+  position:absolute;
+  left:16px;
+
+  border:0;
+  background:none;
+
+  color:white;
+  font-size:15px;
+  font-weight:600;
+}
+
+.menu{
+  position:absolute;
+  right:16px;
+
+  border:0;
+  background:none;
+
+  color:white;
+
+  font-size:26px;
+}
+
+/* =========================
+   BALANCE
+========================= */
+
+.balance-bar{
+  position:relative;
+  z-index:5;
+
+  display:flex;
+  align-items:center;
+
+  padding:0 14px;
+}
+
+.live{
+  color:#ff5664;
+
+  font-size:11px;
+  font-weight:900;
+
+  writing-mode:vertical-rl;
+
+  letter-spacing:1px;
+}
+
+.balance{
+  margin-left:auto;
+
+  display:flex;
+  align-items:center;
+  gap:7px;
+
+  padding:9px 15px;
+
+  border-radius:22px;
+
+  background:#1c1d22;
+
+  font-size:14px;
+  font-weight:750;
+}
+
+.plus{
+  width:20px;
+  height:20px;
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:#fff;
+  color:#000;
+
+  font-size:15px;
+  font-weight:800;
+}
+
+/* =========================
+   GAME
+========================= */
+
+.game{
+  position:absolute;
+  z-index:2;
+
+  left:0;
+  right:0;
+
+  top:120px;
+  bottom:280px;
+
+  display:flex;
+  flex-direction:column;
+
+  align-items:center;
+  justify-content:center;
+}
+
+.multiplier{
+  font-size:min(24vw,100px);
+
+  line-height:1;
+
+  font-weight:850;
+
+  letter-spacing:-4px;
+
+  transition:.2s;
+}
+
+.multiplier.running{
+  color:#fff;
+}
+
+.multiplier.crashed{
+  color:var(--red);
+
+  transform:scale(1.04);
+}
+
+.status{
+  margin-top:8px;
+
+  color:var(--muted);
+
+  font-size:13px;
+  font-weight:650;
+}
+
+/* =========================
+   HISTORY
+========================= */
+
+.history{
+  position:absolute;
+
+  z-index:5;
+
+  left:0;
+  right:0;
+  bottom:226px;
+
+  display:flex;
+
+  gap:8px;
+
+  padding:0 14px 10px;
+
+  overflow-x:auto;
+
+  scrollbar-width:none;
+}
+
+.history::-webkit-scrollbar{
+  display:none;
+}
+
+.history-item{
+  flex-shrink:0;
+
+  min-width:92px;
+
+  padding:12px 16px;
+
+  text-align:center;
+
+  border-radius:14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--purple),
+      var(--purple2)
+    );
+
+  font-weight:800;
+}
+
+.history-item.low{
+  background:#27282d;
+  color:#a4a5ab;
+}
+
+/* =========================
+   BETS
+========================= */
+
+.bets{
+  position:absolute;
+
+  z-index:5;
+
+  left:8px;
+  right:8px;
+  bottom:72px;
+
+  height:150px;
+
+  overflow:hidden;
+
+  padding:15px;
+
+  border-radius:20px 20px 0 0;
+
+  background:#121314;
+}
+
+.bets-header{
+  display:flex;
+  justify-content:space-between;
+
+  color:var(--muted);
+
+  font-size:13px;
+  font-weight:600;
+
+  margin-bottom:7px;
+}
+
+.empty{
+  text-align:center;
+
+  padding:30px 10px;
+
+  color:var(--muted);
+
+  font-size:14px;
+}
+
+.bet{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:7px 0;
+}
+
+.bet-left{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.avatar{
+  width:34px;
+  height:34px;
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  color:white;
+
+  font-weight:800;
+}
+
+.bet-name{
+  font-size:14px;
+  font-weight:700;
+}
+
+.bet-money{
+  color:#ffc94d;
+
+  font-size:12px;
+  font-weight:700;
+}
+
+.bet-coef{
+  color:var(--muted);
+
+  font-weight:800;
+}
+
+.bet-coef.win{
+  color:var(--green);
+}
+
+.bet-coef.lost{
+  color:var(--red);
+}
+
+/* =========================
+   BOTTOM BUTTON
+========================= */
+
+.bottom{
+  position:absolute;
+
+  z-index:10;
+
+  left:0;
+  right:0;
+  bottom:0;
+
+  padding:
+    10px
+    14px
+    calc(14px + env(safe-area-inset-bottom));
+
+  background:#050607;
+}
+
+.main-button{
+  width:100%;
+
+  height:58px;
+
+  border:0;
+
+  border-radius:17px;
+
+  background:white;
+  color:#050505;
+
+  font-size:17px;
+  font-weight:850;
+
+  transition:.15s;
+}
+
+.main-button:active{
+  transform:scale(.98);
+}
+
+.main-button.cashout{
+  background:#38e07b;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+  position:fixed;
+
+  z-index:100;
+
+  inset:0;
+
+  display:none;
+
+  align-items:flex-end;
+
+  background:rgba(0,0,0,.68);
+
+  backdrop-filter:blur(8px);
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-box{
+  width:100%;
+
+  padding:
+    28px
+    28px
+    calc(28px + env(safe-area-inset-bottom));
+
+  border-radius:30px 30px 0 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      #202021,
+      #1b1b1c
+    );
+
+  box-shadow:
+    0 -10px 40px rgba(0,0,0,.45);
+
+  animation:modalUp .22s ease-out;
+}
+
+@keyframes modalUp{
+  from{
+    transform:translateY(100%);
+  }
+
+  to{
+    transform:translateY(0);
+  }
+}
+
+.modal-title{
+  position:relative;
+
+  text-align:center;
+
+  font-size:26px;
+  font-weight:800;
+
+  margin-bottom:55px;
+}
+
+.close{
+  position:absolute;
+
+  top:4px;
+  right:0;
+
+  width:38px;
+  height:38px;
+
+  border:0;
+
+  border-radius:50%;
+
+  background:none;
+
+  color:#aaa;
+
+  font-size:36px;
+  font-weight:300;
+
+  line-height:30px;
+}
+
+/* =========================
+   AMOUNT
+========================= */
+
+.amount{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  gap:10px;
+
+  margin-bottom:30px;
+}
+
+.amount-number{
+  font-size:64px;
+
+  font-weight:800;
+
+  line-height:1;
+}
+
+.star-big{
+  font-size:48px;
+
+  filter:
+    drop-shadow(
+      0 2px 4px
+      rgba(255,170,0,.3)
+    );
+}
+
+/* =========================
+   QUICK BUTTONS
+========================= */
+
+.quick{
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:12px;
+}
+
+.quick button{
+  height:60px;
+
+  border:0;
+
+  border-radius:18px;
+
+  background:#505052;
+
+  color:#fff;
+
+  font-size:17px;
+  font-weight:650;
+}
+
+.quick button:active{
+  transform:scale(.97);
+}
+
+.min-label{
+  text-align:center;
+
+  color:#858589;
+
+  font-size:15px;
+
+  margin-top:17px;
+}
+
+/* =========================
+   AUTO CASHOUT
+========================= */
+
+.auto{
+  display:flex;
+
+  align-items:center;
+  justify-content:space-between;
+
+  margin-top:72px;
+
+  gap:15px;
+}
+
+.auto-left{
+  display:flex;
+  align-items:center;
+  gap:14px;
+
+  font-size:17px;
+}
+
+.checkbox{
+  position:relative;
+
+  width:56px;
+  height:56px;
+
+  border:3px solid white;
+
+  border-radius:18px;
+
+  cursor:pointer;
+}
+
+.checkbox.active{
+  background:white;
+}
+
+.checkbox.active::after{
+  content:"✓";
+
+  position:absolute;
+
+  left:50%;
+  top:50%;
+
+  transform:translate(-50%,-53%);
+
+  color:#111;
+
+  font-size:30px;
+  font-weight:900;
+}
+
+.auto-control{
+  display:flex;
+  align-items:center;
+
+  height:54px;
+
+  border-radius:30px;
+
+  background:#292a2c;
+
+  overflow:hidden;
+}
+
+.auto-control button{
+  width:52px;
+  height:54px;
+
+  border:0;
+
+  background:none;
+
+  color:#aaa;
+
+  font-size:34px;
+
+  line-height:1;
+}
+
+.auto-value{
+  min-width:82px;
+
+  text-align:center;
+
+  color:#a5a5a8;
+
+  font-size:20px;
+  font-weight:700;
+}
+
+/* =========================
+   SEND
+========================= */
+
+.send{
+  width:100%;
+
+  height:64px;
+
+  margin-top:34px;
+
+  border:0;
+
+  border-radius:22px;
+
+  background:#fff;
+
+  color:#080808;
+
+  font-size:20px;
+  font-weight:800;
+}
+
+.send:active{
+  transform:scale(.98);
+}
+
+/* =========================
+   NOT ENOUGH
+========================= */
+
+.warning-title{
+  margin-bottom:8px;
+
+  font-size:27px;
+  font-weight:800;
+}
+
+.warning-text{
+  color:#99999d;
+
+  font-size:18px;
+
+  line-height:1.35;
+
+  margin-bottom:42px;
+}
+
+.topup{
+  width:100%;
+
+  height:65px;
+
+  border:0;
+
+  border-radius:22px;
+
+  background:#fff;
+
+  color:#080808;
+
+  font-size:20px;
+  font-weight:800;
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast{
+  position:fixed;
+
+  z-index:200;
+
+  left:50%;
+  bottom:90px;
+
+  transform:
+    translate(-50%,20px);
+
+  opacity:0;
+
+  pointer-events:none;
+
+  padding:13px 20px;
+
+  border-radius:15px;
+
+  background:#29292b;
+
+  color:#fff;
+
+  font-weight:700;
+
+  transition:.2s;
+}
+
+.toast.show{
+  transform:
+    translate(-50%,0);
+
+  opacity:1;
+}
+</style>
 </head>
+
 <body>
 
-<div class="balance-bar">
-    <span class="balance-value">⭐0</span>
-    <button class="add-btn" id="addBalance">+</button>
+<div id="app">
+
+  <div id="stars"></div>
+
+  <!-- HEADER -->
+
+  <header class="top">
+
+    <button class="back"
+            onclick="history.back()">
+      ← Назад
+    </button>
+
+    <div class="game-title">
+      <span class="frog">🐸</span>
+      Frog Crash
+    </div>
+
+    <button class="menu">
+      ⋮
+    </button>
+
+  </header>
+
+
+  <!-- BALANCE -->
+
+  <div class="balance-bar">
+
+    <div class="live">
+      LIVE
+    </div>
+
+    <div class="balance"
+         onclick="openBetModal()">
+
+      ⭐
+      <span id="balance">
+        0
+      </span>
+
+      <span class="plus">
+        +
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- GAME -->
+
+  <main class="game">
+
+    <div
+      id="multiplier"
+      class="multiplier">
+      10
+    </div>
+
+    <div
+      id="status"
+      class="status">
+      Ожидание
+    </div>
+
+  </main>
+
+
+  <!-- HISTORY -->
+
+  <div
+    id="history"
+    class="history">
+  </div>
+
+
+  <!-- BETS -->
+
+  <section class="bets">
+
+    <div class="bets-header">
+
+      <span>
+        Пользователь
+      </span>
+
+      <span>
+        Коэффициент
+      </span>
+
+    </div>
+
+    <div id="betsList">
+
+      <div class="empty">
+        Сделайте первую ставку!
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- BOTTOM -->
+
+  <footer class="bottom">
+
+    <button
+      id="mainButton"
+      class="main-button"
+      onclick="openBetModal()">
+
+      Сделать ставку
+
+    </button>
+
+  </footer>
+
+
+  <!-- ======================
+       BET MODAL
+  ======================= -->
+
+  <div
+    id="betModal"
+    class="modal">
+
+    <div class="modal-box">
+
+      <div class="modal-title">
+
+        Новая ставка
+
+        <button
+          class="close"
+          onclick="closeModal('betModal')">
+
+          ×
+
+        </button>
+
+      </div>
+
+
+      <div class="amount">
+
+        <span
+          id="betAmount"
+          class="amount-number">
+
+          25
+
+        </span>
+
+        <span class="star-big">
+          ⭐
+        </span>
+
+      </div>
+
+
+      <div class="quick">
+
+        <button onclick="addAmount(100)">
+          + 100
+        </button>
+
+        <button onclick="addAmount(500)">
+          + 500
+        </button>
+
+        <button onclick="addAmount(2500)">
+          + 2 500
+        </button>
+
+      </div>
+
+
+      <div class="min-label">
+        от 25 звёзд
+      </div>
+
+
+      <div class="auto">
+
+        <div class="auto-left">
+
+          <div
+            id="checkbox"
+            class="checkbox"
+            onclick="toggleAuto()">
+          </div>
+
+          <span>
+            Авто вывод
+          </span>
+
+        </div>
+
+
+        <div class="auto-control">
+
+          <button onclick="changeAuto(-0.10)">
+            −
+          </button>
+
+          <div class="auto-value">
+            x<span id="autoValue">
+              1.50
+            </span>
+          </div>
+
+          <button onclick="changeAuto(0.10)">
+            +
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <button
+        class="send"
+        onclick="sendBet()">
+
+        Отправить ставку
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- ======================
+       NOT ENOUGH MODAL
+  ======================= -->
+
+  <div
+    id="notEnoughModal"
+    class="modal">
+
+    <div class="modal-box">
+
+      <div class="modal-title">
+
+        <button
+          class="close"
+          onclick="closeModal('notEnoughModal')">
+
+          ×
+
+        </button>
+
+        <div class="warning-title">
+          Не хватает звёзд!
+        </div>
+
+        <div
+          id="notEnoughText"
+          class="warning-text">
+
+          Нужно еще 25 stars.
+          Пополните баланс.
+
+        </div>
+
+      </div>
+
+
+      <button
+        class="topup"
+        onclick="topUp()">
+
+        Пополнить баланс
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div
+    id="toast"
+    class="toast">
+  </div>
+
 </div>
 
-<div class="timer-container">
-    <div class="timer" id="timer"></div>
-    <img id="planeImage" class="plane" src="PN4.webp" />
-    <div class="bottom-bar" id="bottomBar"></div>
-</div>
-
-<div class="bet-list">
-    <div class="bet-title-left" id="titleLeft">Ставка</div>
-    <div class="bet-title-right" id="titleRight">Возможн. приз</div>
-    <div id="bets" style="text-align:center;">Ставок еще нет</div>
-</div>
-
-<button class="main-btn" id="betBtn">Сделать ставку ⭐50</button>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    let balance = localStorage.getItem("balance") 
-        ? parseInt(localStorage.getItem("balance")) 
-        : 0;
 
-    const balanceEl = document.querySelector(".balance-value");
-    const addBalanceBtn = document.getElementById("addBalance");
-    const timerEl = document.getElementById("timer");
-    const imageEl = document.getElementById("planeImage");
-    const bottomBar = document.getElementById("bottomBar");
-    const betsEl = document.getElementById("bets");
-    const betBtn = document.getElementById("betBtn");
-    const titleLeft = document.getElementById("titleLeft");
-    const titleRight = document.getElementById("titleRight");
+/* =========================================================
+   CONFIG
+========================================================= */
 
-    // Данные ставки
-    let initialBetStars = 0;          // сколько поставили (чистыми звёздами, например 50)
-    let currentMultiplier = 1.00;      // текущий множитель
+const MIN_BET = 25;
+const MIN_AUTO = 1.10;
+const AUTO_STEP = 0.10;
 
-    balanceEl.innerText = "⭐" + balance;
 
-    function saveBalance() {
-        localStorage.setItem("balance", balance);
-        balanceEl.innerText = "⭐" + balance;
-    }
+/* =========================================================
+   STATE
+========================================================= */
 
-    addBalanceBtn.addEventListener("click", () => {
-        balance += 100;
-        saveBalance();
+let balance = 0;
+
+let betAmount = MIN_BET;
+
+let autoEnabled = false;
+
+let autoMultiplier = 1.50;
+
+let currentMultiplier = 1;
+
+let phase = "waiting";
+
+let currentBet = null;
+
+let historyData = [];
+
+let socket = null;
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const balanceEl =
+  document.getElementById("balance");
+
+const betAmountEl =
+  document.getElementById("betAmount");
+
+const autoValueEl =
+  document.getElementById("autoValue");
+
+const checkboxEl =
+  document.getElementById("checkbox");
+
+const multiplierEl =
+  document.getElementById("multiplier");
+
+const statusEl =
+  document.getElementById("status");
+
+const mainButton =
+  document.getElementById("mainButton");
+
+const historyEl =
+  document.getElementById("history");
+
+const betsList =
+  document.getElementById("betsList");
+
+
+/* =========================================================
+   STARFIELD
+========================================================= */
+
+const stars =
+  document.getElementById("stars");
+
+for(let i = 0; i < 70; i++){
+
+  const star =
+    document.createElement("div");
+
+  star.className = "star";
+
+  star.style.left =
+    Math.random() * 100 + "%";
+
+  star.style.top =
+    Math.random() * 100 + "%";
+
+  const size =
+    Math.random() * 2 + 1;
+
+  star.style.width =
+    size + "px";
+
+  star.style.height =
+    size + "px";
+
+  star.style.setProperty(
+    "--duration",
+    (2 + Math.random() * 4) + "s"
+  );
+
+  star.style.animationDelay =
+    Math.random() * 4 + "s";
+
+  stars.appendChild(star);
+}
+
+
+/* =========================================================
+   BALANCE
+========================================================= */
+
+function setBalance(value){
+
+  balance =
+    Math.max(0, Number(value) || 0);
+
+  balanceEl.textContent =
+    balance.toLocaleString("ru-RU");
+}
+
+
+/* =========================================================
+   BET MODAL
+========================================================= */
+
+function openBetModal(){
+
+  if(phase === "running"){
+
+    showToast(
+      "Ставку можно сделать до начала раунда"
+    );
+
+    return;
+  }
+
+  betAmount = Math.max(
+    MIN_BET,
+    betAmount
+  );
+
+  renderBet();
+
+  document
+    .getElementById("betModal")
+    .classList.add("show");
+}
+
+
+function closeModal(id){
+
+  document
+    .getElementById(id)
+    .classList.remove("show");
+}
+
+
+/* =========================================================
+   BET AMOUNT
+========================================================= */
+
+function addAmount(value){
+
+  betAmount += value;
+
+  renderBet();
+}
+
+
+function renderBet(){
+
+  betAmountEl.textContent =
+    betAmount.toLocaleString("ru-RU");
+
+  autoValueEl.textContent =
+    autoMultiplier.toFixed(2);
+}
+
+
+/* =========================================================
+   AUTO CASHOUT
+========================================================= */
+
+function toggleAuto(){
+
+  autoEnabled =
+    !autoEnabled;
+
+  checkboxEl.classList.toggle(
+    "active",
+    autoEnabled
+  );
+}
+
+
+function changeAuto(value){
+
+  autoMultiplier += value;
+
+  autoMultiplier =
+    Math.max(
+      MIN_AUTO,
+      autoMultiplier
+    );
+
+  autoMultiplier =
+    Number(
+      autoMultiplier.toFixed(2)
+    );
+
+  renderBet();
+}
+
+
+/* =========================================================
+   SEND BET
+========================================================= */
+
+function sendBet(){
+
+  if(betAmount < MIN_BET){
+
+    showToast(
+      "Минимальная ставка — 25 ⭐"
+    );
+
+    betAmount = MIN_BET;
+
+    renderBet();
+
+    return;
+  }
+
+
+  /*
+   * Проверяем баланс на клиенте,
+   * но сервер должен проверить его
+   * повторно.
+   */
+
+  if(balance < betAmount){
+
+    const missing =
+      betAmount - balance;
+
+    document.getElementById(
+      "notEnoughText"
+    ).textContent =
+      `Нужно еще ${missing.toLocaleString("ru-RU")} stars. Пополните баланс.`;
+
+    closeModal("betModal");
+
+    document
+      .getElementById("notEnoughModal")
+      .classList.add("show");
+
+    return;
+  }
+
+
+  const data = {
+
+    amount: betAmount,
+
+    autoCashout:
+      autoEnabled,
+
+    autoMultiplier:
+      autoEnabled
+        ? autoMultiplier
+        : null
+
+  };
+
+
+  /*
+   * ONLINE
+   */
+
+  if(socket){
+
+    socket.emit(
+      "bet",
+      data
+    );
+
+  }else{
+
+    /*
+     * Если сервер пока не подключён,
+     * показываем сообщение.
+     */
+
+    showToast(
+      "Сервер пока не подключён"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CASH OUT
+========================================================= */
+
+function cashOut(){
+
+  if(!socket){
+
+    showToast(
+      "Сервер не подключён"
+    );
+
+    return;
+  }
+
+  socket.emit(
+    "cashout"
+  );
+}
+
+
+/* =========================================================
+   TOP UP
+========================================================= */
+
+function topUp(){
+
+  closeModal(
+    "notEnoughModal"
+  );
+
+  /*
+   * Здесь позже можно открыть
+   * отдельный экран получения
+   * виртуальных ⭐.
+   */
+
+  showToast(
+    "Экран пополнения будет здесь"
+  );
+}
+
+
+/* =========================================================
+   MAIN BUTTON
+========================================================= */
+
+function updateMainButton(){
+
+  if(phase === "running" && currentBet){
+
+    mainButton.textContent =
+      `Забрать x${currentMultiplier.toFixed(2)}`;
+
+    mainButton.classList.add(
+      "cashout"
+    );
+
+    mainButton.onclick =
+      cashOut;
+
+    return;
+  }
+
+
+  mainButton.textContent =
+    "Сделать ставку";
+
+  mainButton.classList.remove(
+    "cashout"
+  );
+
+  mainButton.onclick =
+    openBetModal;
+}
+
+
+/* =========================================================
+   MULTIPLIER
+========================================================= */
+
+function updateMultiplier(value){
+
+  currentMultiplier =
+    Number(value);
+
+  multiplierEl.textContent =
+    "x" + currentMultiplier.toFixed(2);
+
+  statusEl.textContent =
+    "x" + currentMultiplier.toFixed(2);
+
+  multiplierEl.classList.add(
+    "running"
+  );
+
+  multiplierEl.classList.remove(
+    "crashed"
+  );
+
+  updateMainButton();
+
+  /*
+   * Клиентская анимация авто-вывода
+   * не является источником истины.
+   * Фактический cashout делает сервер.
+   */
+
+}
+
+
+/* =========================================================
+   ROUND WAITING
+========================================================= */
+
+function roundWaiting(data){
+
+  phase =
+    "waiting";
+
+  currentBet =
+    null;
+
+  multiplierEl.classList.remove(
+    "running",
+    "crashed"
+  );
+
+  multiplierEl.textContent =
+    data.countdown ?? 5;
+
+  statusEl.textContent =
+    "Ожидание";
+
+  updateMainButton();
+}
+
+
+/* =========================================================
+   ROUND START
+========================================================= */
+
+function roundStart(){
+
+  phase =
+    "running";
+
+  multiplierEl.classList.add(
+    "running"
+  );
+
+  statusEl.textContent =
+    "x1.00";
+
+  currentMultiplier =
+    1;
+
+  updateMainButton();
+}
+
+
+/* =========================================================
+   ROUND CRASH
+========================================================= */
+
+function roundCrash(data){
+
+  phase =
+    "crashed";
+
+  currentMultiplier =
+    Number(data.multiplier);
+
+  multiplierEl.textContent =
+    "x" +
+    currentMultiplier.toFixed(2);
+
+  statusEl.textContent =
+    "x" +
+    currentMultiplier.toFixed(2);
+
+  multiplierEl.classList.remove(
+    "running"
+  );
+
+  multiplierEl.classList.add(
+    "crashed"
+  );
+
+  historyData.push(
+    currentMultiplier
+  );
+
+  renderHistory();
+
+  currentBet =
+    null;
+
+  updateMainButton();
+}
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+function renderHistory(){
+
+  historyEl.innerHTML = "";
+
+  historyData
+    .slice(-8)
+    .reverse()
+    .forEach(value => {
+
+      const item =
+        document.createElement("div");
+
+      item.className =
+        "history-item";
+
+      if(value < 2){
+
+        item.classList.add(
+          "low"
+        );
+
+      }
+
+      item.textContent =
+        "x" + value.toFixed(2);
+
+      historyEl.appendChild(
+        item
+      );
+
     });
+}
 
-    let time = 10;
-    let waiting = true;
-    let history = [];
-    let growthInterval;
 
-    function renderBottom(activeText = null) {
-        bottomBar.innerHTML = "";
-        if (activeText) {
-            bottomBar.innerHTML += `<div class="bottom-item active">${activeText}</div>`;
-        }
-        history.forEach(h => {
-            bottomBar.innerHTML += `<div class="bottom-item">${h}</div>`;
-        });
-    }
+/* =========================================================
+   BET LIST
+========================================================= */
 
-    function updateBets() {
-        if (initialBetStars === 0) {
-            betsEl.style.textAlign = "center";
-            betsEl.innerHTML = "Ставок еще нет";
-            titleLeft.style.display = "none";
-            titleRight.style.display = "none";
-            return;
-        }
+function renderBets(bets){
 
-        betsEl.innerHTML = "";
-        titleLeft.style.display = "block";
-        titleRight.style.display = "block";
+  if(!bets || !bets.length){
 
-        // Текущее количество звёзд (начальная ставка * множитель, округлённое)
-        let currentStars = Math.floor(initialBetStars * currentMultiplier);
-        if (currentStars < initialBetStars) currentStars = initialBetStars; // защита от 0.99
+    betsList.innerHTML =
+      `<div class="empty">
+        Сделайте первую ставку!
+      </div>`;
 
-        // Возможный выигрыш = текущие звёзды
-        let possibleWin = currentStars;
+    return;
+  }
 
-        // Формируем левую часть: ⭐ 50 x1.00
-        // Правую часть: ⭐ 65  (просто число, без x)
-        betsEl.innerHTML = `
-            <div class="bet-item">
-                <div class="bet-stars-multiplier">
-                    <span class="stars-icon">⭐</span>
-                    <span class="bet-stars-amount">${initialBetStars}</span>
-                    <span class="bet-x">x</span>
-                    <span class="bet-multiplier-value">${currentMultiplier.toFixed(2)}</span>
-                </div>
-                <div class="possible-win">
-                    <span class="stars-icon">⭐</span>
-                    <span class="possible-stars">${possibleWin}</span>
-                </div>
+
+  betsList.innerHTML =
+    bets.map(b => {
+
+      let state =
+        "";
+
+      if(b.cashedOut){
+
+        state =
+          "win";
+
+      }else if(b.lost){
+
+        state =
+          "lost";
+      }
+
+
+      return `
+
+        <div class="bet">
+
+          <div class="bet-left">
+
+            <div
+              class="avatar"
+              style="background:${b.color || "#7657ff"}">
+
+              ${(b.username || "U")
+                .charAt(0)
+                .toUpperCase()}
+
             </div>
-        `;
+
+            <div>
+
+              <div class="bet-name">
+                ${escapeHtml(
+                  b.username || "Player"
+                )}
+              </div>
+
+              <div class="bet-money">
+                ⭐ ${Number(
+                  b.amount || 0
+                ).toLocaleString("ru-RU")}
+              </div>
+
+            </div>
+
+          </div>
+
+          <div
+            class="bet-coef ${state}">
+
+            x${Number(
+              b.cashout || b.multiplier || 1
+            ).toFixed(2)}
+
+          </div>
+
+        </div>
+
+      `;
+
+    }).join("");
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHtml(value){
+
+  return String(value)
+
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer;
+
+function showToast(message){
+
+  const toast =
+    document.getElementById(
+      "toast"
+    );
+
+  toast.textContent =
+    message;
+
+  toast.classList.add(
+    "show"
+  );
+
+  clearTimeout(
+    toastTimer
+  );
+
+  toastTimer =
+    setTimeout(() => {
+
+      toast.classList.remove(
+        "show"
+      );
+
+    },2500);
+}
+
+
+/* =========================================================
+   SOCKET.IO
+========================================================= */
+
+function connectSocket(){
+
+  /*
+   * Если index.html отдаётся
+   * тем же Node.js сервером:
+   */
+
+  try{
+
+    socket =
+      io();
+
+  }catch(error){
+
+    console.error(
+      "Socket error:",
+      error
+    );
+
+    socket =
+      null;
+
+    return;
+  }
+
+
+  socket.on(
+    "connect",
+    () => {
+
+      console.log(
+        "Connected:",
+        socket.id
+      );
+
+
+      /*
+       * Временно спрашиваем ник.
+       * Позже заменим на нормальную
+       * регистрацию/авторизацию.
+       */
+
+      let username =
+        localStorage.getItem(
+          "frog_username"
+        );
+
+
+      if(!username){
+
+        username =
+          prompt(
+            "Введите ник:"
+          ) ||
+          "Player";
+
+        localStorage.setItem(
+          "frog_username",
+          username
+        );
+
+      }
+
+
+      socket.emit(
+        "login",
+        username
+      );
+
     }
+  );
 
-    betBtn.addEventListener("click", () => {
-        if (!waiting) {
-            alert("Сейчас идёт игра, дождитесь нового раунда");
-            return;
-        }
 
-        let betAmount = 50;
+  /*
+   * ACCOUNT
+   */
 
-        if (balance < betAmount) {
-            alert("Недостаточно звёзд ⭐");
-            return;
-        }
+  socket.on(
+    "account",
+    data => {
 
-        balance -= betAmount;
-        saveBalance();
+      setBalance(
+        data.balance
+      );
 
-        initialBetStars = betAmount;
-        currentMultiplier = 1.00;   // множитель в момент ставки = 1.0
-
-        updateBets();
-    });
-
-    function startWaiting() {
-        waiting = true;
-        time = 10;
-        // Ставка сбрасывается (по логике авиатора после краша ставки обнуляются)
-        initialBetStars = 0;
-        updateBets();
-
-        timerEl.innerText = time;
-        imageEl.style.display = "none";
-        timerEl.style.display = "block";
-
-        renderBottom("Ожидание");
-
-        const interval = setInterval(() => {
-            time--;
-            if (time <= 0) {
-                clearInterval(interval);
-                startRound();
-                return;
-            }
-            timerEl.innerText = time;
-        }, 1000);
     }
+  );
 
-    function startRound() {
-        waiting = false;
-        currentMultiplier = 1.00;
 
-        timerEl.style.display = "none";
-        imageEl.style.display = "block";
-        imageEl.src = "PN4.webp";  // замените на свой файл
+  /*
+   * WAITING
+   */
 
-        // Если есть активная ставка, запускаем рост
-        if (initialBetStars > 0) {
-            growthInterval = setInterval(() => {
-                currentMultiplier += 0.03;
-                updateBets();
-                renderBottom("x" + currentMultiplier.toFixed(2));
+  socket.on(
+    "round:waiting",
+    data => {
 
-                // Случайный краш (как в оригинале)
-                if (currentMultiplier >= 5 + Math.random() * 15) {
-                    clearInterval(growthInterval);
+      roundWaiting(
+        data
+      );
 
-                    let crashValue = currentMultiplier.toFixed(2);
-                    history.unshift("x" + crashValue);
-                    if (history.length > 10) history.pop();
-
-                    imageEl.src = "crash.webp";  // замените на свой файл
-
-                    // Здесь можно было бы начислить выигрыш, но оставим как в демо
-
-                    setTimeout(() => {
-                        startWaiting();
-                    }, 1500);
-                }
-            }, 50);
-        } else {
-            // Если ставки нет, просто летим с пустым множителем
-            growthInterval = setInterval(() => {
-                currentMultiplier += 0.03;
-                renderBottom("x" + currentMultiplier.toFixed(2));
-
-                if (currentMultiplier >= 5 + Math.random() * 15) {
-                    clearInterval(growthInterval);
-                    let crashValue = currentMultiplier.toFixed(2);
-                    history.unshift("x" + crashValue);
-                    if (history.length > 10) history.pop();
-                    imageEl.src = "crash.webp";
-                    setTimeout(() => {
-                        startWaiting();
-                    }, 1500);
-                }
-            }, 50);
-        }
     }
+  );
 
-    // Старт
-    startWaiting();
-});
+
+  /*
+   * ROUND STATE
+   */
+
+  socket.on(
+    "round:state",
+    data => {
+
+      phase =
+        data.running
+          ? "running"
+          : "waiting";
+
+      if(data.multiplier){
+
+        updateMultiplier(
+          data.multiplier
+        );
+
+      }
+
+      updateMainButton();
+
+    }
+  );
+
+
+  /*
+   * START
+   */
+
+  socket.on(
+    "round:start",
+    () => {
+
+      roundStart();
+
+    }
+  );
+
+
+  /*
+   * UPDATE
+   */
+
+  socket.on(
+    "round:update",
+    data => {
+
+      updateMultiplier(
+        data.multiplier
+      );
+
+    }
+  );
+
+
+  /*
+   * CRASH
+   */
+
+  socket.on(
+    "round:crash",
+    data => {
+
+      roundCrash(
+        data
+      );
+
+    }
+  );
+
+
+  /*
+   * BET ACCEPTED
+   */
+
+  socket.on(
+    "bet:accepted",
+    data => {
+
+      currentBet =
+        data;
+
+      closeModal(
+        "betModal"
+      );
+
+      showToast(
+        "Ставка принята ⭐"
+      );
+
+      if(data.balance !== undefined){
+
+        setBalance(
+          data.balance
+        );
+
+      }
+
+      updateMainButton();
+
+    }
+  );
+
+
+  /*
+   * BET ERROR
+   */
+
+  socket.on(
+    "bet:error",
+    message => {
+
+      showToast(
+        message
+      );
+
+    }
+  );
+
+
+  /*
+   * NEW BETS
+   */
+
+  socket.on(
+    "bets:update",
+    bets => {
+
+      renderBets(
+        bets
+      );
+
+    }
+  );
+
+
+  /*
+   * CASHOUT SUCCESS
+   */
+
+  socket.on(
+    "cashout:success",
+    data => {
+
+      currentBet =
+        null;
+
+      if(data.balance !== undefined){
+
+        setBalance(
+          data.balance
+        );
+
+      }
+
+      showToast(
+        `Cash Out x${Number(
+          data.multiplier
+        ).toFixed(2)} · +${Number(
+          data.win
+        ).toLocaleString("ru-RU")} ⭐`
+      );
+
+      updateMainButton();
+
+    }
+  );
+
+
+  /*
+   * CASHOUT ERROR
+   */
+
+  socket.on(
+    "cashout:error",
+    message => {
+
+      showToast(
+        message
+      );
+
+    }
+  );
+
+
+  /*
+   * SERVER DISCONNECTED
+   */
+
+  socket.on(
+    "disconnect",
+    () => {
+
+      showToast(
+        "Соединение с сервером потеряно"
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   CLOSE MODALS BY BACKDROP
+========================================================= */
+
+document
+  .getElementById("betModal")
+  .addEventListener(
+    "click",
+    event => {
+
+      if(
+        event.target.id ===
+        "betModal"
+      ){
+
+        closeModal(
+          "betModal"
+        );
+
+      }
+
+    }
+  );
+
+
+document
+  .getElementById("notEnoughModal")
+  .addEventListener(
+    "click",
+    event => {
+
+      if(
+        event.target.id ===
+        "notEnoughModal"
+      ){
+
+        closeModal(
+          "notEnoughModal"
+        );
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   INITIAL
+========================================================= */
+
+setBalance(0);
+
+renderBet();
+
+renderHistory();
+
+updateMainButton();
+
+connectSocket();
+
 </script>
+
 </body>
 </html>
