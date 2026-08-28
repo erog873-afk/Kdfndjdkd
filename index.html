@@ -1008,10 +1008,8 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
             av.className='jackpot-avatar';
             const centerAngle=(p._startAngle+p._endAngle)/2;
             const rad=centerAngle*Math.PI/180;
-            // Аватар всегда находится в центре своего цветного сектора.
-            // Радиус 30% от центра поля даёт одинаковое положение
-            // внутри каждого кусочка, независимо от количества игроков.
-            const r=30;
+            // При двух игроках аватары находятся в своих половинах.
+            const r=players.length===2 ? 24 : (players.length===3 ? 27 : 30);
             av.style.left=(50+Math.sin(rad)*r)+'%';
             av.style.top=(50-Math.cos(rad)*r)+'%';
             av.style.zIndex='4';
