@@ -120,20 +120,22 @@ p{font-size:large}
 .jackpot-screen.active{display:block}
 .jackpot-pot-pill{background:#1c1c1e;border-radius:22px;padding:14px 18px;text-align:center;font-size:19px;font-weight:800;margin-bottom:14px}
 .jackpot-pot-pill span{color:#ffb020}
-.jackpot-wheel-wrap{position:relative;width:100%;aspect-ratio:1/1;border-radius:26px;overflow:hidden;background:#1c1c1e;margin-bottom:16px}
-.jackpot-wheel-wrap.waiting-grid{background-color:#1c1c1e;background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:14.2857% 14.2857%;}
-.jackpot-wheel-wrap.active-green{background:#247f61;}
-.jackpot-wheel{position:absolute;inset:0}
+.jackpot-wheel-wrap{position:relative;width:100%;height:390px;border-radius:26px;overflow:hidden;background:#1c1c1e;margin-bottom:16px;display:block}
+.jackpot-wheel-wrap.show{display:block}
+.jackpot-wheel{position:absolute;inset:0;background-color:#1c1c1e;background-image:linear-gradient(rgba(255,255,255,.075) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.075) 1px,transparent 1px);background-size:46px 46px}
 .jackpot-empty-state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:transparent;z-index:2}
-.jackpot-empty-dot{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e6e6e6,#8e8e93)}
-.jackpot-empty-state p{color:#8e8e93;font-size:20px;font-weight:800;margin:0}
-.jackpot-avatar{position:absolute;width:56px;height:56px;border-radius:50%;border:3px solid rgba(255,255,255,.85);overflow:hidden;transform:translate(-50%,-50%);background:#3a3a3d;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px}
+.jackpot-empty-dot{position:absolute;left:92%;top:31%;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e6e6e6,#8e8e93);transform:translate(-50%,-50%)}
+.jackpot-empty-state p{color:#77777d;font-size:20px;font-weight:800;margin:0;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);white-space:nowrap}
+.jackpot-avatar{position:absolute;width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.85);overflow:hidden;transform:translate(-50%,-50%);background:#3a3a3d;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;z-index:3}
 .jackpot-avatar img{width:100%;height:100%;object-fit:cover}
 .jackpot-timer{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.55);color:#fff;font-size:30px;font-weight:800;padding:10px 20px;border-radius:16px;z-index:5}
-.jackpot-plus-marker{position:absolute;width:44px;height:44px;border-radius:50%;background:#fff;color:#000;font-size:24px;font-weight:800;display:none;align-items:center;justify-content:center;box-shadow:0 0 0 6px rgba(255,255,255,.15),0 0 16px rgba(255,255,255,.5);z-index:7;left:50%;top:50%;transform:translate(-50%,-50%);cursor:pointer;transition:left 2.8s cubic-bezier(.15,.7,.2,1),top 2.8s cubic-bezier(.15,.7,.2,1)}
+.jackpot-plus-marker{position:absolute;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#bfc5cc 70%,#8c949d);color:transparent;font-size:0;display:none;align-items:center;justify-content:center;box-shadow:0 0 0 5px rgba(255,255,255,.10),0 0 18px rgba(255,255,255,.65);z-index:7;left:50%;top:50%;transform:translate(-50%,-50%);cursor:pointer;transition:left 2.8s cubic-bezier(.15,.7,.2,1),top 2.8s cubic-bezier(.15,.7,.2,1)}
 .jackpot-plus-marker.show{display:flex}
+.jackpot-plus-marker.flying{animation:jackpotBallFly 5.5s ease-in-out infinite, jackpotBallPulse .65s ease-in-out infinite alternate}.jackpot-player-token{position:absolute;width:34px;height:34px;border-radius:50%;overflow:hidden;transform:translate(-50%,-50%);background:#3a3a3d;border:2px solid rgba(255,255,255,.9);box-shadow:0 2px 12px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:800;z-index:6;transition:left .15s linear,top .15s linear}.jackpot-player-token img{width:100%;height:100%;object-fit:cover}.jackpot-player-token.me{width:38px;height:38px;border-width:3px}.jackpot-token-name{position:absolute;left:50%;top:calc(100% + 5px);transform:translateX(-50%);font-size:10px;font-weight:700;color:#fff;white-space:nowrap;text-shadow:0 1px 4px #000;pointer-events:none}
+@keyframes jackpotBallFly{0%{left:8%;top:50%}25%{left:50%;top:8%}50%{left:92%;top:50%}75%{left:50%;top:92%}100%{left:8%;top:50%}}
+@keyframes jackpotBallPulse{from{box-shadow:0 0 0 4px rgba(255,255,255,.08),0 0 10px rgba(255,255,255,.35)}to{box-shadow:0 0 0 7px rgba(255,255,255,.12),0 0 22px rgba(255,255,255,.8)}}
+.jackpot-game-info{display:none;text-align:center;margin:12px 0 0;color:rgba(255,255,255,.45);font-size:13px;line-height:1.8}.jackpot-game-info.show{display:block}.jackpot-game-info b{color:rgba(255,255,255,.72);font-weight:600}.jackpot-bet-info{font-size:14px;color:rgba(255,255,255,.62)}
 .jackpot-players-panel{display:none;background:#ffffff0d;border-radius:26px;padding:16px}
-.jackpot-players-panel.active{display:block}
 .jackpot-players-header{display:flex;justify-content:space-between;color:#8e8e93;font-size:13.5px;font-weight:700;margin-bottom:10px}
 .jackpot-player-row{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid #ffffff0f}
 .jackpot-player-row:last-child{border-bottom:none}
@@ -146,7 +148,6 @@ p{font-size:large}
 .jackpot-player-amount img{width:14px;height:14px}
 .jackpot-winner-banner{display:none;text-align:center;background:linear-gradient(135deg,#ffd966,#e0a020);color:#000;border-radius:20px;padding:14px;font-weight:800;font-size:16px;margin-bottom:14px}
 .jackpot-winner-banner.show{display:block}
-.jackpot-game-hash{display:block;text-align:center;color:#242427;font-size:14px;font-weight:700;margin:0 0 16px;}
 .jackpot-bottom-wrap{position:fixed;left:0;right:0;bottom:0;background:#0c0c0e;padding:12px 16px calc(16px + env(safe-area-inset-bottom));box-sizing:border-box;z-index:2200}
 .jackpot-quick-bar{display:flex;gap:8px}
 .jackpot-quick-btn{flex:1;background:#fff;color:#000;border:none;padding:15px 0;border-radius:22px;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer}
@@ -287,20 +288,16 @@ p{font-size:large}
     <div class="jackpot-screen" id="jackpotScreen">
         <div class="jackpot-pot-pill">Банк: <span id="jackpotPotValue">0</span> ⭐</div>
         <div class="jackpot-winner-banner" id="jackpotWinnerBanner"></div>
-        <div class="jackpot-wheel-wrap waiting-grid" id="jackpotWheelWrap">
-            <div class="jackpot-wheel" id="jackpotWheel"></div>
-            <div class="jackpot-empty-state" id="jackpotEmptyState">
-                <div class="jackpot-empty-dot"></div>
-                <p>Ожидание игроков</p>
-            </div>
+        <div class="jackpot-wheel-wrap" id="jackpotWheelWrap">
+            <div class="jackpot-wheel" id="jackpotWheel"><div id="jackpotTokens"></div></div>
+            <div class="jackpot-empty-state" id="jackpotEmptyState"><div class="jackpot-empty-dot"></div><p>Ожидание игроков</p></div>
             <div class="jackpot-timer" id="jackpotTimer" style="display:none">20</div>
             <div class="jackpot-plus-marker" id="jackpotPlusMarker">+</div>
         </div>
-        <div class="jackpot-players-panel">
-            <div class="jackpot-players-header"><span>Игроки</span><span id="jackpotRoundId">Игра #1</span></div>
-            <div id="jackpotPlayersList"></div>
+        <div class="jackpot-game-info" id="jackpotGameInfo">
+            <div class="jackpot-bet-info">Ставка: <b id="jackpotUserBet">0</b> ⭐</div>
+            <div class="jackpot-hash-info">Хэш игры: <b id="jackpotGameHash">—</b></div>
         </div>
-        <div class="jackpot-game-hash" id="jackpotGameHash">Хэш игры: 02fe...4258</div>
     </div>
     <div id="page-profile" class="page-section" data-page="Профиль" style="padding-bottom:100px">
         <div class="container" style="margin-top:64px">
@@ -875,15 +872,17 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
 (function(){
     const wheelEl=document.getElementById('jackpotWheel');
     const wheelWrapEl=document.getElementById('jackpotWheelWrap');
-    const playersPanelEl=document.querySelector('.jackpot-players-panel');
-    const gameHashEl=document.getElementById('jackpotGameHash');
     const emptyStateEl=document.getElementById('jackpotEmptyState');
     const timerEl=document.getElementById('jackpotTimer');
     const plusMarker=document.getElementById('jackpotPlusMarker');
+    const tokensEl=document.getElementById('jackpotTokens');
     const potValueEl=document.getElementById('jackpotPotValue');
     const playersListEl=document.getElementById('jackpotPlayersList');
     const roundIdEl=document.getElementById('jackpotRoundId');
     const winnerBannerEl=document.getElementById('jackpotWinnerBanner');
+    const gameInfoEl=document.getElementById('jackpotGameInfo');
+    const userBetEl=document.getElementById('jackpotUserBet');
+    const gameHashEl=document.getElementById('jackpotGameHash');
     const quickBtns=[document.getElementById('jackpotQuick100'),document.getElementById('jackpotQuick500'),document.getElementById('jackpotQuick1000')];
     const customBtn=document.getElementById('jackpotCustomBtn');
     const amtSheet=document.getElementById('jackpotAmtSheet');
@@ -910,6 +909,14 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
     let countdownTimerId=null;
     let fakeJoinTimerId=null;
     let roundId=Math.floor(Math.random()*90000)+10000;
+    let gameHash=randomGameHash();
+
+    function randomGameHash(){
+        const chars='0123456789abcdef';
+        let h='';
+        for(let i=0;i<24;i++)h+=chars[Math.floor(Math.random()*chars.length)];
+        return h.slice(0,4)+'...'+h.slice(-4);
+    }
     let running=false;
     let userJoined=false;
 
@@ -952,68 +959,79 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
         });
     }
 
-    // Ожидание: сетка. После первой ставки сетка исчезает,
-    // а поле становится зелёным. При нескольких игроках поле
-    // делится на сектора пропорционально размерам ставок.
+    let tokenRafId=null;
+    const tokenMotion=new Map();
+    function renderPlayerTokens(){
+        if(!tokensEl)return;
+        tokensEl.innerHTML='';
+        players.forEach((p,i)=>{
+            const el=document.createElement('div');
+            el.className='jackpot-player-token'+(p.isUser?' me':'');
+            el.innerHTML=p.avatarHtml || (p.name?p.name[0]:'?');
+            const label=document.createElement('div');
+            label.className='jackpot-token-name';
+            label.textContent=p.isUser?'Вы':p.name;
+            el.appendChild(label);
+            tokensEl.appendChild(el);
+            if(!tokenMotion.has(p)){
+                const a=Math.random()*Math.PI*2;
+                tokenMotion.set(p,{x:15+Math.random()*70,y:15+Math.random()*70,vx:(Math.random()>.5?1:-1)*(0.08+Math.random()*.12),vy:(Math.random()>.5?1:-1)*(0.07+Math.random()*.11),el});
+            }else tokenMotion.get(p).el=el;
+        });
+        for(const p of Array.from(tokenMotion.keys()))if(!players.includes(p))tokenMotion.delete(p);
+        moveTokens();
+    }
+    function moveTokens(){
+        if(tokenRafId)cancelAnimationFrame(tokenRafId);
+        const step=()=>{
+            if(!players.length){tokenRafId=null;return;}
+            tokenMotion.forEach(m=>{
+                m.x+=m.vx; m.y+=m.vy;
+                if(m.x>90||m.x<10){m.vx*=-1;m.x=Math.max(10,Math.min(90,m.x));}
+                if(m.y>88||m.y<12){m.vy*=-1;m.y=Math.max(12,Math.min(88,m.y));}
+                m.el.style.left=m.x+'%';m.el.style.top=m.y+'%';
+            });
+            tokenRafId=requestAnimationFrame(step);
+        };
+        tokenRafId=requestAnimationFrame(step);
+    }
+    function stopTokens(){if(tokenRafId)cancelAnimationFrame(tokenRafId);tokenRafId=null;tokenMotion.clear();}
+
+    // Поле всегда остаётся квадратным с сеткой. До первой ставки показываем ожидание.
     function renderWheel(){
-        const pot=potTotal();
-        wheelEl.innerHTML='';
-        wheelEl.style.background='';
-        playersPanelEl.classList.toggle('active', players.length>0);
-
+        wheelEl.style.backgroundColor='#1c1c1e';
+        wheelEl.style.backgroundImage='linear-gradient(to right,rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.07) 1px,transparent 1px)';
+        wheelEl.style.backgroundSize='12.5% 12.5%';
         if(players.length===0){
-            wheelWrapEl.classList.add('waiting-grid');
-            wheelWrapEl.classList.remove('active-green');
             emptyStateEl.style.display='flex';
+            plusMarker.classList.remove('show');
             return;
         }
-
         emptyStateEl.style.display='none';
-        wheelWrapEl.classList.remove('waiting-grid');
-        wheelWrapEl.classList.add('active-green');
+        plusMarker.classList.add('show');
+    }
 
-        // Сектора: размер каждого сектора равен доле ставки игрока.
-        // При одинаковых двух ставках получается ровно 50/50.
-        let angle=0;
-        const sectorColors=['#247f61','#2b8b6b','#207357','#319777','#1d6b50','#3aa27e'];
-        const stops=[];
-        players.forEach((p,i)=>{
-            const size=pot>0 ? (p.amount/pot)*360 : 0;
-            const next=angle+size;
-            stops.push(`${sectorColors[i%sectorColors.length]} ${angle}deg ${next}deg`);
-            p._startAngle=angle;
-            p._endAngle=next;
-            angle=next;
-        });
-        wheelEl.style.background=`conic-gradient(from -90deg, ${stops.join(', ')})`;
-
-        // Показываем всех игроков на самом поле.
-        // Первый игрок — по центру. Остальные располагаются вокруг него.
-        if(players.length===1){
-            const p=players[0];
-            const av=document.createElement('div');
-            av.className='jackpot-avatar';
-            av.style.left='50%';
-            av.style.top='50%';
-            av.style.zIndex='4';
-            av.innerHTML=p.avatarHtml;
-            wheelEl.appendChild(av);
-            return;
-        }
-
-        players.forEach((p,i)=>{
-            const av=document.createElement('div');
-            av.className='jackpot-avatar';
-            const centerAngle=(p._startAngle+p._endAngle)/2;
-            const rad=centerAngle*Math.PI/180;
-            // При двух игроках аватары находятся в своих половинах.
-            const r=players.length===2 ? 23 : 30;
-            av.style.left=(50+Math.sin(rad)*r)+'%';
-            av.style.top=(50-Math.cos(rad)*r)+'%';
-            av.style.zIndex='4';
-            av.innerHTML=p.avatarHtml;
-            wheelEl.appendChild(av);
-        });
+    let ballRafId=null;
+    let ballX=8, ballY=12, ballVX=0.34, ballVY=0.27;
+    function moveBall(){
+        if(ballRafId)cancelAnimationFrame(ballRafId);
+        const step=()=>{
+            if(!players.length){ballRafId=null;return;}
+            ballX+=ballVX; ballY+=ballVY;
+            const min=5, max=95;
+            if(ballX>=max){ballX=max;ballVX=-Math.abs(ballVX);}
+            if(ballX<=min){ballX=min;ballVX=Math.abs(ballVX);}
+            if(ballY>=max){ballY=max;ballVY=-Math.abs(ballVY);}
+            if(ballY<=min){ballY=min;ballVY=Math.abs(ballVY);}
+            plusMarker.style.left=ballX+'%';
+            plusMarker.style.top=ballY+'%';
+            ballRafId=requestAnimationFrame(step);
+        };
+        ballRafId=requestAnimationFrame(step);
+    }
+    function stopBall(){
+        if(ballRafId)cancelAnimationFrame(ballRafId);
+        ballRafId=null;
     }
 
     function addPlayer(name,avatarHtml,amount,isUser){
@@ -1021,6 +1039,7 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
         renderPot();
         renderWheel();
         renderPlayersList();
+        renderPlayerTokens();
         maybeStartCountdown();
     }
 
@@ -1032,11 +1051,18 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
         renderBalance();
         closeAmtSheet();
         addPlayer(myName,myAvatarHtml,amount,true);
+        userBetEl.textContent=amount;
+        gameHashEl.textContent=gameHash;
+        gameInfoEl.classList.add('show');
+        wheelWrapEl.classList.add('show');
+        plusMarker.classList.add('show','flying');
+        // После ставки начинаем добавлять остальных игроков в поле.
+        scheduleFakeJoins();
         setBettingEnabled(false);
     }
 
     function maybeStartCountdown(){
-        if(phase==='waiting'&&players.length>=2){
+        if(phase==='waiting'&&players.length>=1){
             phase='countdown';
             countdownRemaining=COUNTDOWN_SECONDS;
             timerEl.style.display='block';
@@ -1075,6 +1101,7 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
         plusMarker.style.transition='none';
         plusMarker.style.left='50%';
         plusMarker.style.top='50%';
+        plusMarker.classList.remove('flying');
         plusMarker.classList.add('show');
         void plusMarker.offsetWidth; // форсируем reflow, чтобы transition сработал заново
         plusMarker.style.transition='left 2.8s cubic-bezier(.15,.7,.2,1),top 2.8s cubic-bezier(.15,.7,.2,1)';
@@ -1105,13 +1132,18 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
 
     function resetRound(){
         winnerBannerEl.classList.remove('show');
-        gameHashEl.textContent='Хэш игры: '+Math.random().toString(16).slice(2,6)+'...'+Math.random().toString(16).slice(2,6);
         players=[];
         userJoined=false;
         roundId++;
         roundIdEl.textContent='Игра #'+roundId;
-        plusMarker.classList.remove('show');
+        gameHash=randomGameHash();
+        userBetEl.textContent='0';
+        gameHashEl.textContent='—';
+        gameInfoEl.classList.remove('show');
+        plusMarker.classList.remove('show','flying');
         plusMarker.style.transition='none';
+        wheelWrapEl.classList.add('show');
+        emptyStateEl.style.display='flex';
         plusMarker.style.left='50%';
         plusMarker.style.top='50%';
         renderPot();
@@ -1123,18 +1155,19 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
     }
 
     function scheduleFakeJoins(){
+        if(!userJoined)return;
         let count=0;
         const maxFakes=4;
         fakeJoinTimerId=setInterval(()=>{
-            if(phase!=='waiting'&&phase!=='countdown'){clearInterval(fakeJoinTimerId);return;}
-            if(count>=maxFakes){clearInterval(fakeJoinTimerId);return;}
+            if(!userJoined || (phase!=='waiting'&&phase!=='countdown')){clearInterval(fakeJoinTimerId);fakeJoinTimerId=null;return;}
+            if(count>=maxFakes){clearInterval(fakeJoinTimerId);fakeJoinTimerId=null;return;}
             if(Math.random()<0.6){
                 const name=FAKE_NAMES[Math.floor(Math.random()*FAKE_NAMES.length)];
                 const amount=Math.round(Math.random()*90+10);
                 addPlayer(name,name[0],amount,false);
                 count++;
             }
-        },2200);
+        },1800);
     }
 
     quickBtns.forEach(b=>{
@@ -1166,6 +1199,8 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
         running=false;
         if(countdownTimerId)clearInterval(countdownTimerId);
         if(fakeJoinTimerId)clearInterval(fakeJoinTimerId);
+        stopBall();
+        stopTokens();
         closeAmtSheet();
     };
 })();
