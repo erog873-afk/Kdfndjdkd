@@ -1008,8 +1008,10 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
             av.className='jackpot-avatar';
             const centerAngle=(p._startAngle+p._endAngle)/2;
             const rad=centerAngle*Math.PI/180;
-            // При двух игроках аватары находятся в своих половинах.
-            const r=players.length===2 ? 23 : 30;
+            // Аватар всегда находится в центре своего цветного сектора.
+            // Радиус 30% от центра поля даёт одинаковое положение
+            // внутри каждого кусочка, независимо от количества игроков.
+            const r=30;
             av.style.left=(50+Math.sin(rad)*r)+'%';
             av.style.top=(50-Math.cos(rad)*r)+'%';
             av.style.zIndex='4';
@@ -1021,20 +1023,14 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
     }
 
     // У каждого игрока свой случайный цвет, без повторов в текущем раунде.
-    // Каждый игрок получает свой случайный цвет.
-    // Зелёные оттенки исключены, чтобы они не совпадали с цветом фона.
     function randomPlayerColor(){
         const used=players.map(p=>p.color).filter(Boolean);
-        const allowedHues=[0,15,30,45,55,70,185,205,220,240,260,280,300,320,340];
         for(let i=0;i<100;i++){
-            const hue=allowedHues[Math.floor(Math.random()*allowedHues.length)];
-            const color=`hsl(${hue} 78% 55%)`;
+            const hue=Math.floor(Math.random()*360);
+            const color=`hsl(${hue} 72% 52%)`;
             if(!used.includes(color)) return color;
         }
-        // Если цветов много, используем тот же принцип с небольшим сдвигом.
-        let hue=(players.length*47)%360;
-        if(hue>75 && hue<175) hue=(hue+110)%360;
-        return `hsl(${hue} 78% 55%)`;
+        return `hsl(${(players.length*137.508)%360} 72% 52%)`;
     }
 
     function addPlayer(name,avatarHtml,amount,isUser){
