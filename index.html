@@ -972,46 +972,40 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
         wheelWrapEl.classList.remove('waiting-grid');
         wheelWrapEl.classList.add('active-green');
 
-        // Сектора: размер каждого сектора равен доле ставки игрока.
-        // При одинаковых двух ставках получается ровно 50/50.
+        // Каждая ставка получает СВОЙ сектор. Размер сектора строго
+        // соответствует доле ставки, а аватарка ставится в центр этого сектора.
         let angle=0;
-        const sectorColors=['#247f61','#2b8b6b','#207357','#319777','#1d6b50','#3aa27e'];
         const stops=[];
-        players.forEach((p,i)=>{
+        players.forEach(p=>{
             const size=pot>0 ? (p.amount/pot)*360 : 0;
             const next=angle+size;
             stops.push(`${p.color} ${angle}deg ${next}deg`);
             p._startAngle=angle;
             p._endAngle=next;
+            p._sizeAngle=size;
             angle=next;
         });
         wheelEl.style.background=`conic-gradient(from -90deg, ${stops.join(', ')})`;
 
-        // Показываем всех игроков на самом поле.
-        // Первый игрок — по центру. Остальные располагаются вокруг него.
-        if(players.length===1){
-            const p=players[0];
+        // Аватарка КАЖДОГО игрока находится только внутри его сектора.
+        // Позиция вычисляется от центра именно его сектора, поэтому
+        // аватарки не разбросаны по полю и не попадают в чужие сектора.
+        players.forEach((p)=>{
             const av=document.createElement('div');
             av.className='jackpot-avatar';
-            av.style.left='50%';
-            av.style.top='50%';
-            av.style.zIndex='4';
-            av.style.background=p.color;
-            av.style.borderColor=p.color;
-            av.innerHTML=p.avatarHtml;
-            wheelEl.appendChild(av);
-            return;
-        }
 
-        players.forEach((p,i)=>{
-            const av=document.createElement('div');
-            av.className='jackpot-avatar';
-            const centerAngle=(p._startAngle+p._endAngle)/2;
+            const centerAngle=p._startAngle + p._sizeAngle/2;
             const rad=centerAngle*Math.PI/180;
-            // При двух игроках аватары находятся в своих половинах.
-            const r=players.length===2 ? 24 : (players.length===3 ? 27 : 30);
-            av.style.left=(50+Math.sin(rad)*r)+'%';
-            av.style.top=(50-Math.cos(rad)*r)+'%';
+
+            // 30% от размера поля от центра — визуальный центр сектора.
+            // Для маленьких долей немного приближаем к центру, чтобы аватарка
+            // гарантированно оставалась внутри своего кусочка.
+            const r=Math.max(15, Math.min(30, p._sizeAngle/12));
+            const x=50 + Math.sin(rad)*r;
+            const y=50 - Math.cos(rad)*r;
+
+            av.style.left=x+'%';
+            av.style.top=y+'%';
             av.style.zIndex='4';
             av.style.background=p.color;
             av.style.borderColor=p.color;
