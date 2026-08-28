@@ -125,17 +125,16 @@ p{font-size:large}
 
 /* ===== JACKPOT SCREEN ===== */
 .jackpot-screen{display:none;position:fixed;inset:0;background:#000;z-index:2100;overflow:hidden;box-sizing:border-box;opacity:0;transition:opacity .3s ease}
-.jackpot-screen.active{display:flex;flex-direction:column;opacity:1;padding-top:8px}
+.jackpot-screen.active{display:flex;flex-direction:column;opacity:1}
 
-.jackpot-topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top))}
+.jackpot-topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top))}
 .jackpot-topbar-btn{width:48px;height:48px;border-radius:16px;background:#2c2c2e;border:none;color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s ease}
 .jackpot-topbar-btn:active{transform:scale(.92);background:#3a3a3d}
 .jackpot-topbar-btn svg{width:24px;height:24px;fill:#fff}
 .jackpot-total-pill{flex:1;background:#1c1c1e;border-radius:20px;padding:14px 20px;text-align:center;font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s ease}
 .jackpot-total-pill .star-icon{width:24px;height:24px}
 
-.jackpot-field-wrap{flex-shrink:0;height:300px;margin:0 16px;border-radius:28px;overflow:hidden;position:relative;transition:height .35s cubic-bezier(.4,0,.2,1),transform .3s ease}
-.jackpot-screen.has-players .jackpot-field-wrap{height:220px}
+.jackpot-field-wrap{flex-shrink:0;height:316px;margin:0 16px;border-radius:28px;overflow:hidden;position:relative}
 .jackpot-field{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
 .jackpot-field-bg{position:absolute;inset:0;background:#1c1c1e;border-radius:28px;transition:background .5s ease}
 .jackpot-field-bg.grid-bg{background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:38px 38px;background-position:center center}
@@ -166,8 +165,8 @@ p{font-size:large}
 @keyframes avatarAppear{from{opacity:0;transform:translate(-50%,-50%) scale(0)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 
 /* Панель игроков — скрыта по умолчанию, показывается только когда есть игроки */
-.jackpot-info-panel{background:#1c1c1e;border-radius:24px 24px 0 0;margin:12px 16px 0;padding:16px;flex:1;overflow-y:auto;min-height:0;transition:all .35s ease;opacity:0;transform:translateY(20px);pointer-events:none}
-.jackpot-info-panel.show{opacity:1;transform:translateY(0);pointer-events:auto}
+.jackpot-info-panel{display:none;background:#1c1c1e;border-radius:24px;margin:12px 16px 0;padding:16px;flex:0 0 auto;max-height:42vh;overflow-y:auto;min-height:0}
+.jackpot-info-panel.show{display:block}
 .jackpot-info-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .jackpot-info-header span:first-child{color:#8e8e93;font-size:16px;font-weight:700}
 .jackpot-info-header span:last-child{color:#8e8e93;font-size:16px;font-weight:700}
@@ -190,9 +189,7 @@ p{font-size:large}
 .jackpot-winner-banner{display:none;text-align:center;background:linear-gradient(135deg,#30d158,#1a9a3a);color:#fff;border-radius:20px;padding:16px;font-weight:800;font-size:18px;margin-bottom:14px;opacity:0;transform:translateY(-10px);transition:all .4s ease}
 .jackpot-winner-banner.show{display:block;opacity:1;transform:translateY(0)}
 
-.jackpot-hash{text-align:center;color:#5c5c5e;font-size:13px;padding:8px 0 5px;flex-shrink:0;transition:margin .3s ease}
-.jackpot-screen:not(.has-players) .jackpot-hash{margin-top:2px}
-.jackpot-screen.has-players .jackpot-hash{margin-top:0}
+.jackpot-hash{text-align:center;color:#5c5c5e;font-size:13px;padding:12px 0 8px;flex-shrink:0}
 
 .jackpot-bottom-wrap{background:#000;padding:12px 16px calc(16px + env(safe-area-inset-bottom));box-sizing:border-box;z-index:2200;flex-shrink:0;transition:transform .3s ease,opacity .3s ease}
 .jackpot-bottom-wrap.hidden{transform:translateY(100%);opacity:0;pointer-events:none}
@@ -1084,7 +1081,6 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
 
     function renderWheel(){
         const pot=potTotal();
-        jackpotScreen.classList.toggle('has-players',players.length>0);
         if(players.length===0){
             // Нет игроков — показываем "Ожидание", скрываем панель игроков
             emptyStateEl.classList.remove('hidden');
