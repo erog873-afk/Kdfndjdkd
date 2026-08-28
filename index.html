@@ -997,10 +997,15 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
             const centerAngle=p._startAngle + p._sizeAngle/2;
             const rad=centerAngle*Math.PI/180;
 
-            // 30% от размера поля от центра — визуальный центр сектора.
-            // Для маленьких долей немного приближаем к центру, чтобы аватарка
-            // гарантированно оставалась внутри своего кусочка.
-            const r=Math.max(15, Math.min(30, p._sizeAngle/12));
+            // Настоящий центр площади сектора (центроид), а не фиксированная
+            // точка от центра всего поля. Поэтому аватарка всегда находится
+            // внутри ИМЕННО своего сектора и перемещается вместе с его размером.
+            const theta=p._sizeAngle*Math.PI/180;
+            let r=0;
+            if(theta > 0.01 && theta < Math.PI*2-0.01){
+                r=(4*Math.sin(theta/2)/(3*theta))*50;
+            }
+            r=Math.max(0, Math.min(44, r));
             const x=50 + Math.sin(rad)*r;
             const y=50 - Math.cos(rad)*r;
 
