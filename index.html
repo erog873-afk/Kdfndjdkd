@@ -134,6 +134,7 @@ p{font-size:large}
 .jackpot-plus-marker.flying{animation:jackpotBallFly 5.5s ease-in-out infinite, jackpotBallPulse .65s ease-in-out infinite alternate}.jackpot-player-token{position:absolute;width:34px;height:34px;border-radius:50%;overflow:hidden;transform:translate(-50%,-50%);background:#3a3a3d;border:2px solid rgba(255,255,255,.9);box-shadow:0 2px 12px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:800;z-index:6;transition:left .15s linear,top .15s linear}.jackpot-player-token img{width:100%;height:100%;object-fit:cover}.jackpot-player-token.me{width:38px;height:38px;border-width:3px}.jackpot-token-name{position:absolute;left:50%;top:calc(100% + 5px);transform:translateX(-50%);font-size:10px;font-weight:700;color:#fff;white-space:nowrap;text-shadow:0 1px 4px #000;pointer-events:none}
 @keyframes jackpotBallFly{0%{left:8%;top:50%}25%{left:50%;top:8%}50%{left:92%;top:50%}75%{left:50%;top:92%}100%{left:8%;top:50%}}
 @keyframes jackpotBallPulse{from{box-shadow:0 0 0 4px rgba(255,255,255,.08),0 0 10px rgba(255,255,255,.35)}to{box-shadow:0 0 0 7px rgba(255,255,255,.12),0 0 22px rgba(255,255,255,.8)}}
+.jackpot-game-info{display:none;text-align:center;margin:12px 0 0;color:rgba(255,255,255,.45);font-size:13px;line-height:1.8}.jackpot-game-info.show{display:block}.jackpot-game-info b{color:rgba(255,255,255,.72);font-weight:600}.jackpot-bet-info{font-size:14px;color:rgba(255,255,255,.62)}
 .jackpot-players-panel{display:none;background:#ffffff0d;border-radius:26px;padding:16px}
 .jackpot-players-header{display:flex;justify-content:space-between;color:#8e8e93;font-size:13.5px;font-weight:700;margin-bottom:10px}
 .jackpot-player-row{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid #ffffff0f}
@@ -293,9 +294,9 @@ p{font-size:large}
             <div class="jackpot-timer" id="jackpotTimer" style="display:none">20</div>
             <div class="jackpot-plus-marker" id="jackpotPlusMarker">+</div>
         </div>
-        <div class="jackpot-players-panel">
-            <div class="jackpot-players-header"><span>Игроки</span><span id="jackpotRoundId">Игра #1</span></div>
-            <div id="jackpotPlayersList"></div>
+        <div class="jackpot-game-info" id="jackpotGameInfo">
+            <div class="jackpot-bet-info">Ставка: <b id="jackpotUserBet">0</b> ⭐</div>
+            <div class="jackpot-hash-info">Хэш игры: <b id="jackpotGameHash">—</b></div>
         </div>
     </div>
     <div id="page-profile" class="page-section" data-page="Профиль" style="padding-bottom:100px">
@@ -879,6 +880,9 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
     const playersListEl=document.getElementById('jackpotPlayersList');
     const roundIdEl=document.getElementById('jackpotRoundId');
     const winnerBannerEl=document.getElementById('jackpotWinnerBanner');
+    const gameInfoEl=document.getElementById('jackpotGameInfo');
+    const userBetEl=document.getElementById('jackpotUserBet');
+    const gameHashEl=document.getElementById('jackpotGameHash');
     const quickBtns=[document.getElementById('jackpotQuick100'),document.getElementById('jackpotQuick500'),document.getElementById('jackpotQuick1000')];
     const customBtn=document.getElementById('jackpotCustomBtn');
     const amtSheet=document.getElementById('jackpotAmtSheet');
@@ -905,6 +909,14 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
     let countdownTimerId=null;
     let fakeJoinTimerId=null;
     let roundId=Math.floor(Math.random()*90000)+10000;
+    let gameHash=randomGameHash();
+
+    function randomGameHash(){
+        const chars='0123456789abcdef';
+        let h='';
+        for(let i=0;i<24;i++)h+=chars[Math.floor(Math.random()*chars.length)];
+        return h.slice(0,4)+'...'+h.slice(-4);
+    }
     let running=false;
     let userJoined=false;
 
@@ -1039,6 +1051,9 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
         renderBalance();
         closeAmtSheet();
         addPlayer(myName,myAvatarHtml,amount,true);
+        userBetEl.textContent=amount;
+        gameHashEl.textContent=gameHash;
+        gameInfoEl.classList.add('show');
         wheelWrapEl.classList.add('show');
         plusMarker.classList.add('show','flying');
         // После ставки начинаем добавлять остальных игроков в поле.
@@ -1121,6 +1136,10 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
         userJoined=false;
         roundId++;
         roundIdEl.textContent='Игра #'+roundId;
+        gameHash=randomGameHash();
+        userBetEl.textContent='0';
+        gameHashEl.textContent='—';
+        gameInfoEl.classList.remove('show');
         plusMarker.classList.remove('show','flying');
         plusMarker.style.transition='none';
         wheelWrapEl.classList.add('show');
