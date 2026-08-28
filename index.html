@@ -2,21 +2,20 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-<title>Frog Crash</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Frog Case — Arena</title>
 
 <style>
 :root{
-  --bg:#050607;
-  --panel:#121314;
-  --panel2:#242425;
+  --bg:#050507;
+  --panel:#1b1a1f;
+  --panel2:#242329;
   --text:#f5f5f7;
-  --muted:#858589;
-  --green:#38e07b;
-  --red:#ff4d5e;
-  --purple:#7657ff;
-  --purple2:#9a80ff;
+  --muted:#8e8c96;
+  --green:#35d07f;
+  --yellow:#ffd34d;
+  --red:#ff6262;
+  --blue:#4d7cff;
 }
 
 *{
@@ -29,822 +28,465 @@ html,body{
   width:100%;
   height:100%;
   overflow:hidden;
-  background:#000;
+  background:var(--bg);
   color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
 }
 
-button{
-  font:inherit;
+body{
+  user-select:none;
 }
 
 #app{
-  position:relative;
   width:100%;
   height:100dvh;
+  display:flex;
+  flex-direction:column;
   overflow:hidden;
-  background:
-    radial-gradient(
-      circle at 50% 50%,
-      rgba(35,90,30,.14),
-      transparent 25%
-    ),
-    #000;
 }
 
-/* =========================
-   STARS
-========================= */
+/* HEADER */
 
-#stars{
-  position:absolute;
-  inset:0;
-  overflow:hidden;
-  pointer-events:none;
-}
-
-.star{
-  position:absolute;
-  width:2px;
-  height:2px;
-  border-radius:50%;
-  background:#fff;
-  opacity:.2;
-  animation:twinkle var(--duration) infinite ease-in-out;
-}
-
-@keyframes twinkle{
-  0%,100%{
-    opacity:.1;
-    transform:scale(1);
-  }
-
-  50%{
-    opacity:.8;
-    transform:scale(1.5);
-  }
-}
-
-/* =========================
-   TOP
-========================= */
-
-.top{
-  position:relative;
-  z-index:5;
-
-  height:72px;
-
+header{
+  height:76px;
+  padding:12px 16px;
   display:flex;
   align-items:center;
-  justify-content:center;
-
-  padding:0 16px;
-}
-
-.game-title{
-  display:flex;
-  align-items:center;
-  gap:8px;
-
-  font-size:18px;
-  font-weight:750;
-}
-
-.frog{
-  width:27px;
-  height:27px;
-
-  border-radius:50%;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  background:#20212a;
-
-  font-size:15px;
+  justify-content:space-between;
+  flex-shrink:0;
 }
 
 .back{
-  position:absolute;
-  left:16px;
-
   border:0;
-  background:none;
-
-  color:white;
+  background:#111115;
+  color:#fff;
+  border-radius:20px;
+  padding:11px 16px;
   font-size:15px;
-  font-weight:600;
+  font-weight:700;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-size:19px;
+  font-weight:800;
+}
+
+.logoIcon{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#45c95e;
+  font-size:22px;
 }
 
 .menu{
-  position:absolute;
-  right:16px;
-
+  width:42px;
+  height:42px;
+  border-radius:50%;
   border:0;
-  background:none;
-
-  color:white;
-
-  font-size:26px;
+  background:#111115;
+  color:#fff;
+  font-size:25px;
 }
 
-/* =========================
-   BALANCE
-========================= */
+/* TOP */
 
-.balance-bar{
-  position:relative;
-  z-index:5;
+.top{
+  padding:0 14px 12px;
+  flex-shrink:0;
+}
 
+.topLine{
   display:flex;
   align-items:center;
-
-  padding:0 14px;
+  gap:8px;
 }
 
 .live{
-  color:#ff5664;
-
-  font-size:11px;
-  font-weight:900;
-
   writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  font-weight:900;
+  font-size:13px;
+  color:#fff;
+  margin-right:4px;
+}
 
-  letter-spacing:1px;
+.category{
+  height:52px;
+  min-width:52px;
+  padding:0 13px;
+  border-radius:18px;
+  background:#222127;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
 }
 
 .balance{
   margin-left:auto;
-
+  height:52px;
+  padding:0 16px;
+  border-radius:18px;
+  background:#5a5960;
   display:flex;
   align-items:center;
-  gap:7px;
+  gap:8px;
+  font-weight:800;
+  font-size:17px;
+}
 
-  padding:9px 15px;
+.coin{
+  font-size:22px;
+}
 
+/* TOTAL */
+
+.total{
+  margin-top:12px;
+  height:72px;
   border-radius:22px;
-
-  background:#1c1d22;
-
-  font-size:14px;
-  font-weight:750;
-}
-
-.star-icon{
-  width:16px;
-  height:16px;
-  display:block;
-}
-
-.plus{
-  width:20px;
-  height:20px;
-
-  border-radius:50%;
-
+  background:#1b1a1f;
   display:flex;
   align-items:center;
   justify-content:center;
-
-  background:#fff;
-  color:#000;
-
-  font-size:15px;
+  gap:8px;
+  font-size:20px;
   font-weight:800;
 }
 
-/* =========================
-   GAME
-========================= */
+.total span{
+  color:var(--yellow);
+  font-size:24px;
+}
 
-.game{
-  position:absolute;
-  z-index:2;
+/* ARENA */
 
-  left:0;
-  right:0;
-
-  top:120px;
-  bottom:280px;
-
+.arenaWrap{
+  flex:1;
+  min-height:0;
+  padding:0 14px 10px;
   display:flex;
   flex-direction:column;
-
-  align-items:center;
-  justify-content:center;
 }
 
-.multiplier{
-  font-size:min(24vw,100px);
-
-  line-height:1;
-
-  font-weight:850;
-
-  letter-spacing:-4px;
-
-  transition:.2s;
-}
-
-.multiplier.running{
-  color:#fff;
-}
-
-.multiplier.crashed{
-  color:var(--red);
-
-  transform:scale(1.04);
-}
-
-.status{
-  margin-top:8px;
-
-  color:var(--muted);
-
-  font-size:13px;
-  font-weight:650;
-}
-
-/* =========================
-   HISTORY
-========================= */
-
-.history{
-  position:absolute;
-
-  z-index:5;
-
-  left:0;
-  right:0;
-  bottom:226px;
-
-  display:flex;
-
-  gap:8px;
-
-  padding:0 14px 10px;
-
-  overflow-x:auto;
-
-  scrollbar-width:none;
-}
-
-.history::-webkit-scrollbar{
-  display:none;
-}
-
-.history-item{
-  flex-shrink:0;
-
-  min-width:92px;
-
-  padding:12px 16px;
-
-  text-align:center;
-
-  border-radius:14px;
-
-  background:
-    linear-gradient(
-      135deg,
-      var(--purple),
-      var(--purple2)
-    );
-
-  font-weight:800;
-}
-
-.history-item.low{
-  background:#27282d;
-  color:#a4a5ab;
-}
-
-/* =========================
-   BETS
-========================= */
-
-.bets{
-  position:absolute;
-
-  z-index:5;
-
-  left:8px;
-  right:8px;
-  bottom:72px;
-
-  height:150px;
-
+.arena{
+  position:relative;
+  flex:1;
+  min-height:280px;
   overflow:hidden;
-
-  padding:15px;
-
-  border-radius:20px 20px 0 0;
-
-  background:#121314;
+  border-radius:30px;
+  background:
+    linear-gradient(135deg,#202126,#15161a);
+  border:1px solid rgba(255,255,255,.035);
 }
 
-.bets-header{
-  display:flex;
-  justify-content:space-between;
+/* GRID */
 
-  color:var(--muted);
-
-  font-size:13px;
-  font-weight:600;
-
-  margin-bottom:7px;
+.arena:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  opacity:.25;
+  background-image:
+    linear-gradient(rgba(255,255,255,.09) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.09) 1px,transparent 1px);
+  background-size:74px 74px;
 }
 
-.empty{
+/* CENTER */
+
+.center{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
   text-align:center;
+  z-index:10;
+}
 
-  padding:30px 10px;
+.state{
+  font-size:28px;
+  font-weight:900;
+  white-space:nowrap;
+}
 
+.timer{
+  margin-top:8px;
+  font-size:16px;
   color:var(--muted);
-
-  font-size:14px;
+  font-weight:700;
 }
 
-.bet{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-
-  padding:7px 0;
+.hash{
+  position:absolute;
+  left:50%;
+  bottom:-30px;
+  transform:translateX(-50%);
+  width:100%;
+  text-align:center;
+  color:#77757d;
+  font-size:12px;
 }
 
-.bet-left{
-  display:flex;
-  align-items:center;
-  gap:9px;
+/* PLAYERS */
+
+.player{
+  position:absolute;
+  width:70px;
+  text-align:center;
+  z-index:5;
+  transition:
+    left .5s ease,
+    top .5s ease,
+    transform .5s ease;
 }
 
 .avatar{
-  width:34px;
-  height:34px;
-
-  border-radius:50%;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  color:white;
-
-  font-weight:800;
-}
-
-.bet-name{
-  font-size:14px;
-  font-weight:700;
-}
-
-.bet-money{
-  color:#ffc94d;
-
-  font-size:12px;
-  font-weight:700;
-}
-
-.bet-coef{
-  color:var(--muted);
-
-  font-weight:800;
-}
-
-.bet-coef.win{
-  color:var(--green);
-}
-
-.bet-coef.lost{
-  color:var(--red);
-}
-
-/* =========================
-   BOTTOM
-========================= */
-
-.bottom{
-  position:absolute;
-
-  z-index:10;
-
-  left:0;
-  right:0;
-  bottom:0;
-
-  padding:
-    10px
-    14px
-    calc(14px + env(safe-area-inset-bottom));
-
-  background:#050607;
-}
-
-.main-button{
-  width:100%;
-
-  height:58px;
-
-  border:0;
-
-  border-radius:17px;
-
-  background:white;
-  color:#050505;
-
-  font-size:17px;
-  font-weight:850;
-
-  transition:.15s;
-}
-
-.main-button:active{
-  transform:scale(.98);
-}
-
-.main-button.cashout{
-  background:#38e07b;
-}
-
-/* =========================
-   MODAL
-========================= */
-
-.modal{
-  position:fixed;
-
-  z-index:100;
-
-  inset:0;
-
-  display:none;
-
-  align-items:flex-end;
-
-  background:rgba(0,0,0,.68);
-
-  backdrop-filter:blur(8px);
-}
-
-.modal.show{
-  display:flex;
-}
-
-.modal-box{
-  width:100%;
-
-  padding:
-    28px
-    28px
-    calc(28px + env(safe-area-inset-bottom));
-
-  border-radius:30px 30px 0 0;
-
-  background:
-    linear-gradient(
-      180deg,
-      #202021,
-      #1b1b1c
-    );
-
-  box-shadow:
-    0 -10px 40px rgba(0,0,0,.45);
-
-  animation:modalUp .22s ease-out;
-}
-
-@keyframes modalUp{
-  from{
-    transform:translateY(100%);
-  }
-
-  to{
-    transform:translateY(0);
-  }
-}
-
-.modal-title{
-  position:relative;
-
-  text-align:center;
-
-  font-size:26px;
-  font-weight:800;
-
-  margin-bottom:55px;
-}
-
-.close{
-  position:absolute;
-
-  top:4px;
-  right:0;
-
-  width:38px;
-  height:38px;
-
-  border:0;
-
-  border-radius:50%;
-
-  background:none;
-
-  color:#aaa;
-
-  font-size:36px;
-  font-weight:300;
-
-  line-height:30px;
-}
-
-/* =========================
-   AMOUNT
-========================= */
-
-.amount{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  gap:10px;
-
-  margin-bottom:30px;
-}
-
-.amount-number{
-  font-size:64px;
-
-  font-weight:800;
-
-  line-height:1;
-}
-
-.star-big{
-  width:46px;
-  height:46px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.star-big svg{
-  width:44px;
-  height:44px;
-}
-
-/* =========================
-   QUICK
-========================= */
-
-.quick{
-  display:grid;
-
-  grid-template-columns:
-    repeat(3,1fr);
-
-  gap:12px;
-}
-
-.quick button{
-  height:60px;
-
-  border:0;
-
-  border-radius:18px;
-
-  background:#505052;
-
-  color:#fff;
-
-  font-size:17px;
-  font-weight:650;
-}
-
-.quick button:active{
-  transform:scale(.97);
-}
-
-.min-label{
-  text-align:center;
-
-  color:#858589;
-
-  font-size:15px;
-
-  margin-top:17px;
-}
-
-/* =========================
-   AUTO
-========================= */
-
-.auto{
-  display:flex;
-
-  align-items:center;
-  justify-content:space-between;
-
-  margin-top:72px;
-
-  gap:15px;
-}
-
-.auto-left{
-  display:flex;
-  align-items:center;
-  gap:14px;
-
-  font-size:17px;
-}
-
-.checkbox{
-  position:relative;
-
   width:56px;
   height:56px;
-
-  border:3px solid white;
-
-  border-radius:18px;
-
-  cursor:pointer;
+  margin:auto;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
+  background:#33343a;
+  border:3px solid rgba(255,255,255,.15);
+  box-shadow:0 4px 18px rgba(0,0,0,.4);
 }
 
-.checkbox.active{
-  background:white;
+.playerName{
+  margin-top:5px;
+  font-size:11px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
-.checkbox.active::after{
-  content:"✓";
+.playerAmount{
+  color:var(--yellow);
+  font-size:10px;
+  font-weight:800;
+  margin-top:2px;
+}
 
+/* PLUS */
+
+.plus{
   position:absolute;
+  width:62px;
+  height:62px;
+  border-radius:50%;
+  z-index:30;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#fff;
+  color:#222;
+  font-size:36px;
+  font-weight:300;
+  box-shadow:
+    0 0 0 7px rgba(255,255,255,.14),
+    0 0 35px rgba(255,255,255,.65);
+  opacity:0;
+  transform:scale(.4);
+  pointer-events:none;
+}
 
+.plus.show{
+  opacity:1;
+  transform:scale(1);
+  transition:transform .3s ease;
+}
+
+.plus.win{
+  animation:winPulse .8s ease infinite alternate;
+}
+
+@keyframes winPulse{
+  from{
+    box-shadow:
+      0 0 0 7px rgba(255,255,255,.14),
+      0 0 30px rgba(255,255,255,.5);
+  }
+  to{
+    box-shadow:
+      0 0 0 13px rgba(255,255,255,.18),
+      0 0 65px rgba(255,255,255,.95);
+  }
+}
+
+/* WINNER */
+
+.winnerBox{
+  position:absolute;
   left:50%;
   top:50%;
+  transform:translate(-50%,-50%) scale(.8);
+  z-index:50;
+  background:rgba(20,20,23,.94);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:22px;
+  padding:16px 24px;
+  text-align:center;
+  opacity:0;
+  pointer-events:none;
+  transition:.35s ease;
+}
 
-  transform:translate(-50%,-53%);
+.winnerBox.show{
+  opacity:1;
+  transform:translate(-50%,-50%) scale(1);
+}
 
-  color:#111;
+.winnerTitle{
+  font-size:13px;
+  color:var(--muted);
+  font-weight:700;
+}
 
-  font-size:30px;
+.winnerName{
+  margin-top:3px;
+  font-size:24px;
   font-weight:900;
 }
 
-.auto-control{
+.winnerAmount{
+  color:var(--green);
+  font-size:16px;
+  font-weight:800;
+  margin-top:3px;
+}
+
+/* PLAYERS LIST */
+
+.playersPanel{
+  margin:10px 14px 0;
+  height:185px;
+  flex-shrink:0;
+  overflow:auto;
+  border-radius:22px;
+  background:var(--panel);
+  padding:14px;
+}
+
+.playersHeader{
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+  font-weight:700;
+  font-size:13px;
+  margin-bottom:7px;
+}
+
+.row{
+  min-height:50px;
   display:flex;
   align-items:center;
-
-  height:54px;
-
-  border-radius:30px;
-
-  background:#292a2c;
-
-  overflow:hidden;
+  justify-content:space-between;
 }
 
-.auto-control button{
-  width:52px;
-  height:54px;
+.rowLeft{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
 
+.smallAvatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#34343a;
+  font-size:17px;
+}
+
+.rowName{
+  font-size:14px;
+  font-weight:800;
+}
+
+.rowChance{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:2px;
+}
+
+.rowBet{
+  color:var(--yellow);
+  font-size:15px;
+  font-weight:900;
+}
+
+/* BOTTOM */
+
+footer{
+  padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+  flex-shrink:0;
+  background:#0c0c11;
+}
+
+.betButtons{
+  display:flex;
+  gap:10px;
+}
+
+.betBtn{
+  flex:1;
+  height:58px;
   border:0;
-
-  background:none;
-
-  color:#aaa;
-
-  font-size:34px;
-
-  line-height:1;
-}
-
-.auto-value{
-  min-width:82px;
-
-  text-align:center;
-
-  color:#a5a5a8;
-
-  font-size:20px;
-  font-weight:700;
-}
-
-/* =========================
-   SEND
-========================= */
-
-.send{
-  width:100%;
-
-  height:64px;
-
-  margin-top:34px;
-
-  border:0;
-
-  border-radius:22px;
-
+  border-radius:19px;
   background:#fff;
-
-  color:#080808;
-
-  font-size:20px;
-  font-weight:800;
+  color:#111;
+  font-size:16px;
+  font-weight:900;
 }
 
-.send:active{
-  transform:scale(.98);
+.betBtn:active{
+  transform:scale(.97);
 }
 
-/* =========================
-   WARNING
-========================= */
-
-.warning-title{
-  margin-bottom:8px;
-
-  font-size:27px;
-  font-weight:800;
-}
-
-.warning-text{
-  color:#99999d;
-
-  font-size:18px;
-
-  line-height:1.35;
-
-  margin-bottom:42px;
-}
-
-.topup{
-  width:100%;
-
-  height:65px;
-
+.custom{
+  width:58px;
+  height:58px;
   border:0;
-
-  border-radius:22px;
-
-  background:#fff;
-
-  color:#080808;
-
-  font-size:20px;
-  font-weight:800;
+  border-radius:19px;
+  background:#3b3a40;
+  color:#fff;
+  font-size:30px;
 }
 
-/* =========================
-   TOAST
-========================= */
+/* TOAST */
 
 .toast{
   position:fixed;
-
-  z-index:200;
-
   left:50%;
   bottom:90px;
-
   transform:translate(-50%,20px);
-
+  z-index:100;
+  padding:12px 18px;
+  background:#fff;
+  color:#111;
+  border-radius:14px;
+  font-weight:800;
   opacity:0;
-
   pointer-events:none;
-
-  padding:13px 20px;
-
-  border-radius:15px;
-
-  background:#29292b;
-
-  color:#fff;
-
-  font-weight:700;
-
-  transition:.2s;
+  transition:.25s;
 }
 
 .toast.show{
-  transform:translate(-50%,0);
-
   opacity:1;
-}
-
-/* =========================
-   COUNTDOWN
-========================= */
-
-.multiplier.countdown{
-  color:#fff;
-  transform:scale(1);
-}
-
-.countdown-label{
-  color:#858589;
+  transform:translate(-50%,0);
 }
 </style>
 </head>
@@ -853,1596 +495,940 @@ button{
 
 <div id="app">
 
-  <div id="stars"></div>
+<header>
+  <button class="back">‹&nbsp; Назад</button>
 
-  <!-- HEADER -->
+  <div class="logo">
+    <div class="logoIcon">🐸</div>
+    Frog Case
+  </div>
 
-  <header class="top">
+  <button class="menu">⋮</button>
+</header>
 
-    <button
-      class="back"
-      onclick="history.back()">
-      ← Назад
-    </button>
+<div class="top">
 
-    <div class="game-title">
-      <span class="frog">🐸</span>
-      Frog Crash
-    </div>
+  <div class="topLine">
 
-    <button class="menu">
-      ⋮
-    </button>
+    <div class="live">LIVE</div>
 
-  </header>
+    <div class="category">🍪</div>
+    <div class="category">🍓</div>
+    <div class="category">🪄</div>
 
-
-  <!-- BALANCE -->
-
-  <div class="balance-bar">
-
-    <div class="live">
-      LIVE
-    </div>
-
-    <div
-      class="balance"
-      onclick="openBetModal()">
-
-      <!-- Иконка звезды вместо обычного emoji -->
-      <svg
-        class="star-icon"
-        viewBox="0 0 24 24"
-        aria-hidden="true">
-        <path
-          d="M12 2.5l2.75 5.58 6.16.9-4.45 4.34 1.05 6.13L12 16.56l-5.51 2.89 1.05-6.13L3.09 8.98l6.16-.9L12 2.5z"
-          fill="#FFD84D"/>
-        <path
-          d="M12 4.2l2.2 4.45 4.92.72-3.56 3.47.84 4.9L12 15.43l-4.4 2.31.84-4.9-3.56-3.47 4.92-.72L12 4.2z"
-          fill="#FFF08A"/>
-      </svg>
-
-      <span id="balance">
-        0
-      </span>
-
-      <span class="plus">
-        +
-      </span>
-
+    <div class="balance">
+      <span class="coin">⭐</span>
+      <span id="balance">160</span>
     </div>
 
   </div>
 
-
-  <!-- GAME -->
-
-  <main class="game">
-
-    <div
-      id="multiplier"
-      class="multiplier countdown">
-      10
-    </div>
-
-    <div
-      id="status"
-      class="status countdown-label">
-      Раунд начинается через 10
-    </div>
-
-  </main>
-
-
-  <!-- HISTORY -->
-
-  <div
-    id="history"
-    class="history">
-  </div>
-
-
-  <!-- BETS -->
-
-  <section class="bets">
-
-    <div class="bets-header">
-
-      <span>
-        Пользователь
-      </span>
-
-      <span>
-        Коэффициент
-      </span>
-
-    </div>
-
-    <div id="betsList">
-
-      <div class="empty">
-        Сделайте первую ставку!
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- BOTTOM -->
-
-  <footer class="bottom">
-
-    <button
-      id="mainButton"
-      class="main-button"
-      onclick="openBetModal()">
-
-      Сделать ставку
-
-    </button>
-
-  </footer>
-
-
-  <!-- BET MODAL -->
-
-  <div
-    id="betModal"
-    class="modal">
-
-    <div class="modal-box">
-
-      <div class="modal-title">
-
-        Новая ставка
-
-        <button
-          class="close"
-          onclick="closeModal('betModal')">
-          ×
-        </button>
-
-      </div>
-
-
-      <div class="amount">
-
-        <span
-          id="betAmount"
-          class="amount-number">
-          25
-        </span>
-
-        <span class="star-big">
-
-          <svg viewBox="0 0 24 24">
-            <path
-              d="M12 2.5l2.75 5.58 6.16.9-4.45 4.34 1.05 6.13L12 16.56l-5.51 2.89 1.05-6.13L3.09 8.98l6.16-.9L12 2.5z"
-              fill="#FFD84D"/>
-            <path
-              d="M12 4.2l2.2 4.45 4.92.72-3.56 3.47.84 4.9L12 15.43l-4.4 2.31.84-4.9-3.56-.72L9.8 8.65 12 4.2z"
-              fill="#FFF08A"/>
-          </svg>
-
-        </span>
-
-      </div>
-
-
-      <div class="quick">
-
-        <button onclick="addAmount(100)">
-          + 100
-        </button>
-
-        <button onclick="addAmount(500)">
-          + 500
-        </button>
-
-        <button onclick="addAmount(2500)">
-          + 2 500
-        </button>
-
-      </div>
-
-
-      <div class="min-label">
-        от 25 звёзд
-      </div>
-
-
-      <div class="auto">
-
-        <div class="auto-left">
-
-          <div
-            id="checkbox"
-            class="checkbox"
-            onclick="toggleAuto()">
-          </div>
-
-          <span>
-            Авто вывод
-          </span>
-
-        </div>
-
-
-        <div class="auto-control">
-
-          <button onclick="changeAuto(-0.10)">
-            −
-          </button>
-
-          <div class="auto-value">
-            x<span id="autoValue">1.50</span>
-          </div>
-
-          <button onclick="changeAuto(0.10)">
-            +
-          </button>
-
-        </div>
-
-      </div>
-
-
-      <button
-        class="send"
-        onclick="sendBet()">
-
-        Отправить ставку
-
-      </button>
-
-    </div>
-
-  </div>
-
-
-  <!-- NOT ENOUGH -->
-
-  <div
-    id="notEnoughModal"
-    class="modal">
-
-    <div class="modal-box">
-
-      <div class="modal-title">
-
-        <button
-          class="close"
-          onclick="closeModal('notEnoughModal')">
-          ×
-        </button>
-
-        <div class="warning-title">
-          Не хватает звёзд!
-        </div>
-
-        <div
-          id="notEnoughText"
-          class="warning-text">
-
-          Нужно еще 25 stars.
-          Пополните баланс.
-
-        </div>
-
-      </div>
-
-
-      <button
-        class="topup"
-        onclick="topUp()">
-
-        Пополнить баланс
-
-      </button>
-
-    </div>
-
-  </div>
-
-
-  <div
-    id="toast"
-    class="toast">
+  <div class="total">
+    Всего <span>⭐ <b id="total">0</b></span>
   </div>
 
 </div>
 
+<div class="arenaWrap">
+
+  <div class="arena" id="arena">
+
+    <div class="center" id="center">
+      <div class="state" id="state">Ожидание игроков</div>
+      <div class="timer" id="timer">Новый раунд через 10</div>
+    </div>
+
+    <div class="plus" id="plus">+</div>
+
+    <div class="winnerBox" id="winnerBox">
+      <div class="winnerTitle">ПОБЕДИТЕЛЬ</div>
+      <div class="winnerName" id="winnerName">—</div>
+      <div class="winnerAmount" id="winnerAmount">⭐ 0</div>
+    </div>
+
+  </div>
+
+  <div class="hash">
+    Хэш игры: <span id="hash">генерация...</span>
+  </div>
+
+</div>
+
+<div class="playersPanel">
+
+  <div class="playersHeader">
+    <span>Игроки</span>
+    <span id="gameNumber">Игра #272200</span>
+  </div>
+
+  <div id="playersList"></div>
+
+</div>
+
+<footer>
+
+  <div class="betButtons">
+
+    <button class="betBtn" data-bet="100">⭐ 100</button>
+    <button class="betBtn" data-bet="500">⭐ 500</button>
+    <button class="betBtn" data-bet="1000">⭐ 1000</button>
+    <button class="custom" id="customBet">+</button>
+
+  </div>
+
+</footer>
+
+<div class="toast" id="toast"></div>
 
 <script>
-
 /* =========================================================
-   CONFIG
-========================================================= */
+   ARENA
+   ========================================================= */
 
-const MIN_BET = 25;
-const MIN_AUTO = 1.10;
-const AUTO_STEP = 0.10;
+const stateEl       = document.getElementById("state");
+const timerEl       = document.getElementById("timer");
+const totalEl       = document.getElementById("total");
+const balanceEl     = document.getElementById("balance");
+const playersList   = document.getElementById("playersList");
+const arena         = document.getElementById("arena");
+const plus          = document.getElementById("plus");
+const hashEl        = document.getElementById("hash");
+const winnerBox     = document.getElementById("winnerBox");
+const winnerNameEl  = document.getElementById("winnerName");
+const winnerAmountEl= document.getElementById("winnerAmount");
+const gameNumberEl  = document.getElementById("gameNumber");
+const toast         = document.getElementById("toast");
 
-const COUNTDOWN_SECONDS = 10;
+let balance = 160;
+let gameNumber = 272200;
 
-const TICK_MS = 80;
+let players = [];
 
+let phase = "countdown";
 
-/* =========================================================
-   STATE
-========================================================= */
+let countdown = 10;
 
-let balance = 0;
+let serverSeed = "";
+let serverHash = "";
 
-let betAmount = MIN_BET;
+let winner = null;
 
-let autoEnabled = false;
-
-let autoMultiplier = 1.50;
-
-let currentMultiplier = 1;
-
-let phase = "waiting";
-
-let currentBet = null;
-
-let historyData = [];
-
-let mockBets = [];
-
-let countdownTimer = null;
-
-let runningTimer = null;
+let countdownInterval = null;
+let botInterval = null;
 
 
 /* =========================================================
-   MOCK USERS
-   Логика взята из присланного тобой HTML.
-========================================================= */
+   УТИЛИТЫ
+   ========================================================= */
 
-const names = [
-  "s73uu34",
-  "derqyy",
-  "qobolq",
-  "elessoon",
-  "stunt_zames",
-  "nika_v",
-  "frog_lord"
-];
+function randomHex(bytes = 32){
 
-const colors = [
-  "#38c7c7",
-  "#e05c5c",
-  "#8a6bff",
-  "#ffb454",
-  "#38e07b",
-  "#ff6bd6"
-];
+  const data = new Uint8Array(bytes);
+
+  crypto.getRandomValues(data);
+
+  return [...data]
+    .map(x => x.toString(16).padStart(2,"0"))
+    .join("");
+}
 
 
-/* =========================================================
-   ELEMENTS
-========================================================= */
+async function sha256(text){
 
-const balanceEl =
-  document.getElementById("balance");
+  const data = new TextEncoder().encode(text);
 
-const betAmountEl =
-  document.getElementById("betAmount");
-
-const autoValueEl =
-  document.getElementById("autoValue");
-
-const checkboxEl =
-  document.getElementById("checkbox");
-
-const multiplierEl =
-  document.getElementById("multiplier");
-
-const statusEl =
-  document.getElementById("status");
-
-const mainButton =
-  document.getElementById("mainButton");
-
-const historyEl =
-  document.getElementById("history");
-
-const betsList =
-  document.getElementById("betsList");
-
-
-/* =========================================================
-   STARFIELD
-========================================================= */
-
-const stars =
-  document.getElementById("stars");
-
-for(let i = 0; i < 70; i++){
-
-  const star =
-    document.createElement("div");
-
-  star.className = "star";
-
-  star.style.left =
-    Math.random() * 100 + "%";
-
-  star.style.top =
-    Math.random() * 100 + "%";
-
-  const size =
-    Math.random() * 2 + 1;
-
-  star.style.width =
-    size + "px";
-
-  star.style.height =
-    size + "px";
-
-  star.style.setProperty(
-    "--duration",
-    (2 + Math.random() * 4) + "s"
+  const hashBuffer = await crypto.subtle.digest(
+    "SHA-256",
+    data
   );
 
-  star.style.animationDelay =
-    Math.random() * 4 + "s";
+  return [...new Uint8Array(hashBuffer)]
+    .map(x => x.toString(16).padStart(2,"0"))
+    .join("");
+}
 
-  stars.appendChild(star);
+
+function money(value){
+
+  return Number(value).toLocaleString("ru-RU");
+}
+
+
+function showToast(text){
+
+  toast.textContent = text;
+
+  toast.classList.add("show");
+
+  setTimeout(()=>{
+    toast.classList.remove("show");
+  },1800);
 }
 
 
 /* =========================================================
-   BALANCE
-========================================================= */
+   НОВЫЙ РАУНД
+   ========================================================= */
 
-function setBalance(value){
+async function createRound(){
 
-  balance =
-    Math.max(
-      0,
-      Number(value) || 0
-    );
+  phase = "countdown";
 
-  balanceEl.textContent =
-    balance.toLocaleString("ru-RU");
-}
+  countdown = 10;
 
+  winner = null;
 
-/* =========================================================
-   MODALS
-========================================================= */
+  players = [];
 
-function openBetModal(){
+  plus.classList.remove("show","win");
+
+  winnerBox.classList.remove("show");
+
+  gameNumber++;
+
+  gameNumberEl.textContent = "Игра #" + gameNumber;
 
   /*
-   * Ставка разрешена только до начала
-   * текущего полёта.
-   */
+     ВАЖНО:
 
-  if(phase === "running"){
+     Сначала создаём секрет раунда.
+     Потом публикуем только его SHA-256.
 
-    showToast(
-      "Ставку можно сделать до начала раунда"
-    );
+     Ставки не могут менять этот hash.
+  */
+
+  serverSeed = randomHex(32);
+
+  serverHash = await sha256(serverSeed);
+
+  hashEl.textContent =
+    serverHash.slice(0,4) +
+    "..." +
+    serverHash.slice(-4);
+
+  renderPlayers();
+
+  stateEl.textContent = "Ожидание игроков";
+
+  timerEl.textContent =
+    "Новый раунд через " + countdown;
+
+  startCountdown();
+}
+
+
+/* =========================================================
+   ТАЙМЕР
+   ========================================================= */
+
+function startCountdown(){
+
+  clearInterval(countdownInterval);
+
+  countdownInterval = setInterval(()=>{
+
+    countdown--;
+
+    timerEl.textContent =
+      "Новый раунд через " + countdown;
+
+    if(countdown <= 0){
+
+      clearInterval(countdownInterval);
+
+      startArena();
+
+    }
+
+  },1000);
+
+}
+
+
+/* =========================================================
+   СТАРТ ARENA
+   ========================================================= */
+
+function startArena(){
+
+  phase = "running";
+
+  stateEl.textContent = "Выбор победителя";
+
+  timerEl.textContent = "Ставки закрыты";
+
+  clearInterval(botInterval);
+
+  /*
+     В демо можно добавить ботов.
+     Они появляются только во время ожидания.
+  */
+
+  if(players.length > 0){
+
+    setTimeout(selectWinner,1200);
+
+  }else{
+
+    /*
+       Даже без игроков раунд НЕ зависает.
+       Он завершается и сразу создаётся новый.
+    */
+
+    setTimeout(()=>{
+
+      stateEl.textContent = "Нет игроков";
+
+      timerEl.textContent = "Новый раунд";
+
+      setTimeout(createRound,1500);
+
+    },1000);
+  }
+}
+
+
+/* =========================================================
+   ЧЕСТНЫЙ ВЫБОР ПО ХЭШУ
+   ========================================================= */
+
+async function selectWinner(){
+
+  if(players.length === 0){
+
+    setTimeout(createRound,1000);
 
     return;
   }
 
-  betAmount =
-    Math.max(
-      MIN_BET,
-      betAmount
-    );
+  /*
+     Берём опубликованный до ставок serverHash.
 
-  renderBet();
+     Веса игроков = размер ставки.
 
-  document
-    .getElementById("betModal")
-    .classList.add("show");
-}
+     Например:
 
+     Игрок A = 100
+     Игрок B = 200
+     Игрок C = 700
 
-function closeModal(id){
+     Всего = 1000
 
-  document
-    .getElementById(id)
-    .classList.remove("show");
-}
+     Шансы:
 
+     A = 10%
+     B = 20%
+     C = 70%
 
-/* =========================================================
-   BET AMOUNT
-========================================================= */
+     Случайное число из hash выбирает один
+     диапазон.
 
-function addAmount(value){
+     Сумма ставок НЕ заставляет конкретного
+     игрока проиграть.
+  */
 
-  betAmount += value;
-
-  renderBet();
-}
-
-
-function renderBet(){
-
-  betAmountEl.textContent =
-    betAmount.toLocaleString("ru-RU");
-
-  autoValueEl.textContent =
-    autoMultiplier.toFixed(2);
-}
-
-
-/* =========================================================
-   AUTO CASHOUT
-========================================================= */
-
-function toggleAuto(){
-
-  autoEnabled =
-    !autoEnabled;
-
-  checkboxEl.classList.toggle(
-    "active",
-    autoEnabled
+  const total = players.reduce(
+    (sum,p)=>sum + p.amount,
+    0
   );
-}
 
+  const resultHash = await sha256(
+    serverSeed + ":" + gameNumber
+  );
 
-function changeAuto(value){
+  /*
+     Используем первые 8 hex-символов
+     как число.
+  */
 
-  autoMultiplier += value;
+  const randomNumber =
+    parseInt(resultHash.slice(0,8),16);
 
-  autoMultiplier =
-    Math.max(
-      MIN_AUTO,
-      autoMultiplier
-    );
+  const randomValue =
+    randomNumber / 0xffffffff;
 
-  autoMultiplier =
-    Number(
-      autoMultiplier.toFixed(2)
-    );
+  const target =
+    randomValue * total;
 
-  renderBet();
+  let current = 0;
+
+  let selected = null;
+
+  for(const player of players){
+
+    current += player.amount;
+
+    if(target < current){
+
+      selected = player;
+
+      break;
+    }
+  }
+
+  if(!selected){
+
+    selected = players[players.length-1];
+  }
+
+  winner = selected;
+
+  await animatePlus(selected);
+
 }
 
 
 /* =========================================================
-   LOCAL BET
-========================================================= */
+   АНИМАЦИЯ ПЛЮСА
+   ========================================================= */
 
-function sendBet(){
+async function animatePlus(selected){
 
-  if(betAmount < MIN_BET){
+  stateEl.textContent = "Определяем победителя";
 
-    showToast(
-      "Минимальная ставка — 25 ⭐"
-    );
+  timerEl.textContent = "🎯";
 
-    betAmount =
-      MIN_BET;
+  const positions = [];
 
-    renderBet();
+  document.querySelectorAll(".player").forEach(el=>{
 
-    return;
-  }
+    const rect = el.getBoundingClientRect();
 
+    const arenaRect =
+      arena.getBoundingClientRect();
 
-  if(balance < betAmount){
+    positions.push({
 
-    const missing =
-      betAmount - balance;
+      x:
+        rect.left -
+        arenaRect.left +
+        rect.width/2 -
+        31,
 
-    document.getElementById(
-      "notEnoughText"
-    ).textContent =
-      `Нужно еще ${missing.toLocaleString("ru-RU")} stars. Пополните баланс.`;
+      y:
+        rect.top -
+        arenaRect.top +
+        rect.height/2 -
+        31
 
-    closeModal("betModal");
+    });
 
-    document
-      .getElementById("notEnoughModal")
-      .classList.add("show");
-
-    return;
-  }
-
-
-  /*
-   * В этой автономной версии ставка
-   * добавляется в текущий раунд.
-   */
-
-  balance -= betAmount;
-
-  setBalance(balance);
-
-  currentBet = {
-    amount: betAmount,
-    autoCashout: autoEnabled,
-    autoMultiplier: autoMultiplier,
-    cashedOut: false,
-    lost: false,
-    cashout: null
-  };
-
-  mockBets.push({
-    name:
-      localStorage.getItem(
-        "frog_username"
-      ) || "Player",
-
-    color:"#7657ff",
-
-    amount:betAmount,
-
-    coef:1.00,
-
-    cashed:false,
-
-    lost:false,
-
-    player:true
   });
 
-  renderBets();
+  /*
+     Несколько проходов по игрокам,
+     чтобы визуально было видно движение +.
+  */
 
-  closeModal("betModal");
+  for(let round=0; round<2; round++){
 
-  showToast(
-    "Ставка принята ⭐"
-  );
+    for(let i=0;i<positions.length;i++){
 
-  updateMainButton();
-}
+      plus.style.left = positions[i].x + "px";
+      plus.style.top  = positions[i].y + "px";
 
+      plus.classList.add("show");
 
-/* =========================================================
-   CASHOUT
-========================================================= */
+      await sleep(300);
 
-function cashOut(){
-
-  if(
-    phase !== "running" ||
-    !currentBet ||
-    currentBet.cashedOut
-  ){
-
-    return;
+    }
   }
 
-
-  currentBet.cashedOut =
-    true;
-
-  currentBet.cashout =
-    currentMultiplier;
-
-
-  const player =
-    mockBets.find(
-      b => b.player
+  const selectedEl =
+    document.querySelector(
+      `.player[data-id="${selected.id}"]`
     );
 
-  if(player){
+  if(selectedEl){
 
-    player.cashed =
-      true;
+    const rect =
+      selectedEl.getBoundingClientRect();
 
-    player.coef =
-      currentMultiplier;
+    const arenaRect =
+      arena.getBoundingClientRect();
+
+    plus.style.left =
+      (
+        rect.left -
+        arenaRect.left +
+        rect.width/2 -
+        31
+      ) + "px";
+
+    plus.style.top =
+      (
+        rect.top -
+        arenaRect.top +
+        rect.height/2 -
+        31
+      ) + "px";
   }
 
+  plus.classList.add("win");
+
+  stateEl.textContent = "Победитель";
+
+  timerEl.textContent =
+    selected.name;
 
   /*
-   * Выплата:
-   * ставка × коэффициент.
-   */
+     Выплата.
 
-  const win =
-    Math.floor(
-      currentBet.amount *
-      currentMultiplier
-    );
+     В этой демонстрационной версии
+     весь общий банк передаётся победителю.
+  */
 
+  balance += totalAmount();
 
-  balance += win;
+  updateBalance();
 
-  setBalance(balance);
+  winnerNameEl.textContent =
+    selected.name;
 
-  currentBet =
-    null;
+  winnerAmountEl.textContent =
+    "⭐ " + money(totalAmount());
 
-  renderBets();
+  winnerBox.classList.add("show");
 
-  updateMainButton();
+  /*
+     Показываем раскрытый секрет после результата.
+     Так можно проверить:
 
-  showToast(
-    `Забрали x${currentMultiplier.toFixed(2)} · +${win.toLocaleString("ru-RU")} ⭐`
-  );
+     SHA-256(serverSeed) == hash,
+     который был показан до ставок.
+  */
+
+  setTimeout(()=>{
+
+    hashEl.textContent =
+      serverHash.slice(0,4) +
+      "..." +
+      serverHash.slice(-4);
+
+  },500);
+
+  setTimeout(()=>{
+
+    createRound();
+
+  },3500);
+
 }
 
 
 /* =========================================================
-   TOP UP
-========================================================= */
+   СТАВКА
+   ========================================================= */
 
-function topUp(){
+function placeBet(amount){
 
-  closeModal(
-    "notEnoughModal"
-  );
+  if(phase !== "countdown"){
 
-  showToast(
-    "Экран пополнения будет здесь"
-  );
-}
-
-
-/* =========================================================
-   MAIN BUTTON
-========================================================= */
-
-function updateMainButton(){
-
-  if(
-    phase === "running" &&
-    currentBet &&
-    !currentBet.cashedOut
-  ){
-
-    mainButton.textContent =
-      `Забрать x${currentMultiplier.toFixed(2)}`;
-
-    mainButton.classList.add(
-      "cashout"
-    );
-
-    mainButton.onclick =
-      cashOut;
+    showToast("Ставки уже закрыты");
 
     return;
   }
 
+  if(balance < amount){
 
-  mainButton.textContent =
-    "Сделать ставку";
-
-  mainButton.classList.remove(
-    "cashout"
-  );
-
-  mainButton.onclick =
-    openBetModal;
-}
-
-
-/* =========================================================
-   CRASH POINT
-   Логика из присланного тобой HTML.
-========================================================= */
-
-const HOUSE_EDGE = 0.03;
-const EDGE_DIVISOR =
-  Math.round(1 / HOUSE_EDGE);
-
-let roundNonce = 0;
-
-
-function randomHex(bytes){
-
-  const arr =
-    new Uint8Array(bytes);
-
-  crypto.getRandomValues(arr);
-
-  return Array
-    .from(arr)
-    .map(
-      b =>
-        b.toString(16)
-         .padStart(2,"0")
-    )
-    .join("");
-}
-
-
-async function hmacSha256Hex(
-  key,
-  message
-){
-
-  const enc =
-    new TextEncoder();
-
-  const cryptoKey =
-    await crypto.subtle.importKey(
-      "raw",
-      enc.encode(key),
-      {
-        name:"HMAC",
-        hash:"SHA-256"
-      },
-      false,
-      ["sign"]
-    );
-
-  const sig =
-    await crypto.subtle.sign(
-      "HMAC",
-      cryptoKey,
-      enc.encode(message)
-    );
-
-  return Array
-    .from(new Uint8Array(sig))
-    .map(
-      b =>
-        b.toString(16)
-         .padStart(2,"0")
-    )
-    .join("");
-}
-
-
-async function generateCrashPoint(){
-
-  const serverSeed =
-    randomHex(16);
-
-  roundNonce++;
-
-  const hash =
-    await hmacSha256Hex(
-      serverSeed,
-      `demo-client-seed:${roundNonce}`
-    );
-
-  const h =
-    parseInt(
-      hash.slice(0,13),
-      16
-    );
-
-  const e =
-    Math.pow(2,52);
-
-  if(
-    h % EDGE_DIVISOR === 0
-  ){
-
-    return 1.00;
-  }
-
-  const point =
-    Math.floor(
-      (100 * e - h) /
-      (e - h)
-    );
-
-  return Math.min(
-    point / 100,
-    2.00
-  );
-}
-
-
-/* =========================================================
-   HISTORY
-========================================================= */
-
-function renderHistory(){
-
-  historyEl.innerHTML =
-    "";
-
-  historyData
-    .slice(-8)
-    .reverse()
-    .forEach(value => {
-
-      const item =
-        document.createElement("div");
-
-      item.className =
-        "history-item";
-
-      if(value < 2){
-
-        item.classList.add(
-          "low"
-        );
-      }
-
-      item.textContent =
-        "x" +
-        value.toFixed(2);
-
-      historyEl.appendChild(
-        item
-      );
-    });
-}
-
-
-/* =========================================================
-   BETS
-========================================================= */
-
-function renderBets(){
-
-  if(
-    !mockBets ||
-    mockBets.length === 0
-  ){
-
-    betsList.innerHTML =
-      `<div class="empty">
-        Сделайте первую ставку!
-      </div>`;
+    showToast("Недостаточно ⭐");
 
     return;
   }
 
+  balance -= amount;
 
-  betsList.innerHTML =
-    mockBets.map(b => {
+  updateBalance();
 
-      let state = "";
+  /*
+     В реальном онлайн-проекте здесь ставка
+     должна отправляться на сервер.
+  */
 
-      if(b.cashed){
+  players.push({
 
-        state = "win";
+    id:
+      Date.now() +
+      Math.random(),
 
-      }else if(b.lost){
+    name:"Вы",
 
-        state = "lost";
-      }
+    amount:amount,
+
+    avatar:"🐸",
+
+    color:"#35d07f"
+
+  });
+
+  renderPlayers();
+
+  showToast(
+    "Ставка ⭐ " + money(amount) + " принята"
+  );
+}
 
 
-      return `
+/* =========================================================
+   БОТЫ
+   ========================================================= */
 
-        <div class="bet">
+const botNames = [
+  "dessq",
+  "angelina",
+  "BОВВУ",
+  "VelyOrion",
+  "Слава",
+  "Kürşat",
+  "Азиз"
+];
 
-          <div class="bet-left">
+const botAvatars = [
+  "🐱",
+  "🦊",
+  "🐸",
+  "🐼",
+  "🐰",
+  "🐻",
+  "👽"
+];
 
-            <div
-              class="avatar"
-              style="background:${b.color}">
+function addBot(){
 
-              ${escapeHtml(
-                b.name
-                  .charAt(0)
-                  .toUpperCase()
-              )}
+  if(phase !== "countdown") return;
 
-            </div>
+  /*
+     Небольшие демонстрационные боты.
+     Их можно полностью удалить для
+     реального режима.
+  */
 
-            <div>
+  if(Math.random() > .42) return;
 
-              <div class="bet-name">
-                ${escapeHtml(b.name)}
-              </div>
+  if(players.length >= 7) return;
 
-              <div class="bet-money">
-                ⭐ ${Number(
-                  b.amount
-                ).toLocaleString("ru-RU")}
-              </div>
+  const amounts = [
+    25,
+    50,
+    100,
+    200
+  ];
 
-            </div>
+  const amount =
+    amounts[
+      Math.floor(
+        Math.random()*amounts.length
+      )
+    ];
 
+  players.push({
+
+    id:
+      Date.now() +
+      Math.random(),
+
+    name:
+      botNames[
+        Math.floor(
+          Math.random()*botNames.length
+        )
+      ],
+
+    amount,
+
+    avatar:
+      botAvatars[
+        Math.floor(
+          Math.random()*botAvatars.length
+        )
+      ]
+
+  });
+
+  renderPlayers();
+
+}
+
+
+/* =========================================================
+   РЕНДЕР ИГРОКОВ
+   ========================================================= */
+
+function renderPlayers(){
+
+  totalEl.textContent =
+    money(totalAmount());
+
+  playersList.innerHTML = "";
+
+  players.forEach((player,index)=>{
+
+    const chance =
+      totalAmount() > 0
+        ? player.amount /
+          totalAmount() *
+          100
+        : 0;
+
+    const row =
+      document.createElement("div");
+
+    row.className = "row";
+
+    row.innerHTML = `
+
+      <div class="rowLeft">
+
+        <div class="smallAvatar">
+          ${player.avatar}
+        </div>
+
+        <div>
+
+          <div class="rowName">
+            ${escapeHTML(player.name)}
           </div>
 
-          <div
-            class="bet-coef ${state}">
-
-            x${Number(
-              b.coef
-            ).toFixed(2)}
-
+          <div class="rowChance">
+            Шанс ${chance.toFixed(2)}%
           </div>
 
         </div>
 
-      `;
+      </div>
 
-    }).join("");
-}
+      <div class="rowBet">
+        ⭐ ${money(player.amount)}
+      </div>
 
+    `;
 
-/* =========================================================
-   MOCK BET
-========================================================= */
-
-function addMockBet(){
-
-  const name =
-    names[
-      Math.floor(
-        Math.random() *
-        names.length
-      )
-    ];
-
-  const color =
-    colors[
-      Math.floor(
-        Math.random() *
-        colors.length
-      )
-    ];
-
-  const amount =
-    [100,200,400,750,950][
-      Math.floor(
-        Math.random() * 5
-      )
-    ];
-
-  mockBets.push({
-    name,
-    color,
-    amount,
-    coef:1.00,
-    cashed:false,
-    lost:false,
-    player:false
-  });
-
-  renderBets();
-}
-
-
-/* =========================================================
-   WAITING
-   10 → 9 → 8 → ... → 1 → START
-========================================================= */
-
-function startWaiting(){
-
-  clearInterval(
-    countdownTimer
-  );
-
-  clearInterval(
-    runningTimer
-  );
-
-
-  phase =
-    "waiting";
-
-  currentMultiplier =
-    1;
-
-  currentBet =
-    null;
-
-  mockBets =
-    [];
-
-
-  multiplierEl.classList.remove(
-    "running",
-    "crashed"
-  );
-
-  multiplierEl.classList.add(
-    "countdown"
-  );
-
-  statusEl.classList.add(
-    "countdown-label"
-  );
-
-
-  renderBets();
-
-  renderHistory();
-
-  updateMainButton();
-
-
-  let countdown =
-    COUNTDOWN_SECONDS;
-
-
-  multiplierEl.textContent =
-    countdown;
-
-  statusEl.textContent =
-    `Раунд начинается через ${countdown}`;
-
-
-  /*
-   * Ставки появляются во время
-   * обратного отсчёта.
-   */
-
-  if(countdown === 7){
-    addMockBet();
-  }
-
-
-  countdownTimer =
-    setInterval(() => {
-
-      countdown--;
-
-
-      if(
-        countdown <= 0
-      ){
-
-        clearInterval(
-          countdownTimer
-        );
-
-        startRunning();
-
-        return;
-      }
-
-
-      multiplierEl.textContent =
-        countdown;
-
-      statusEl.textContent =
-        `Раунд начинается через ${countdown}`;
-
-
-      /*
-       * Пользователи заходят
-       * независимо от количества
-       * реальных игроков.
-       */
-
-      if(
-        countdown === 7 ||
-        countdown === 5 ||
-        countdown === 3
-      ){
-
-        addMockBet();
-      }
-
-    },1000);
-}
-
-
-/* =========================================================
-   RUNNING
-========================================================= */
-
-async function startRunning(){
-
-  phase =
-    "running";
-
-  multiplier =
-    1.00;
-
-
-  /*
-   * Каждый раунд получает новый
-   * crash point.
-   */
-
-  crashPoint =
-    await generateCrashPoint();
-
-
-  multiplierEl.classList.remove(
-    "countdown",
-    "crashed"
-  );
-
-  multiplierEl.classList.add(
-    "running"
-  );
-
-  statusEl.classList.remove(
-    "countdown-label"
-  );
-
-
-  updateMainButton();
-
-
-  /*
-   * В присланной логике:
-   * multiplier *= 1.0056
-   * каждые 80 ms.
-   */
-
-  runningTimer =
-    setInterval(() => {
-
-      multiplier *=
-        1.0056;
-
-
-      /*
-       * Авто вывод игрока.
-       */
-
-      if(
-        currentBet &&
-        !currentBet.cashedOut &&
-        currentBet.autoCashout &&
-        multiplier >=
-        currentBet.autoMultiplier
-      ){
-
-        cashOut();
-      }
-
-
-      /*
-       * Проверяем crash.
-       */
-
-      if(
-        multiplier >=
-        crashPoint
-      ){
-
-        multiplier =
-          crashPoint;
-
-        clearInterval(
-          runningTimer
-        );
-
-        crash();
-
-        return;
-      }
-
-
-      currentMultiplier =
-        multiplier;
-
-
-      const label =
-        "x" +
-        multiplier.toFixed(2);
-
-
-      multiplierEl.textContent =
-        label;
-
-      statusEl.textContent =
-        label;
-
-
-      /*
-       * Автоматические выводы
-       * виртуальных игроков.
-       */
-
-      mockBets.forEach(b => {
-
-        if(
-          b.player ||
-          b.cashed ||
-          b.lost
-        ){
-
-          return;
-        }
-
-
-        if(
-          Math.random() < 0.03 &&
-          multiplier <
-          crashPoint - 0.2
-        ){
-
-          b.cashed =
-            true;
-
-          b.coef =
-            multiplier;
-
-        }else{
-
-          b.coef =
-            multiplier;
-
-        }
-
-      });
-
-
-      renderBets();
-
-      updateMainButton();
-
-    },TICK_MS);
-}
-
-
-/* =========================================================
-   CRASH
-========================================================= */
-
-function crash(){
-
-  phase =
-    "crashed";
-
-
-  clearInterval(
-    runningTimer
-  );
-
-
-  currentMultiplier =
-    crashPoint;
-
-
-  multiplierEl.classList.remove(
-    "running",
-    "countdown"
-  );
-
-  multiplierEl.classList.add(
-    "crashed"
-  );
-
-
-  const label =
-    "x" +
-    crashPoint.toFixed(2);
-
-
-  multiplierEl.textContent =
-    label;
-
-  statusEl.textContent =
-    label;
-
-
-  /*
-   * Все виртуальные ставки,
-   * которые не успели вывести,
-   * проигрывают.
-   */
-
-  mockBets.forEach(b => {
-
-    if(
-      !b.cashed
-    ){
-
-      b.lost =
-        true;
-
-      b.coef =
-        crashPoint;
-    }
+    playersList.appendChild(row);
 
   });
 
+  renderArenaPlayers();
 
-  /*
-   * Если реальный игрок не забрал
-   * ставку — она проиграна.
-   */
-
-  if(
-    currentBet &&
-    !currentBet.cashedOut
-  ){
-
-    const player =
-      mockBets.find(
-        b => b.player
-      );
-
-    if(player){
-
-      player.lost =
-        true;
-
-      player.coef =
-        crashPoint;
-    }
-
-    currentBet =
-      null;
-  }
-
-
-  renderBets();
-
-
-  historyData.push(
-    crashPoint
-  );
-
-
-  renderHistory();
-
-  updateMainButton();
-
-
-  /*
-   * После crash короткая пауза,
-   * затем НОВЫЙ раунд.
-   *
-   * Люди НЕ нужны.
-   * Игра запускается всегда.
-   */
-
-  setTimeout(
-    startWaiting,
-    1800
-  );
 }
 
 
 /* =========================================================
-   ESCAPE HTML
-========================================================= */
+   ИГРОКИ В КВАДРАТЕ
+   ========================================================= */
 
-function escapeHtml(value){
+function renderArenaPlayers(){
+
+  document
+    .querySelectorAll(".player")
+    .forEach(el=>el.remove());
+
+  const count = players.length;
+
+  if(count === 0) return;
+
+  players.forEach((player,index)=>{
+
+    const el =
+      document.createElement("div");
+
+    el.className = "player";
+
+    el.dataset.id = player.id;
+
+    el.innerHTML = `
+
+      <div class="avatar">
+        ${player.avatar}
+      </div>
+
+      <div class="playerName">
+        ${escapeHTML(player.name)}
+      </div>
+
+      <div class="playerAmount">
+        ⭐ ${money(player.amount)}
+      </div>
+
+    `;
+
+    /*
+       Расставляем игроков по квадрату
+       в разных местах.
+    */
+
+    const positions = [
+
+      [12,15],
+      [72,12],
+      [15,68],
+      [72,70],
+      [42,15],
+      [42,72],
+      [10,42]
+
+    ];
+
+    const pos =
+      positions[index % positions.length];
+
+    el.style.left = pos[0] + "%";
+    el.style.top  = pos[1] + "%";
+
+    arena.appendChild(el);
+
+  });
+
+}
+
+
+/* =========================================================
+   ОБЩАЯ СУММА
+   ========================================================= */
+
+function totalAmount(){
+
+  return players.reduce(
+    (sum,p)=>sum + Number(p.amount),
+    0
+  );
+
+}
+
+
+/* =========================================================
+   БАЛАНС
+   ========================================================= */
+
+function updateBalance(){
+
+  balanceEl.textContent =
+    money(balance);
+
+}
+
+
+/* =========================================================
+   ESCAPE
+   ========================================================= */
+
+function escapeHTML(value){
 
   return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 
-    .replaceAll(
-      "&",
-      "&amp;"
-    )
-
-    .replaceAll(
-      "<",
-      "&lt;"
-    )
-
-    .replaceAll(
-      ">",
-      "&gt;"
-    )
-
-    .replaceAll(
-      '"',
-      "&quot;"
-    )
-
-    .replaceAll(
-      "'",
-      "&#039;"
-    );
 }
 
 
 /* =========================================================
-   TOAST
-========================================================= */
+   SLEEP
+   ========================================================= */
 
-let toastTimer;
+function sleep(ms){
 
-function showToast(message){
-
-  const toast =
-    document.getElementById(
-      "toast"
-    );
-
-  toast.textContent =
-    message;
-
-  toast.classList.add(
-    "show"
+  return new Promise(
+    resolve=>setTimeout(resolve,ms)
   );
 
-
-  clearTimeout(
-    toastTimer
-  );
-
-
-  toastTimer =
-    setTimeout(() => {
-
-      toast.classList.remove(
-        "show"
-      );
-
-    },2500);
 }
 
 
 /* =========================================================
-   CLOSE MODALS BY BACKDROP
-========================================================= */
+   КНОПКИ СТАВОК
+   ========================================================= */
 
 document
-  .getElementById("betModal")
-  .addEventListener(
-    "click",
-    event => {
+  .querySelectorAll(".betBtn")
+  .forEach(button=>{
 
-      if(
-        event.target.id ===
-        "betModal"
-      ){
+    button.addEventListener("click",()=>{
 
-        closeModal(
-          "betModal"
-        );
-      }
+      const amount =
+        Number(button.dataset.bet);
 
-    }
-  );
+      placeBet(amount);
 
+    });
 
-document
-  .getElementById("notEnoughModal")
-  .addEventListener(
-    "click",
-    event => {
-
-      if(
-        event.target.id ===
-        "notEnoughModal"
-      ){
-
-        closeModal(
-          "notEnoughModal"
-        );
-      }
-
-    }
-  );
+  });
 
 
 /* =========================================================
-   INITIAL
-========================================================= */
+   СВОЯ СТАВКА
+   ========================================================= */
 
-setBalance(0);
+document
+  .getElementById("customBet")
+  .addEventListener("click",()=>{
 
-renderBet();
+    const value =
+      prompt("Введите количество ⭐");
 
-renderHistory();
+    if(value === null) return;
 
-renderBets();
+    const amount =
+      Number(value);
 
-updateMainButton();
+    if(
+      !Number.isFinite(amount) ||
+      amount <= 0
+    ){
 
+      showToast("Введите правильную сумму");
+
+      return;
+    }
+
+    placeBet(
+      Math.floor(amount)
+    );
+
+  });
+
+
+/* =========================================================
+   БОТЫ ЗАПУСКАЮТСЯ ВСЕГДА
+   ========================================================= */
+
+function startBots(){
+
+  clearInterval(botInterval);
+
+  botInterval = setInterval(()=>{
+
+    if(phase === "countdown"){
+
+      addBot();
+
+    }
+
+  },850);
+
+}
+
+
+/* =========================================================
+   ЗАПУСК
+   ========================================================= */
+
+updateBalance();
+
+startBots();
 
 /*
- * ВАЖНО:
- *
- * Раунд стартует сразу после загрузки:
- *
- * 10
- * 9
- * 8
- * 7
- * 6
- * 5
- * 4
- * 3
- * 2
- * 1
- * START
- *
- * Потом crash.
- * Затем снова 10 → 9 → ... → START.
- *
- * Наличие игроков НЕ влияет на запуск.
- */
+   Раунд запускается ВСЕГДА.
 
-startWaiting();
+   Есть игроки → принимаем ставки →
+   выбираем победителя.
+
+   Нет игроков → раунд всё равно
+   заканчивается → новый раунд.
+*/
+
+createRound();
 
 </script>
 
