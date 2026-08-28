@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -7,10 +6,12 @@
 <title>Stars App</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-body{margin:0;padding:0;background:#0c0c0e;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh;color:#fff;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+*{transition-timing-function:cubic-bezier(.4,0,.2,1)}
+body{margin:0;padding:0;background:#000;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh;color:#fff;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 button,a,input{-webkit-tap-highlight-color:transparent}
 p{font-size:large}
-.bottom-nav{display:flex;justify-content:space-around;align-items:center;background:#161618;width:100%;position:fixed;bottom:0;left:0;padding:4px 0 24px;border-top:1px solid #252528;box-sizing:border-box;z-index:1000}
+.bottom-nav{display:flex;justify-content:space-around;align-items:center;background:#161618;width:100%;position:fixed;bottom:0;left:0;padding:4px 0 24px;border-top:1px solid #252528;box-sizing:border-box;z-index:1000;transition:transform .3s ease,opacity .3s ease}
+.bottom-nav.hidden{transform:translateY(100%);opacity:0;pointer-events:none}
 .nav-item{display:flex;flex-direction:column;align-items:center;cursor:pointer;flex:1;-webkit-tap-highlight-color:transparent;user-select:none}
 .nav-icon-container{width:36px;height:36px;margin-bottom:6px;display:flex;justify-content:center;align-items:center}
 .nav-icon{width:25px;height:25px;object-fit:contain;filter:brightness(.65);transition:filter .15s linear}
@@ -19,8 +20,9 @@ p{font-size:large}
 .nav-item.active .nav-label{color:#fff;font-weight:600}
 .content-pages{width:100%;max-width:600px;flex:1;padding:16px;box-sizing:border-box}
 
-.page-section{display:none;width:100%}
-.page-section.active-page{display:block}
+.page-section{display:none;width:100%;opacity:0;transform:translateY(10px);transition:opacity .25s ease,transform .25s ease}
+.page-section.active-page{display:block;opacity:1;transform:translateY(0)}
+
 .section-title{font-size:32px;font-weight:300;margin:0 0 20px;letter-spacing:-.02em}
 .container{background:#ffffff1a;border-radius:24px;padding:10px}
 .star_logo{width:32px;height:32px}
@@ -67,8 +69,8 @@ p{font-size:large}
 .game-card.crash{background:linear-gradient(160deg,#4a3aeb,#1a1268)}
 .game-card.jackpot{background:linear-gradient(160deg,#2e9e5b,#0f4a2a)}
 
-.crash-screen{display:none;position:fixed;inset:0;background:#050506;z-index:2100;overflow-y:auto;padding:16px 16px 190px;box-sizing:border-box}
-.crash-screen.active{display:block}
+.crash-screen{display:none;position:fixed;inset:0;background:#050506;z-index:2100;overflow-y:auto;padding:16px 16px 190px;box-sizing:border-box;opacity:0;transition:opacity .3s ease}
+.crash-screen.active{display:block;opacity:1}
 .crash-topbar{display:flex;align-items:center;gap:10px;margin-bottom:6px}
 .crash-stage{position:relative;height:340px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
 .crash-stage-dot{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.5)}
@@ -97,64 +99,83 @@ p{font-size:large}
 .crash-bet-amount img{width:14px;height:14px}
 .crash-bet-mult{font-size:13px;font-weight:700;color:#4cd964;margin-left:8px}
 .crash-bet-mult.busted{color:#ff5a5a}
-.crash-bottom-wrap{position:fixed;left:0;right:0;bottom:0;background:#0c0c0e;padding:12px 16px calc(16px + env(safe-area-inset-bottom));box-sizing:border-box;z-index:2200}
+.crash-bottom-wrap{position:fixed;left:0;right:0;bottom:0;background:#0c0c0e;padding:12px 16px calc(16px + env(safe-area-inset-bottom));box-sizing:border-box;z-index:2200;transition:transform .3s ease,opacity .3s ease}
+.crash-bottom-wrap.hidden{transform:translateY(100%);opacity:0;pointer-events:none}
 .crash-amount-row{display:flex;align-items:center;gap:10px;background:#1c1c1e;border-radius:22px;padding:8px 8px 8px 18px;margin-bottom:10px}
 .crash-amount-row span{font-size:20px;font-weight:800;flex:1}
 .crash-amt-btn{width:38px;height:38px;border-radius:50%;background:#3a3a3d;border:none;color:#fff;font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.crash-submit-btn{width:100%;background:#fff;color:#000;border:none;padding:18px;border-radius:24px;font-size:18px;font-weight:800;cursor:pointer}
+.crash-submit-btn{width:100%;background:#fff;color:#000;border:none;padding:18px;border-radius:24px;font-size:18px;font-weight:800;cursor:pointer;transition:all .2s ease}
 .crash-submit-btn.flying{background:#4cd964;color:#000}
 .crash-submit-btn:disabled{opacity:.5;pointer-events:none}
 
-.crash-amt-sheet{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2300;align-items:flex-end;justify-content:center}
-.crash-amt-sheet.active{display:flex}
-.crash-amt-panel{width:100%;max-width:600px;background:#1e1c1f;border-radius:28px 28px 0 0;padding:22px 18px calc(20px + env(safe-area-inset-bottom));box-sizing:border-box}
+.crash-amt-sheet{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2300;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .25s ease}
+.crash-amt-sheet.active{display:flex;opacity:1}
+.crash-amt-panel{width:100%;max-width:600px;background:#1e1c1f;border-radius:28px 28px 0 0;padding:22px 18px calc(20px + env(safe-area-inset-bottom));box-sizing:border-box;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.crash-amt-sheet.active .crash-amt-panel{transform:translateY(0)}
 .crash-amt-title{text-align:center;font-size:19px;font-weight:800;margin-bottom:20px}
 .crash-amt-stepper{display:flex;align-items:center;justify-content:center;gap:22px;margin-bottom:18px}
 .crash-amt-stepper span{font-size:42px;font-weight:800;min-width:120px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px}
 .crash-amt-stepper span img{width:32px;height:32px}
 .crash-amt-quick{display:flex;gap:8px;margin-bottom:20px}
-.crash-amt-quick button{flex:1;background:#3a3a3d;border:none;color:#fff;padding:12px 0;border-radius:16px;font-size:15px;font-weight:700;cursor:pointer}
+.crash-amt-quick button{flex:1;background:#3a3a3d;border:none;color:#fff;padding:12px 0;border-radius:16px;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s ease,transform .1s ease}
 .crash-amt-quick button.active{background:#fff;color:#000}
-.crash-amt-confirm{width:100%;background:#fff;color:#000;border:none;padding:17px;border-radius:24px;font-size:17px;font-weight:800;cursor:pointer}
+.crash-amt-quick button:active{transform:scale(.95)}
+.crash-amt-confirm{width:100%;background:#fff;color:#000;border:none;padding:17px;border-radius:24px;font-size:17px;font-weight:800;cursor:pointer;transition:all .15s ease}
+.crash-amt-confirm:active{transform:scale(.98);opacity:.85}
 
-/* ===== JACKPOT SCREEN - Frog Case Style ===== */
-.jackpot-screen{display:none;position:fixed;inset:0;background:#000;z-index:2100;overflow:hidden;box-sizing:border-box}
-.jackpot-screen.active{display:flex;flex-direction:column}
+/* ===== JACKPOT SCREEN ===== */
+.jackpot-screen{display:none;position:fixed;inset:0;background:#000;z-index:2100;overflow:hidden;box-sizing:border-box;opacity:0;transition:opacity .3s ease}
+.jackpot-screen.active{display:flex;flex-direction:column;opacity:1}
 
 .jackpot-topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top))}
-.jackpot-topbar-btn{width:48px;height:48px;border-radius:16px;background:#2c2c2e;border:none;color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.jackpot-topbar-btn{width:48px;height:48px;border-radius:16px;background:#2c2c2e;border:none;color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s ease}
+.jackpot-topbar-btn:active{transform:scale(.92);background:#3a3a3d}
 .jackpot-topbar-btn svg{width:24px;height:24px;fill:#fff}
-.jackpot-total-pill{flex:1;background:#1c1c1e;border-radius:20px;padding:14px 20px;text-align:center;font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px}
+.jackpot-total-pill{flex:1;background:#1c1c1e;border-radius:20px;padding:14px 20px;text-align:center;font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s ease}
 .jackpot-total-pill .star-icon{width:24px;height:24px}
 
-.jackpot-field-wrap{flex-shrink:0;height:380px;margin:0 16px;border-radius:28px;overflow:hidden;position:relative}
+.jackpot-field-wrap{flex-shrink:0;height:380px;margin:0 16px;border-radius:28px;overflow:hidden;position:relative;transition:transform .3s ease}
 .jackpot-field{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.jackpot-field-bg{position:absolute;inset:0;background:#1c1c1e;border-radius:28px}
-.jackpot-field-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%}
+.jackpot-field-bg{position:absolute;inset:0;background:#1c1c1e;border-radius:28px;transition:background .5s ease}
+.jackpot-field-bg.grid-bg{background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:38px 38px;background-position:center center}
 
-.jackpot-empty-state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:3}
+.jackpot-empty-state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:3;opacity:1;transition:opacity .3s ease}
+.jackpot-empty-state.hidden{opacity:0;pointer-events:none}
 .jackpot-empty-frame{position:absolute;width:62%;height:62%;border:1px solid rgba(255,255,255,.08);border-radius:22px}
-.jackpot-empty-dot{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e6e6e6,#8e8e93);animation:jackpotDotMove 1.4s ease-in-out infinite;box-shadow:0 0 18px 4px rgba(255,255,255,.25)}
+.jackpot-empty-dot{width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e6e6e6,#8e8e93);animation:jackpotDotMove 1.4s ease-in-out infinite;box-shadow:0 0 18px 4px rgba(255,255,255,.25)}
 @keyframes jackpotDotMove{0%,100%{transform:translateX(-46px)}50%{transform:translateX(46px)}}
-.jackpot-empty-state p{color:#8e8e93;font-size:20px;font-weight:800;margin:0;z-index:1}
+.jackpot-empty-state p{color:#8e8e93;font-size:24px;font-weight:800;margin:0;z-index:1;letter-spacing:-.01em}
 
-.jackpot-timer{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.55);color:#fff;font-size:30px;font-weight:800;padding:10px 20px;border-radius:16px;z-index:5}
+.jackpot-timer{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.55);color:#fff;font-size:30px;font-weight:800;padding:10px 20px;border-radius:16px;z-index:5;opacity:0;transition:opacity .25s ease}
+.jackpot-timer.show{opacity:1}
 
 .jackpot-plus-marker{position:absolute;width:56px;height:56px;border-radius:50%;background:#fff;color:#000;font-size:28px;font-weight:800;display:none;align-items:center;justify-content:center;box-shadow:0 0 0 6px rgba(255,255,255,.15),0 0 16px rgba(255,255,255,.5);z-index:7;left:50%;top:50%;transform:translate(-50%,-50%);cursor:pointer}
 .jackpot-plus-marker.show{display:flex}
+.jackpot-plus-marker.winner-pulse{animation:winnerPulse .6s ease-in-out 3}
+@keyframes winnerPulse{0%,100%{transform:translate(-50%,-50%) scale(1);box-shadow:0 0 0 6px rgba(255,255,255,.15),0 0 16px rgba(255,255,255,.5)}50%{transform:translate(-50%,-50%) scale(1.2);box-shadow:0 0 0 12px rgba(255,255,255,.3),0 0 32px rgba(255,255,255,.8)}}
 
-.jackpot-avatar-center{position:absolute;width:80px;height:80px;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,.85);background:#3a3a3d;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:28px;z-index:4}
+.jackpot-avatar-center{position:absolute;width:80px;height:80px;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,.85);background:#3a3a3d;display:none;align-items:center;justify-content:center;font-weight:800;font-size:28px;z-index:4;left:50%;top:50%;transform:translate(-50%,-50%) scale(0)}
+.jackpot-avatar-center.show{display:flex;opacity:1;transform:translate(-50%,-50%) scale(1);animation:avatarPop .4s cubic-bezier(.175,.885,.32,1.275) forwards}
+@keyframes avatarPop{from{opacity:0;transform:translate(-50%,-50%) scale(0)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 .jackpot-avatar-center img{width:100%;height:100%;object-fit:cover}
 
 .jackpot-wheel-sectors{position:absolute;inset:0;z-index:1}
+.jackpot-field-avatar{position:absolute;width:56px;height:56px;border-radius:50%;border:3px solid rgba(255,255,255,.85);overflow:hidden;background:#3a3a3d;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;z-index:4;opacity:0;animation:avatarAppear .4s cubic-bezier(.175,.885,.32,1.275) forwards}
+.jackpot-field-avatar img{width:100%;height:100%;object-fit:cover}
+@keyframes avatarAppear{from{opacity:0;transform:translate(-50%,-50%) scale(0)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 
-.jackpot-info-panel{background:#1c1c1e;border-radius:24px 24px 0 0;margin:0 16px;padding:16px 20px;flex:1;overflow-y:auto;min-height:0}
-.jackpot-info-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+/* Панель игроков — скрыта по умолчанию, показывается только когда есть игроки */
+.jackpot-info-panel{background:#1c1c1e;border-radius:24px 24px 0 0;margin-top:20px;padding:20px;flex:1;overflow-y:auto;min-height:0;transition:all .3s ease;opacity:0;transform:translateY(20px);pointer-events:none}
+.jackpot-info-panel.show{opacity:1;transform:translateY(0);pointer-events:auto}
+.jackpot-info-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .jackpot-info-header span:first-child{color:#8e8e93;font-size:16px;font-weight:700}
 .jackpot-info-header span:last-child{color:#8e8e93;font-size:16px;font-weight:700}
 
-.jackpot-player-row-info{display:flex;align-items:center;gap:14px;padding:8px 0}
-.jackpot-player-avatar-info{width:52px;height:52px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#3a3a3d;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px}
+.jackpot-player-row-info{display:flex;align-items:center;gap:14px;padding:10px 0;opacity:0;transform:translateY(10px);animation:playerSlideIn .35s ease forwards}
+@keyframes playerSlideIn{to{opacity:1;transform:translateY(0)}}
+.jackpot-player-row-info.winner-row{background:rgba(48,209,88,.1);border-radius:16px;padding:12px;margin:4px 0;transition:all .3s ease}
+.jackpot-player-avatar-info{width:52px;height:52px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#3a3a3d;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;transition:transform .3s ease}
+.jackpot-player-row-info.winner-row .jackpot-player-avatar-info{transform:scale(1.1)}
 .jackpot-player-avatar-info img{width:100%;height:100%;object-fit:cover}
 .jackpot-player-info-body{flex:1;min-width:0}
 .jackpot-player-name-info{font-size:17px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -162,22 +183,34 @@ p{font-size:large}
 .jackpot-player-amount-info{display:flex;align-items:center;gap:6px;font-weight:800;font-size:20px;color:#ffb020;flex-shrink:0}
 .jackpot-player-amount-info img{width:22px;height:22px}
 
-.jackpot-more-players{display:flex;align-items:center;justify-content:center;padding:12px 0;color:#8e8e93;font-size:15px;font-weight:600;cursor:pointer;gap:6px}
-.jackpot-more-players:active{opacity:.7}
+.jackpot-more-players{display:flex;align-items:center;justify-content:center;padding:12px 0;color:#8e8e93;font-size:15px;font-weight:600;cursor:pointer;gap:6px;transition:all .15s ease}
+.jackpot-more-players:active{opacity:.7;transform:scale(.98)}
+
+.jackpot-winner-banner{display:none;text-align:center;background:linear-gradient(135deg,#30d158,#1a9a3a);color:#fff;border-radius:20px;padding:16px;font-weight:800;font-size:18px;margin-bottom:14px;opacity:0;transform:translateY(-10px);transition:all .4s ease}
+.jackpot-winner-banner.show{display:block;opacity:1;transform:translateY(0)}
 
 .jackpot-hash{text-align:center;color:#5c5c5e;font-size:13px;padding:12px 0 8px;flex-shrink:0}
 
-.jackpot-bottom-wrap{background:#000;padding:12px 16px calc(16px + env(safe-area-inset-bottom));box-sizing:border-box;z-index:2200;flex-shrink:0}
+.jackpot-bottom-wrap{background:#000;padding:12px 16px calc(16px + env(safe-area-inset-bottom));box-sizing:border-box;z-index:2200;flex-shrink:0;transition:transform .3s ease,opacity .3s ease}
+.jackpot-bottom-wrap.hidden{transform:translateY(100%);opacity:0;pointer-events:none}
 .jackpot-quick-bar{display:flex;gap:10px}
-.jackpot-quick-btn{flex:1;background:#fff;color:#000;border:none;padding:16px 0;border-radius:22px;font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer}
+.jackpot-quick-btn{flex:1;background:#fff;color:#000;border:none;padding:16px 0;border-radius:22px;font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:all .15s ease}
+.jackpot-quick-btn:active{transform:scale(.95);opacity:.85}
 .jackpot-quick-btn img{width:20px;height:20px}
 .jackpot-quick-btn:disabled{opacity:.5;pointer-events:none}
-.jackpot-quick-plus{width:56px;flex:none;background:#3a3a3d;color:#fff;border:none;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;cursor:pointer}
+.jackpot-quick-plus{width:56px;flex:none;background:#3a3a3d;color:#fff;border:none;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;cursor:pointer;transition:all .15s ease}
+.jackpot-quick-plus:active{transform:scale(.95);opacity:.85}
 .jackpot-quick-plus:disabled{opacity:.5;pointer-events:none}
+
+.jackpot-winner-sheet{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:2400;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .3s ease}
+.jackpot-winner-sheet.active{display:flex;opacity:1}
+.jackpot-winner-sheet .crash-amt-panel{transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+.jackpot-winner-sheet.active .crash-amt-panel{transform:translateY(0)}
 
 .jackpot-winner-panel{padding-top:18px}
 .jackpot-winner-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;font-weight:800;font-size:17px;color:#fff}
-.jackpot-winner-close{background:none;border:none;color:#8e8e93;font-size:20px;cursor:pointer;padding:4px;line-height:1}
+.jackpot-winner-close{background:none;border:none;color:#8e8e93;font-size:20px;cursor:pointer;padding:4px;line-height:1;transition:all .15s ease}
+.jackpot-winner-close:active{transform:scale(.9);opacity:.7}
 .jackpot-winner-row{display:flex;align-items:center;gap:12px;background:#26262a;border-radius:16px;padding:12px;margin-bottom:16px}
 .jackpot-winner-avatar{width:46px;height:46px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#3a3a3d;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px}
 .jackpot-winner-avatar img{width:100%;height:100%;object-fit:cover}
@@ -196,7 +229,8 @@ p{font-size:large}
 .invite-emoji{width:76px;height:76px;object-fit:contain;margin-bottom:10px}
 .invite-title{font-size:26px;font-weight:800;margin-bottom:8px}
 .invite-desc{color:#8e8e93;font-size:14.5px;line-height:1.4;margin-bottom:18px}
-.invite-btn{background:#fff;color:#000;border:none;width:100%;padding:15px;border-radius:22px;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+.invite-btn{background:#fff;color:#000;border:none;width:100%;padding:15px;border-radius:22px;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:all .15s ease}
+.invite-btn:active{transform:scale(.98);opacity:.85}
 .invite-badge{background:#3fb950;color:#fff;border-radius:14px;padding:5px 10px;display:flex;align-items:center;gap:4px;font-size:15px;font-weight:700}
 .invite-badge img{width:14px;height:14px}
 .inventory-card{margin-top:16px;text-align:center}
@@ -208,8 +242,8 @@ p{font-size:large}
 .inventory-item img{width:56px;height:56px}
 .inventory-item .inv-count{font-size:20px;font-weight:800}
 
-.topup-screen{display:none;position:fixed;inset:0;background:#000;z-index:2200;overflow-y:auto;padding:64px 0 100px}
-.topup-screen.active{display:block}
+.topup-screen{display:none;position:fixed;inset:0;background:#000;z-index:2200;overflow-y:auto;padding:64px 0 100px;opacity:0;transition:opacity .3s ease}
+.topup-screen.active{display:block;opacity:1}
 .topup-screen .wrap{padding:14px}
 .topup-screen .top{display:flex;justify-content:space-between;align-items:center}
 .topup-screen .back-btn{background:transparent;border:none;color:#fff;font-size:17px;font-weight:600;padding:0;cursor:pointer}
@@ -318,7 +352,7 @@ p{font-size:large}
         </div>
     </div>
 
-    <!-- JACKPOT SCREEN - Frog Case Style -->
+    <!-- JACKPOT SCREEN -->
     <div class="jackpot-screen" id="jackpotScreen">
         <div class="jackpot-topbar">
             <button class="jackpot-topbar-btn" id="jackpotHistoryBtn">
@@ -336,24 +370,25 @@ p{font-size:large}
 
         <div class="jackpot-field-wrap">
             <div class="jackpot-field">
-                <div class="jackpot-field-bg" id="jackpotFieldBg"></div>
+                <div class="jackpot-field-bg grid-bg" id="jackpotFieldBg"></div>
                 <div class="jackpot-wheel-sectors" id="jackpotWheel"></div>
                 <div class="jackpot-empty-state" id="jackpotEmptyState">
                     <div class="jackpot-empty-frame"></div>
                     <div class="jackpot-empty-dot"></div>
                     <p>Ожидание игроков</p>
                 </div>
-                <div class="jackpot-avatar-center" id="jackpotAvatarCenter" style="display:none"></div>
-                <div class="jackpot-timer" id="jackpotTimer" style="display:none">20</div>
+                <div class="jackpot-avatar-center" id="jackpotAvatarCenter"></div>
+                <div class="jackpot-timer" id="jackpotTimer">20</div>
                 <div class="jackpot-plus-marker" id="jackpotPlusMarker">+</div>
             </div>
         </div>
 
-        <div class="jackpot-info-panel">
+        <div class="jackpot-info-panel" id="jackpotInfoPanel">
             <div class="jackpot-info-header">
                 <span>Игроки</span>
                 <span id="jackpotRoundId">Игра #1</span>
             </div>
+            <div class="jackpot-winner-banner" id="jackpotWinnerBanner">🏆 Победитель определён!</div>
             <div id="jackpotPlayersList"></div>
             <div class="jackpot-more-players" id="jackpotMorePlayers" style="display:none">
                 <span id="jackpotMoreCount">+1 ещё</span>
@@ -398,14 +433,14 @@ p{font-size:large}
         </div>
     </div>
 </div>
-<nav class="bottom-nav">
+<nav class="bottom-nav" id="bottomNav">
     <div class="nav-item active" data-title="Заработок"><div class="nav-icon-container"><img src="star.png" class="nav-icon"></div><span class="nav-label">Заработок</span></div>
     <div class="nav-item" data-title="Игры"><div class="nav-icon-container"><img src="game.png" class="nav-icon"></div><span class="nav-label">Игры</span></div>
     <div class="nav-item" data-title="Лидеры"><div class="nav-icon-container"><img src="winer.png" class="nav-icon"></div><span class="nav-label">Лидеры</span></div>
     <div class="nav-item" data-title="Профиль"><div class="nav-icon-container"><img src="profile.png" class="nav-icon"></div><span class="nav-label">Профиль</span></div>
 </nav>
 
-<div class="crash-bottom-wrap" id="crashBottomWrap" style="display:none">
+<div class="crash-bottom-wrap hidden" id="crashBottomWrap">
     <button class="crash-submit-btn" id="crashSubmitBtn">Сделать ставку</button>
 </div>
 <div class="crash-amt-sheet" id="crashAmtSheet">
@@ -442,7 +477,7 @@ p{font-size:large}
         <button class="crash-amt-confirm" id="jackpotAmtConfirm">Поставить</button>
     </div>
 </div>
-<div class="crash-amt-sheet" id="jackpotWinnerSheet">
+<div class="jackpot-winner-sheet" id="jackpotWinnerSheet">
     <div class="crash-amt-panel jackpot-winner-panel">
         <div class="jackpot-winner-head">
             <span id="jackpotWinnerGameId">Игра #1</span>
@@ -647,33 +682,33 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
     const crashBottomWrap=document.getElementById('crashBottomWrap');
     const jackpotScreen=document.getElementById('jackpotScreen');
     const jackpotBottomWrap=document.getElementById('jackpotBottomWrap');
-    const bottomNav=document.querySelector('.bottom-nav');
+    const bottomNav=document.getElementById('bottomNav');
 
     function openCrash(){
         crashScreen.classList.add('active');
-        crashBottomWrap.style.display='block';
-        if(bottomNav)bottomNav.style.display='none';
+        crashBottomWrap.classList.remove('hidden');
+        if(bottomNav)bottomNav.classList.add('hidden');
         if(tg&&tg.BackButton)tg.BackButton.show();
         if(window.startCrashGame)window.startCrashGame();
     }
     function closeCrash(){
         crashScreen.classList.remove('active');
-        crashBottomWrap.style.display='none';
-        if(bottomNav)bottomNav.style.display='';
+        crashBottomWrap.classList.add('hidden');
+        if(bottomNav)bottomNav.classList.remove('hidden');
         if(tg&&tg.BackButton)tg.BackButton.hide();
         if(window.stopCrashGame)window.stopCrashGame();
     }
     function openJackpot(){
         jackpotScreen.classList.add('active');
-        jackpotBottomWrap.style.display='block';
-        if(bottomNav)bottomNav.style.display='none';
+        jackpotBottomWrap.classList.remove('hidden');
+        if(bottomNav)bottomNav.classList.add('hidden');
         if(tg&&tg.BackButton)tg.BackButton.show();
         if(window.startJackpotGame)window.startJackpotGame();
     }
     function closeJackpot(){
         jackpotScreen.classList.remove('active');
-        jackpotBottomWrap.style.display='none';
-        if(bottomNav)bottomNav.style.display='';
+        jackpotBottomWrap.classList.add('hidden');
+        if(bottomNav)bottomNav.classList.remove('hidden');
         if(tg&&tg.BackButton)tg.BackButton.hide();
         if(window.stopJackpotGame)window.stopJackpotGame();
     }
@@ -944,6 +979,8 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
     const morePlayersEl=document.getElementById('jackpotMorePlayers');
     const moreCountEl=document.getElementById('jackpotMoreCount');
     const roundIdEl=document.getElementById('jackpotRoundId');
+    const infoPanel=document.getElementById('jackpotInfoPanel');
+    const winnerBanner=document.getElementById('jackpotWinnerBanner');
     const winnerSheet=document.getElementById('jackpotWinnerSheet');
     const winnerGameIdEl=document.getElementById('jackpotWinnerGameId');
     const winnerAvatarEl=document.getElementById('jackpotWinnerAvatar');
@@ -1017,17 +1054,17 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
         const visiblePlayers = showAllPlayers ? sortedPlayers : sortedPlayers.slice(0, 5);
         const hiddenCount = sortedPlayers.length - 5;
 
-        visiblePlayers.forEach(p=>{
+        visiblePlayers.forEach((p,idx)=>{
             const chance=pot>0?(p.amount/pot*100):0;
             const row=document.createElement('div');
             row.className='jackpot-player-row-info';
+            row.style.animationDelay=(idx*0.08)+'s';
             row.innerHTML=`<div class="jackpot-player-avatar-info">${p.avatarHtml}</div>
                 <div class="jackpot-player-info-body"><div class="jackpot-player-name-info">${p.name}</div><div class="jackpot-player-chance-info">Шанс ${chance.toFixed(1)}%</div></div>
                 <div class="jackpot-player-amount-info"><img src="https://chimpbot.org/assets/stars-BaCoVmhq.svg">${p.amount}</div>`;
             playersListEl.appendChild(row);
         });
 
-        // Показываем "+N ещё" если игроков больше 5 и не раскрыт список
         if (hiddenCount > 0 && !showAllPlayers) {
             morePlayersEl.style.display='flex';
             moreCountEl.textContent = `+${hiddenCount} ещё`;
@@ -1036,7 +1073,6 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
         }
     }
 
-    // Клик по "+N ещё" раскрывает весь список
     morePlayersEl.addEventListener('click', ()=>{
         showAllPlayers = true;
         renderPlayersList();
@@ -1045,14 +1081,21 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
     function renderWheel(){
         const pot=potTotal();
         if(players.length===0){
-            emptyStateEl.style.display='flex';
+            // Нет игроков — показываем "Ожидание", скрываем панель игроков
+            emptyStateEl.classList.remove('hidden');
+            avatarCenterEl.classList.remove('show');
             avatarCenterEl.style.display='none';
             wheelEl.innerHTML='';
             fieldBg.style.background='#1c1c1e';
+            fieldBg.classList.add('grid-bg');
+            infoPanel.classList.remove('show');
             return;
         }
-        emptyStateEl.style.display='none';
+        // Есть игроки — скрываем "Ожидание", показываем панель
+        emptyStateEl.classList.add('hidden');
         wheelEl.innerHTML='';
+        fieldBg.classList.remove('grid-bg');
+        infoPanel.classList.add('show');
 
         if(players.length===1){
             const p=players[0];
@@ -1060,8 +1103,9 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
             p._endAngle=360;
             const color=COLORS[0];
             fieldBg.style.background=color;
-            avatarCenterEl.style.display='flex';
             avatarCenterEl.innerHTML=p.avatarHtml;
+            avatarCenterEl.style.display='flex';
+            setTimeout(()=>{avatarCenterEl.classList.add('show');},50);
             return;
         }
 
@@ -1075,9 +1119,21 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
             stops.push(`${color} ${startAngle}deg ${endAngle}deg`);
             p._startAngle=startAngle;
             p._endAngle=endAngle;
+            const midAngle=(startAngle+endAngle)/2;
+            const rad=midAngle*Math.PI/180;
+            const r=32;
+            const dx=r*Math.sin(rad);
+            const dy=-r*Math.cos(rad);
+            const av=document.createElement('div');
+            av.className='jackpot-field-avatar';
+            av.style.left=(50+dx)+'%';
+            av.style.top=(50+dy)+'%';
+            av.innerHTML=p.avatarHtml;
+            wheelEl.appendChild(av);
             cursor+=share;
         });
         fieldBg.style.background=`conic-gradient(${stops.join(',')})`;
+        avatarCenterEl.classList.remove('show');
         avatarCenterEl.style.display='none';
     }
 
@@ -1104,7 +1160,7 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
         if(phase==='waiting'&&players.length>=2){
             phase='countdown';
             countdownRemaining=COUNTDOWN_SECONDS;
-            timerEl.style.display='block';
+            timerEl.classList.add('show');
             timerEl.textContent=countdownRemaining;
             countdownTimerId=setInterval(()=>{
                 countdownRemaining--;
@@ -1178,7 +1234,7 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
         phase='spinning';
         setBettingEnabled(false);
         if(fakeJoinTimerId){clearInterval(fakeJoinTimerId);fakeJoinTimerId=null;}
-        timerEl.style.display='none';
+        timerEl.classList.remove('show');
         
         ballPos = { x: 0, y: 0 };
         const angle = Math.random() * Math.PI * 2;
@@ -1212,13 +1268,30 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
         const mult=pot/winner.amount;
         const chance=Math.round((winner.amount/pot)*10000)/100;
         
-        winnerGameIdEl.textContent='Игра #'+roundId;
-        winnerAvatarEl.innerHTML=winner.avatarHtml;
-        winnerNameEl.textContent=winner.name;
-        winnerMultEl.textContent='x'+mult.toFixed(2);
-        winnerAmountEl.textContent=pot;
-        winnerChanceEl.textContent='Шанс '+(chance%1===0?chance.toFixed(0):chance)+'%';
-        winnerSheet.classList.add('active');
+        winnerBanner.classList.add('show');
+        
+        setTimeout(()=>{
+            const rows=playersListEl.querySelectorAll('.jackpot-player-row-info');
+            rows.forEach(row=>{
+                const nameEl=row.querySelector('.jackpot-player-name-info');
+                if(nameEl && nameEl.textContent===winner.name){
+                    row.classList.add('winner-row');
+                }
+            });
+        },500);
+        
+        plusMarker.classList.add('winner-pulse');
+        
+        setTimeout(()=>{
+            winnerGameIdEl.textContent='Игра #'+roundId;
+            winnerAvatarEl.innerHTML=winner.avatarHtml;
+            winnerNameEl.textContent=winner.name;
+            winnerMultEl.textContent='x'+mult.toFixed(2);
+            winnerAmountEl.textContent=pot;
+            winnerChanceEl.textContent='Шанс '+(chance%1===0?chance.toFixed(0):chance)+'%';
+            winnerSheet.classList.add('active');
+        },1500);
+        
         if(winner.isUser){
             starsBalance+=pot;
             renderBalance();
@@ -1235,6 +1308,8 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
 
     function resetRound(){
         winnerSheet.classList.remove('active');
+        winnerBanner.classList.remove('show');
+        plusMarker.classList.remove('winner-pulse');
         players=[];
         userJoined=false;
         showAllPlayers=false;
@@ -1307,5 +1382,3 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
 </script>
 </body>
 </html>
-```
-
