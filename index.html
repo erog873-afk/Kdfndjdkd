@@ -132,7 +132,7 @@ p{font-size:large}
 .jackpot-plus-marker{position:absolute;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#bfc5cc 70%,#8c949d);color:transparent;font-size:0;display:none;align-items:center;justify-content:center;box-shadow:0 0 0 5px rgba(255,255,255,.10),0 0 18px rgba(255,255,255,.65);z-index:7;left:50%;top:50%;transform:translate(-50%,-50%);cursor:pointer;transition:left 2.8s cubic-bezier(.15,.7,.2,1),top 2.8s cubic-bezier(.15,.7,.2,1)}
 .jackpot-plus-marker.show{display:flex}
 .jackpot-plus-marker.flying{animation:jackpotBallFly 5.5s ease-in-out infinite, jackpotBallPulse .65s ease-in-out infinite alternate}
-@keyframes jackpotBallFly{0%{left:18%;top:72%}18%{left:28%;top:30%}38%{left:70%;top:18%}58%{left:88%;top:52%}78%{left:60%;top:82%}100%{left:20%;top:46%}}
+@keyframes jackpotBallFly{0%{left:8%;top:50%}25%{left:50%;top:8%}50%{left:92%;top:50%}75%{left:50%;top:92%}100%{left:8%;top:50%}}
 @keyframes jackpotBallPulse{from{box-shadow:0 0 0 4px rgba(255,255,255,.08),0 0 10px rgba(255,255,255,.35)}to{box-shadow:0 0 0 7px rgba(255,255,255,.12),0 0 22px rgba(255,255,255,.8)}}
 .jackpot-players-panel{background:#ffffff0d;border-radius:26px;padding:16px}
 .jackpot-players-header{display:flex;justify-content:space-between;color:#8e8e93;font-size:13.5px;font-weight:700;margin-bottom:10px}
@@ -289,10 +289,7 @@ p{font-size:large}
         <div class="jackpot-winner-banner" id="jackpotWinnerBanner"></div>
         <div class="jackpot-wheel-wrap" id="jackpotWheelWrap">
             <div class="jackpot-wheel" id="jackpotWheel"></div>
-            <div class="jackpot-empty-state" id="jackpotEmptyState">
-                <div class="jackpot-empty-dot"></div>
-                <p>Ожидание игроков</p>
-            </div>
+            <div class="jackpot-empty-state" id="jackpotEmptyState"></div>
             <div class="jackpot-timer" id="jackpotTimer" style="display:none">20</div>
             <div class="jackpot-plus-marker" id="jackpotPlusMarker">+</div>
         </div>
