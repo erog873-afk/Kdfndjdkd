@@ -120,12 +120,12 @@ p{font-size:large}
 .jackpot-screen.active{display:block}
 .jackpot-pot-pill{background:#1c1c1e;border-radius:22px;padding:14px 18px;text-align:center;font-size:19px;font-weight:800;margin-bottom:14px}
 .jackpot-pot-pill span{color:#ffb020}
-.jackpot-wheel-wrap{position:relative;width:100%;height:390px;border-radius:26px;overflow:hidden;background:#1c1c1e;margin-bottom:16px;display:none}
+.jackpot-wheel-wrap{position:relative;width:100%;height:390px;border-radius:26px;overflow:hidden;background:#1c1c1e;margin-bottom:16px;display:block}
 .jackpot-wheel-wrap.show{display:block}
 .jackpot-wheel{position:absolute;inset:0;background-color:#1c1c1e;background-image:linear-gradient(rgba(255,255,255,.075) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.075) 1px,transparent 1px);background-size:46px 46px}
-.jackpot-empty-state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#1c1c1e}
-.jackpot-empty-dot{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e6e6e6,#8e8e93)}
-.jackpot-empty-state p{color:#8e8e93;font-size:20px;font-weight:800;margin:0}
+.jackpot-empty-state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:transparent;z-index:2}
+.jackpot-empty-dot{position:absolute;left:92%;top:31%;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e6e6e6,#8e8e93);transform:translate(-50%,-50%)}
+.jackpot-empty-state p{color:#77777d;font-size:20px;font-weight:800;margin:0;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);white-space:nowrap}
 .jackpot-avatar{position:absolute;width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.85);overflow:hidden;transform:translate(-50%,-50%);background:#3a3a3d;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;z-index:3}
 .jackpot-avatar img{width:100%;height:100%;object-fit:cover}
 .jackpot-timer{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.55);color:#fff;font-size:30px;font-weight:800;padding:10px 20px;border-radius:16px;z-index:5}
@@ -134,7 +134,7 @@ p{font-size:large}
 .jackpot-plus-marker.flying{animation:jackpotBallFly 5.5s ease-in-out infinite, jackpotBallPulse .65s ease-in-out infinite alternate}
 @keyframes jackpotBallFly{0%{left:8%;top:50%}25%{left:50%;top:8%}50%{left:92%;top:50%}75%{left:50%;top:92%}100%{left:8%;top:50%}}
 @keyframes jackpotBallPulse{from{box-shadow:0 0 0 4px rgba(255,255,255,.08),0 0 10px rgba(255,255,255,.35)}to{box-shadow:0 0 0 7px rgba(255,255,255,.12),0 0 22px rgba(255,255,255,.8)}}
-.jackpot-players-panel{background:#ffffff0d;border-radius:26px;padding:16px}
+.jackpot-players-panel{display:none;background:#ffffff0d;border-radius:26px;padding:16px}
 .jackpot-players-header{display:flex;justify-content:space-between;color:#8e8e93;font-size:13.5px;font-weight:700;margin-bottom:10px}
 .jackpot-player-row{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid #ffffff0f}
 .jackpot-player-row:last-child{border-bottom:none}
@@ -289,7 +289,7 @@ p{font-size:large}
         <div class="jackpot-winner-banner" id="jackpotWinnerBanner"></div>
         <div class="jackpot-wheel-wrap" id="jackpotWheelWrap">
             <div class="jackpot-wheel" id="jackpotWheel"></div>
-            <div class="jackpot-empty-state" id="jackpotEmptyState"></div>
+            <div class="jackpot-empty-state" id="jackpotEmptyState"><div class="jackpot-empty-dot"></div><p>Ожидание игроков</p></div>
             <div class="jackpot-timer" id="jackpotTimer" style="display:none">20</div>
             <div class="jackpot-plus-marker" id="jackpotPlusMarker">+</div>
         </div>
@@ -950,35 +950,26 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
     // перемещая плюсик-маркер в сектор победителя.
     function renderWheel(){
         const pot=potTotal();
-        // Поле появляется только после собственной ставки пользователя.
-        if(!userJoined){
-            wheelWrapEl.classList.remove('show');
-            emptyStateEl.style.display='none';
-            wheelEl.innerHTML='';
-            return;
-        }
+        // Поле всегда остаётся на экране. До первой ставки показываем только сетку,
+        // точку и надпись «Ожидание игроков». После ставки запускается летающий шарик.
         wheelWrapEl.classList.add('show');
-        emptyStateEl.style.display='none';
         wheelEl.innerHTML='';
         wheelEl.style.background='';
 
-        // Участники остаются в виде маленьких аватаров, а фон — поле с квадратиками.
+        if(!userJoined){
+            emptyStateEl.style.display='flex';
+            return;
+        }
+
+        emptyStateEl.style.display='none';
+
+        // Игроки не закрашивают поле: остаётся одна и та же сетка.
+        // Координаты используются только для расчёта победного сектора.
         let cursor=0;
         players.forEach((p,i)=>{
             const share=pot>0?p.amount/pot:1/Math.max(players.length,1);
-            const angle=(cursor+share/2)*360;
-            const rad=angle*Math.PI/180;
-            const r=30;
-            const dx=r*Math.sin(rad);
-            const dy=-r*Math.cos(rad);
             p._startAngle=cursor*360;
             p._endAngle=(cursor+share)*360;
-            const av=document.createElement('div');
-            av.className='jackpot-avatar';
-            av.style.left=(50+dx)+'%';
-            av.style.top=(50+dy)+'%';
-            av.innerHTML=p.avatarHtml;
-            wheelEl.appendChild(av);
             cursor+=share;
         });
     }
@@ -1083,7 +1074,8 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
         roundIdEl.textContent='Игра #'+roundId;
         plusMarker.classList.remove('show','flying');
         plusMarker.style.transition='none';
-        wheelWrapEl.classList.remove('show');
+        wheelWrapEl.classList.add('show');
+        emptyStateEl.style.display='flex';
         plusMarker.style.left='50%';
         plusMarker.style.top='50%';
         renderPot();
