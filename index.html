@@ -1182,58 +1182,88 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
         phase='spinning';
         setBettingEnabled(false);
         timerEl.style.display='none';
-        const winner=pickWeightedWinner();
-        const SPIN_DURATION=6000; // минимум 5 секунд: здесь 6 секунд
 
-        // ПРЯМОУГОЛЬНОЕ/КВАДРАТНОЕ ПОЛЕ: плюсик реально отскакивает от стенок.
+        // ВАЖНО: победитель заранее НЕ выбирается.
+        // Победителем становится тот игрок, чей цветовой сектор окажется
+        // под плюсиком в момент полной остановки.
+        const SPIN_DURATION=7000;       // 7 секунд всего
+        const FAST_DURATION=5000;       // первые 5 секунд — быстро
+
+        // Квадратное поле. Плюсик реально летит внутри него и отбивается
+        // от каждой стенки, как шарик.
         const HALF_FIELD=46;
         const MARKER_RADIUS=3.5;
         const MAX_X=HALF_FIELD-MARKER_RADIUS;
         const MAX_Y=HALF_FIELD-MARKER_RADIUS;
 
-        let posX=0, posY=0;
+        let posX=0;
+        let posY=0;
+
         const startAngle=Math.random()*Math.PI*2;
-        const INITIAL_SPEED=175;
         let dirX=Math.cos(startAngle);
         let dirY=Math.sin(startAngle);
 
+        const INITIAL_SPEED=190;
+        const FINAL_SPEED=2.5;
         const spinStart=performance.now();
+        let lastTime=spinStart;
+        let rafId=null;
+
         plusMarker.classList.add('show');
         plusMarker.style.transition='none';
         plusMarker.style.left='50%';
         plusMarker.style.top='50%';
         void plusMarker.offsetWidth;
 
-        let lastTime=spinStart;
-        let rafId=null;
+        function getWinnerByPosition(){
+            if(players.length===0)return null;
+            if(players.length===1)return players[0];
+
+            // Переводим последнюю позицию плюсика в угол относительно центра.
+            // 0° — сверху, дальше по часовой стрелке.
+            let angle=Math.atan2(posX,-posY)*180/Math.PI;
+            if(angle<0)angle+=360;
+
+            for(const p of players){
+                if(angle>=p._startAngle && angle<p._endAngle){
+                    return p;
+                }
+            }
+            return players[players.length-1];
+        }
 
         function frame(now){
             if(!running)return;
+
             const rawDt=(now-lastTime)/1000;
             const dt=Math.min(rawDt,0.016);
             lastTime=now;
 
             const elapsed=now-spinStart;
+
+            // 0..1 — общая анимация.
             const t=Math.min(elapsed/SPIN_DURATION,1);
 
-            // Первые 5 секунд плюсик быстро летает по всему полю и отскакивает от стен.
-            // Последняя секунда — плавное торможение. В конце он гарантированно
-            // приходит в сектор выбранного игрока.
-            const slowdownStart=5/6;
             let speed;
-            if(t<slowdownStart){
+            if(elapsed < FAST_DURATION){
+                // Первые 5 секунд скорость практически максимальная.
                 speed=INITIAL_SPEED;
             }else{
-                const u=(t-slowdownStart)/(1-slowdownStart);
-                speed=INITIAL_SPEED*(1-u*u);
+                // Последние 2 секунды — настоящее плавное торможение.
+                // В самом конце плюсик ползёт буквально по чуть-чуть.
+                const u=Math.min((elapsed-FAST_DURATION)/(SPIN_DURATION-FAST_DURATION),1);
+                const eased=u*u*(3-2*u); // smoothstep
+                speed=INITIAL_SPEED+(FINAL_SPEED-INITIAL_SPEED)*eased;
             }
 
-            // Движение с обработкой нескольких столкновений за один кадр.
             let distance=speed*dt;
             let guard=0;
-            while(distance>0 && guard++<8){
+
+            // Обрабатываем даже несколько ударов о стенки за один кадр.
+            while(distance>0 && guard++<12){
                 const tx=dirX>0 ? (MAX_X-posX)/dirX : (-MAX_X-posX)/dirX;
                 const ty=dirY>0 ? (MAX_Y-posY)/dirY : (-MAX_Y-posY)/dirY;
+
                 const hitX=tx>=0?tx:Infinity;
                 const hitY=ty>=0?ty:Infinity;
                 const hit=Math.min(hitX,hitY);
@@ -1243,13 +1273,23 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
                     posY+=dirY*hit;
                     distance-=hit;
 
+                    let bounced=false;
+
                     if(Math.abs(posX)>=MAX_X-0.001){
                         posX=dirX>0?MAX_X:-MAX_X;
                         dirX*=-1;
+                        bounced=true;
                     }
+
                     if(Math.abs(posY)>=MAX_Y-0.001){
                         posY=dirY>0?MAX_Y:-MAX_Y;
                         dirY*=-1;
+                        bounced=true;
+                    }
+
+                    // Лёгкая вибрация при ударе о стену в Telegram.
+                    if(bounced && tg&&tg.HapticFeedback){
+                        try{tg.HapticFeedback.selectionChanged();}catch(e){}
                     }
                 }else{
                     posX+=dirX*distance;
@@ -1264,11 +1304,22 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
             if(t<1){
                 rafId=requestAnimationFrame(frame);
             }else{
-                // В момент остановки плюсик остаётся ровно на последнем месте.
-                applyWinnerHighlight(winner);
-                setTimeout(()=>{finishRound(winner);},1500);
+                // ПОЛНАЯ ОСТАНОВКА.
+                // Только сейчас определяем победителя по реальному месту,
+                // где остановился плюсик.
+                const winner=getWinnerByPosition();
+
+                // Плюсик больше не двигается вообще.
+                plusMarker.style.left=(50+posX)+'%';
+                plusMarker.style.top=(50+posY)+'%';
+
+                if(winner){
+                    applyWinnerHighlight(winner);
+                    setTimeout(()=>{finishRound(winner);},1500);
+                }
             }
         }
+
         rafId=requestAnimationFrame(frame);
     }
 
