@@ -1216,8 +1216,10 @@ document.getElementById('openTopupFromProfile').addEventListener('click',()=>{
             const elapsed=now-spinStart;
             const t=Math.min(elapsed/SPIN_DURATION,1);
 
-            // Первые ~5 секунд очень быстро. Последняя секунда — сильное торможение.
-            const slowdownStart=0.82;
+            // Первые 5 секунд плюсик быстро летает по всему полю и отскакивает от стен.
+            // Последняя секунда — плавное торможение. В конце он гарантированно
+            // приходит в сектор выбранного игрока.
+            const slowdownStart=5/6;
             let speed;
             if(t<slowdownStart){
                 speed=INITIAL_SPEED;
