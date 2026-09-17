@@ -150,14 +150,15 @@ body.offline-loading .Panel--container {
     if (!card) return;
 
     const originalHTML = card.innerHTML;
-    const originalHeight = card.getBoundingClientRect().height || 430;
+    let referenceHeight = null;
     let tasks = [];
     let index = 0;
 
     function showEmpty() {
       card.style.display = "";
-      card.style.minHeight = originalHeight + "px";
-      card.innerHTML = '<div class="Placeholder--container" style="text-align:center;display:flex;flex-direction:column;justify-content:center;min-height:' + Math.max(0, originalHeight - 32) + 'px;"><div class="Placeholder--children"></div><div class="Placeholder--title-container" style="justify-content:center;"><h2>Задания закончились</h2></div><p class="Placeholder--text Placeholder--text-2">Но уже совсем скоро появятся новые! Пока что можете сыграть в рулетку или пригласить друзей.</p></div>';
+      const h = referenceHeight || 240;
+      card.style.minHeight = h + "px";
+      card.innerHTML = '<div class="Placeholder--container" style="text-align:center;display:flex;flex-direction:column;justify-content:center;min-height:' + Math.max(0, h - 32) + 'px;"><div class="Placeholder--children"></div><div class="Placeholder--title-container" style="justify-content:center;"><h2>Задания закончились</h2></div><p class="Placeholder--text Placeholder--text-2">Но уже совсем скоро появятся новые! Пока что можете сыграть в рулетку или пригласить друзей.</p></div>';
     }
 
     function showTask(task) {
@@ -172,6 +173,11 @@ body.offline-loading .Panel--container {
       const description = card.querySelector("#task-description");
       if (title) title.textContent = task.title || "Подписаться на канал";
       if (description) description.textContent = task.description || "Перейдите в канал, подпишитесь на него, вернитесь сюда и нажмите кнопку «Проверить»";
+
+      requestAnimationFrame(function () {
+        const h = card.getBoundingClientRect().height;
+        if (h > 0) referenceHeight = h;
+      });
 
       if (go) go.onclick = function () { if (task.url) window.open(task.url, "_blank"); };
       if (skip) skip.onclick = function () {
