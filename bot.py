@@ -264,11 +264,6 @@ async def start(message: types.Message):
         types.InlineKeyboardButton(text="Чат", url=CHAT_URL)
     )
 
-    if is_admin(message.from_user.id):
-        keyboard.row(types.InlineKeyboardButton(
-            text="🛠 Админ-панель", callback_data="admin:panel"
-        ))
-
     await message.answer(
         "⭐ Зарабатывайте звёзды и NFT-подарки, "
         "выполняя простые задания и играя в игры 👇",
