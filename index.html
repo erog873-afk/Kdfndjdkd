@@ -142,34 +142,29 @@ body.offline-loading .Panel--container {
 </script>
 <script>
 (function () {
-  const section = document.getElementById("task-section");
-  const card = section ? section.querySelector(".Card--container") : null;
-  if (!card) return;
+  function initTasks() {
+    const section = document.getElementById("task-section");
+    const card = section ? section.querySelector(".Card--container") : null;
+    if (!card) return;
 
-  // The existing card is the source template. Its width, padding, radius and balance block are untouched.
-  const originalHeight = card.getBoundingClientRect().height;
-  const originalHTML = card.innerHTML;
+    const originalHTML = card.innerHTML;
+    const originalHeight = card.getBoundingClientRect().height || 430;
 
-  function showEmpty() {
-    card.style.minHeight = originalHeight + "px";
-    card.innerHTML = '<div class="Placeholder--container" style="text-align:center;display:flex;flex-direction:column;justify-content:center;min-height:' + Math.max(0, originalHeight - 32) + 'px;"><div class="Placeholder--children"></div><div class="Placeholder--title-container" style="justify-content:center;"><h2>Задания закончились</h2></div><p class="Placeholder--text Placeholder--text-2">Но уже совсем скоро появятся новые! Пока что можете сыграть в рулетку или пригласить друзей.</p></div>';
-  }
+    function showEmpty() {
+      card.style.display = "";
+      card.style.minHeight = originalHeight + "px";
+      card.innerHTML = '<div class="Placeholder--container" style="text-align:center;display:flex;flex-direction:column;justify-content:center;min-height:' + Math.max(0, originalHeight - 32) + 'px;"><div class="Placeholder--children"></div><div class="Placeholder--title-container" style="justify-content:center;"><h2>Задания закончились</h2></div><p class="Placeholder--text Placeholder--text-2">Но уже совсем скоро появятся новые! Пока что можете сыграть в рулетку или пригласить друзей.</p></div>';
+    }
 
-  async function loadTask() {
-    try {
-      const response = await fetch("/api/tasks", { cache: "no-store" });
-      const tasks = await response.json();
-      const task = Array.isArray(tasks) && tasks.length ? tasks[0] : null;
-      if (!task) { showEmpty(); return; }
-
-      // Restore the exact original task template; only the channel link/behavior is dynamic.
+    function showTask(task) {
+      card.style.display = "";
       card.style.minHeight = "";
       card.innerHTML = originalHTML;
       const go = card.querySelector("#task-go");
       const skip = card.querySelector("#task-skip");
       const check = card.querySelector("#task-check");
       if (go) go.onclick = function () { window.open(task.url, "_blank"); };
-      if (skip) skip.onclick = function () { card.style.display = "none"; };
+      if (skip) skip.onclick = function () { showEmpty(); };
       if (check) check.onclick = async function () {
         check.disabled = true;
         try {
@@ -180,23 +175,61 @@ body.offline-loading .Panel--container {
             body: JSON.stringify({ task_id: task.id, init_data: initData })
           });
           const result = await vr.json();
-          if (result.subscribed) {
-            check.textContent = "Проверено";
+          if (result.subscribed && result.credited) {
+            check.textContent = "Зачислено 0,5 ⭐";
+            if (typeof result.balance === "number") {
+              document.querySelectorAll(".BalanceItem--stars p").forEach(function (el) {
+                el.textContent = result.balance.toFixed(2).replace(".", ",");
+              });
+            }
+            setTimeout(showEmpty, 900);
+          } else if (result.subscribed && result.already_completed) {
+            check.textContent = "Задание уже выполнено";
+            setTimeout(function () { check.textContent = "Проверить"; check.disabled = false; }, 1800);
           } else {
-            check.textContent = "Подпишитесь и проверьте";
+            check.textContent = "Вы не подписались";
             setTimeout(function () { check.textContent = "Проверить"; check.disabled = false; }, 1800);
           }
         } catch (_) {
-          check.disabled = false;
+          check.textContent = "Ошибка проверки";
+          setTimeout(function () { check.textContent = "Проверить"; check.disabled = false; }, 1800);
         }
       };
-    } catch (_) {
-      // Keep the original template if the API is temporarily unavailable.
     }
+
+    async function loadTasks() {
+      try {
+        const response = await fetch("/api/tasks", { cache: "no-store" });
+        if (!response.ok) throw new Error("tasks api");
+        const tasks = await response.json();
+        const task = Array.isArray(tasks) && tasks.length ? tasks[0] : null;
+        if (task) showTask(task); else showEmpty();
+      } catch (_) {
+        // Если сервер не сообщил о задании, не показываем старый шаблон как активное задание.
+        showEmpty();
+      }
+    }
+
+    async function loadBalance() {
+      try {
+        const initData = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp.initData : "";
+        const r = await fetch("/api/balance?init_data=" + encodeURIComponent(initData), { cache: "no-store" });
+        if (!r.ok) return;
+        const data = await r.json();
+        if (typeof data.balance === "number") {
+          document.querySelectorAll(".BalanceItem--stars p").forEach(function (el) {
+            el.textContent = data.balance.toFixed(2).replace(".", ",");
+          });
+        }
+      } catch (_) {}
+    }
+
+    loadTasks();
+    loadBalance();
   }
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", loadTask);
-  else loadTask();
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initTasks);
+  else initTasks();
 })();
 </script>
 <div id="task-section" style="display:none;animation:scaleUp .3s ease;box-sizing:border-box;min-height:100vh;left:0;overflow-y:auto;padding:var(--top_margin) 16px var(--bottom_margin) 16px;position:fixed;top:0;width:100%;background:var(--background_color);z-index:1000;">
