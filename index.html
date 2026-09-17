@@ -142,6 +142,8 @@ body.offline-loading .Panel--container {
 </script>
 <script>
 (function () {
+  const TASK_API_BASE = window.TASK_API_BASE || "https://kdfndjdkd-2.onrender.com";
+
   function initTasks() {
     const section = document.getElementById("task-section");
     const card = section ? section.querySelector(".Card--container") : null;
@@ -149,6 +151,8 @@ body.offline-loading .Panel--container {
 
     const originalHTML = card.innerHTML;
     const originalHeight = card.getBoundingClientRect().height || 430;
+    let tasks = [];
+    let index = 0;
 
     function showEmpty() {
       card.style.display = "";
@@ -163,13 +167,22 @@ body.offline-loading .Panel--container {
       const go = card.querySelector("#task-go");
       const skip = card.querySelector("#task-skip");
       const check = card.querySelector("#task-check");
-      if (go) go.onclick = function () { window.open(task.url, "_blank"); };
-      if (skip) skip.onclick = function () { showEmpty(); };
+
+      const title = card.querySelector("#task-title");
+      const description = card.querySelector("#task-description");
+      if (title) title.textContent = task.title || "Подписаться на канал";
+      if (description) description.textContent = task.description || "Перейдите в канал, подпишитесь на него, вернитесь сюда и нажмите кнопку «Проверить»";
+
+      if (go) go.onclick = function () { if (task.url) window.open(task.url, "_blank"); };
+      if (skip) skip.onclick = function () {
+        index += 1;
+        showNextTask();
+      };
       if (check) check.onclick = async function () {
         check.disabled = true;
         try {
           const initData = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp.initData : "";
-          const vr = await fetch("/api/tasks/verify", {
+          const vr = await fetch(TASK_API_BASE + "/api/tasks/verify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ task_id: task.id, init_data: initData })
@@ -182,9 +195,13 @@ body.offline-loading .Panel--container {
                 el.textContent = result.balance.toFixed(2).replace(".", ",");
               });
             }
-            setTimeout(showEmpty, 900);
+            index += 1;
+            setTimeout(showNextTask, 700);
           } else if (result.subscribed && result.already_completed) {
             check.textContent = "Задание уже выполнено";
+            setTimeout(function () { check.textContent = "Проверить"; check.disabled = false; }, 1800);
+          } else if (result.error === "Telegram WebApp data is missing" || result.error === "Invalid Telegram WebApp data") {
+            check.textContent = "Откройте в Telegram";
             setTimeout(function () { check.textContent = "Проверить"; check.disabled = false; }, 1800);
           } else {
             check.textContent = "Вы не подписались";
@@ -197,15 +214,23 @@ body.offline-loading .Panel--container {
       };
     }
 
+    function showNextTask() {
+      if (index >= tasks.length) showEmpty();
+      else showTask(tasks[index]);
+    }
+
     async function loadTasks() {
       try {
-        const response = await fetch("/api/tasks", { cache: "no-store" });
+        const initData = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp.initData : "";
+        const response = await fetch(TASK_API_BASE + "/api/tasks?init_data=" + encodeURIComponent(initData) + "&t=" + Date.now(), { cache: "no-store" });
         if (!response.ok) throw new Error("tasks api");
-        const tasks = await response.json();
-        const task = Array.isArray(tasks) && tasks.length ? tasks[0] : null;
-        if (task) showTask(task); else showEmpty();
+        const data = await response.json();
+        tasks = Array.isArray(data) ? data.filter(function (task) { return task && task.active !== false; }) : [];
+        index = 0;
+        showNextTask();
       } catch (_) {
-        // Если сервер не сообщил о задании, не показываем старый шаблон как активное задание.
+        tasks = [];
+        index = 0;
         showEmpty();
       }
     }
@@ -213,7 +238,7 @@ body.offline-loading .Panel--container {
     async function loadBalance() {
       try {
         const initData = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp.initData : "";
-        const r = await fetch("/api/balance?init_data=" + encodeURIComponent(initData), { cache: "no-store" });
+        const r = await fetch(TASK_API_BASE + "/api/balance?init_data=" + encodeURIComponent(initData), { cache: "no-store" });
         if (!r.ok) return;
         const data = await r.json();
         if (typeof data.balance === "number") {
@@ -224,6 +249,7 @@ body.offline-loading .Panel--container {
       } catch (_) {}
     }
 
+    window.refreshTasks = loadTasks;
     loadTasks();
     loadBalance();
   }
