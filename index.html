@@ -11,7 +11,7 @@
     --tg-safe-area-inset-bottom: 20px;
     --tg-content-safe-area-inset-top: 0px;
     --tg-content-safe-area-inset-bottom: 0px;
-    --top_margin: calc(var(--tg-safe-area-inset-top) + var(--tg-content-safe-area-inset-top) + 8px);
+    --top_margin: calc(var(--tg-safe-area-inset-top) + var(--tg-content-safe-area-inset-top) + 64px);
     --bottom_margin: calc(var(--tg-content-safe-area-inset-bottom) + 16px);
   }
   body {
@@ -24,17 +24,21 @@
 
 /* Увеличиваем высоту нижней панели с кнопками, не трогая сам набор кнопок */
 .Tabbar--container{
-  padding: 16px 0 14px;
+  padding: 12px 0 10px;
 }
 .Tab--container .Icon,
 .Tab--container .IconFilled,
 .Tab--container img{
+  height: 24px;
+  width: 24px;
+}
+.Tab--highlight .IconFilled{
   height: 30px;
   width: 30px;
 }
 .Tab--container p{
-  margin-top: 8px;
-  font-size: 12px;
+  margin-top: 6px;
+  font-size: 11px;
 }
 .BottomLayout--container{
   padding-bottom: calc(var(--bottom_margin) + 8px);
