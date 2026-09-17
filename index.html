@@ -7,10 +7,12 @@
 <link href="main.css" rel="stylesheet"/>
 <style>
   :root {
-    --tg-safe-area-inset-top: 0px;
-    --tg-safe-area-inset-bottom: 0px;
-    --top_margin: 0px;
-    --bottom_margin: 0px;
+    --tg-safe-area-inset-top: 44px;
+    --tg-safe-area-inset-bottom: 20px;
+    --tg-content-safe-area-inset-top: 0px;
+    --tg-content-safe-area-inset-bottom: 0px;
+    --top_margin: calc(var(--tg-safe-area-inset-top) + var(--tg-content-safe-area-inset-top) + 8px);
+    --bottom_margin: calc(var(--tg-content-safe-area-inset-bottom) + 16px);
   }
   body {
     margin: 0;
@@ -18,7 +20,26 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: #fff;
   }
-.Tab--container--inactive .TaskIcon{filter:brightness(0) invert(1);opacity:.55}.Tab--container--active .TaskIcon{filter:brightness(0) invert(1);opacity:1}</style>
+.Tab--container--inactive .TaskIcon{filter:brightness(0) invert(1);opacity:.55}.Tab--container--active .TaskIcon{filter:brightness(0) invert(1);opacity:1}
+
+/* Увеличиваем высоту нижней панели с кнопками, не трогая сам набор кнопок */
+.Tabbar--container{
+  padding: 16px 0 14px;
+}
+.Tab--container .Icon,
+.Tab--container .IconFilled,
+.Tab--container img{
+  height: 30px;
+  width: 30px;
+}
+.Tab--container p{
+  margin-top: 8px;
+  font-size: 12px;
+}
+.BottomLayout--container{
+  padding-bottom: calc(var(--bottom_margin) + 8px);
+}
+</style>
 <style>
 /* При Лидерах/Магазине/Профиле игровая страница полностью скрывается. */
 body.offline-loading .Panel--content,
