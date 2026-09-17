@@ -150,7 +150,23 @@ body.offline-loading .Panel--container {
     if (!card) return;
 
     const originalHTML = card.innerHTML;
-    const originalHeight = card.getBoundingClientRect().height || 430;
+
+    // section скрыт (display:none) в момент загрузки, поэтому обычный замер
+    // высоты вернул бы 0. Ненадолго показываем его невидимо (visibility:hidden),
+    // чтобы браузер посчитал реальную высоту карточки с заданием, и прячем обратно.
+    const wasHidden = section.style.display === "none";
+    let originalHeight;
+    if (wasHidden) {
+      const prevVisibility = section.style.visibility;
+      section.style.visibility = "hidden";
+      section.style.display = "block";
+      originalHeight = card.getBoundingClientRect().height || 430;
+      section.style.display = "none";
+      section.style.visibility = prevVisibility;
+    } else {
+      originalHeight = card.getBoundingClientRect().height || 430;
+    }
+
     let tasks = [];
     let index = 0;
 
