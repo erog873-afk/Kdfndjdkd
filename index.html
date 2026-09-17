@@ -166,11 +166,13 @@ body.offline-loading .Panel--container {
       }, 160);
     }
 
+    const CARD_HEIGHT = originalHeight + 120;
+
     function showEmpty() {
       renderCard(function () {
         card.style.display = "";
-        card.style.minHeight = originalHeight + "px";
-        card.innerHTML = '<div class="Placeholder--container" style="text-align:center;display:flex;flex-direction:column;justify-content:center;min-height:' + Math.max(0, originalHeight - 32) + 'px;"><div class="Placeholder--children"></div><div class="Placeholder--title-container" style="justify-content:center;"><h2>Задания закончились</h2></div><p class="Placeholder--text Placeholder--text-2">Но уже совсем скоро появятся новые! Пока что можете сыграть в рулетку или пригласить друзей.</p></div>';
+        card.style.minHeight = CARD_HEIGHT + "px";
+        card.innerHTML = '<div class="Placeholder--container" style="text-align:center;display:flex;flex-direction:column;justify-content:center;min-height:' + Math.max(0, CARD_HEIGHT - 32) + 'px;"><div class="Placeholder--children"></div><div class="Placeholder--title-container" style="justify-content:center;"><h2>Задания закончились</h2></div><p class="Placeholder--text Placeholder--text-2">Но уже совсем скоро появятся новые! Пока что можете сыграть в рулетку или пригласить друзей.</p></div>';
       });
     }
 
@@ -180,7 +182,7 @@ body.offline-loading .Panel--container {
 
     function renderTaskContent(task) {
       card.style.display = "";
-      card.style.minHeight = "";
+      card.style.minHeight = CARD_HEIGHT + "px";
       card.innerHTML = originalHTML;
       const go = card.querySelector("#task-go");
       const skip = card.querySelector("#task-skip");
