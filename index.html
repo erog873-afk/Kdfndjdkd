@@ -154,7 +154,35 @@ body.offline-loading .Panel--container {
     let tasks = [];
     let index = 0;
 
+    let banner = null;
+    function hideBanner() {
+      if (banner) banner.style.display = "none";
+    }
+    function showBanner(kind, text) {
+      if (!banner) {
+        banner = document.createElement("div");
+        banner.style.cssText = "display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:16px;font-weight:600;font-size:15px;margin-bottom:16px;";
+        card.parentNode.insertBefore(banner, card);
+      }
+      if (kind === "success") {
+        banner.style.background = "var(--secondary_bg_color, #2c2c2e)";
+        banner.style.color = "var(--text_color, #ffffff)";
+        banner.innerHTML = '<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.12);font-size:14px;">\u2b50</span><span>' + text + "</span>";
+      } else {
+        banner.style.background = "#e53935";
+        banner.style.color = "#ffffff";
+        banner.innerHTML = '<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.25);font-size:13px;">\u2715</span><span>' + text + "</span>";
+      }
+      banner.style.display = "flex";
+      clearTimeout(banner._hideTimer);
+      banner._hideTimer = setTimeout(hideBanner, 2400);
+    }
+    function haptic() {
+      return window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback;
+    }
+
     function showEmpty() {
+      hideBanner();
       card.style.display = "";
       const h = referenceHeight || 240;
       card.style.minHeight = h + "px";
@@ -162,6 +190,7 @@ body.offline-loading .Panel--container {
     }
 
     function showTask(task) {
+      hideBanner();
       card.style.display = "";
       card.style.minHeight = "";
       card.innerHTML = originalHTML;
@@ -194,28 +223,35 @@ body.offline-loading .Panel--container {
             body: JSON.stringify({ task_id: task.id, init_data: initData })
           });
           const result = await vr.json();
+          const hf = haptic();
           if (result.subscribed && result.credited) {
-            check.textContent = "Зачислено 0,5 ⭐";
+            if (hf) hf.notificationOccurred("success");
+            showBanner("success", "Начислено +" + (task.reward != null ? String(task.reward).replace(".", ",") : "0,5") + " \u2b50");
             if (typeof result.balance === "number") {
               document.querySelectorAll(".BalanceItem--stars p").forEach(function (el) {
                 el.textContent = result.balance.toFixed(2).replace(".", ",");
               });
             }
             index += 1;
-            setTimeout(showNextTask, 700);
+            setTimeout(showNextTask, 1200);
           } else if (result.subscribed && result.already_completed) {
-            check.textContent = "Задание уже выполнено";
-            setTimeout(function () { check.textContent = "Проверить"; check.disabled = false; }, 1800);
+            if (hf) hf.notificationOccurred("warning");
+            showBanner("error", "Задание уже выполнено");
+            check.disabled = false;
           } else if (result.error === "Telegram WebApp data is missing" || result.error === "Invalid Telegram WebApp data") {
-            check.textContent = "Откройте в Telegram";
-            setTimeout(function () { check.textContent = "Проверить"; check.disabled = false; }, 1800);
+            if (hf) hf.notificationOccurred("error");
+            showBanner("error", "Откройте в Telegram");
+            check.disabled = false;
           } else {
-            check.textContent = "Вы не подписались";
-            setTimeout(function () { check.textContent = "Проверить"; check.disabled = false; }, 1800);
+            if (hf) hf.notificationOccurred("error");
+            showBanner("error", "Выполните задание!");
+            check.disabled = false;
           }
         } catch (_) {
-          check.textContent = "Ошибка проверки";
-          setTimeout(function () { check.textContent = "Проверить"; check.disabled = false; }, 1800);
+          const hf = haptic();
+          if (hf) hf.notificationOccurred("error");
+          showBanner("error", "Ошибка проверки");
+          check.disabled = false;
         }
       };
     }
