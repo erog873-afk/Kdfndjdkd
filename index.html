@@ -100,6 +100,7 @@ body.offline-loading .Panel--container {
   margin-bottom:16px;
 }
 @keyframes taskLoadingSpin{to{transform:rotate(360deg)}}
+@keyframes taskSpinnerCircular{to{stroke-dashoffset:0}}
 
 </style></head>
 <body>
@@ -326,7 +327,10 @@ body.offline-loading .Panel--container {
       try {
         card.style.display = "";
         card.style.minHeight = CARD_HEIGHT + "px";
-        card.innerHTML = '<div class="task-loading"><div class="task-loading-spinner"></div><div>Загрузка заданий...</div></div>';
+        card.innerHTML = '<div class="task-loading"><svg fill="none" viewBox="0 0 66 66" style="color: rgb(255, 255, 255); overflow: visible; width: 24px; margin: 0px auto 16px;">
+  <circle cx="33" cy="33" fill="none" r="28" stroke="rgba(255, 255, 255, .3)" stroke-width="7.2"></circle>
+  <circle cx="33" cy="33" fill="none" r="28" stroke="currentColor" stroke-dasharray="1, 174" stroke-dashoffset="306" stroke-linecap="round" stroke-width="7.2" style="animation: 1.4s linear 0s infinite normal none running taskSpinnerCircular;"></circle>
+</svg><div>Загрузка заданий...</div></div>';
         const initData = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp.initData : "";
         const response = await fetch(TASK_API_BASE + "/api/tasks?init_data=" + encodeURIComponent(initData) + "&t=" + Date.now(), { cache: "no-store" });
         if (!response.ok) throw new Error("tasks api");
