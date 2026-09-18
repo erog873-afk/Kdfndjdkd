@@ -82,22 +82,8 @@ body.offline-loading .Panel--container {
 .games-balance{margin-top:8px;margin-bottom:8px;}
 .tasks-balance{display:flex;width:max-content;max-width:100%;box-sizing:border-box;margin:28px 0 12px auto;}
 .tasks-balance + .Card--container{margin-top:28px !important;}
-</style>
-<style id="task-notistack-source-style">
-#task-notistack{position:fixed;top:8px;left:8px;right:8px;z-index:2147483647;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:8px;}
-#task-notistack .notistack-CollapseWrapper{display:flex;width:100%;justify-content:center;}
-#task-notistack .notistack-Snackbar{width:min(100%,448px);pointer-events:all;}
-#task-notistack .notistack-MuiContent{box-sizing:border-box;display:flex;align-items:center;min-height:48px;padding:10px 16px;border-radius:4px;box-shadow:0 3px 5px -1px rgba(0,0,0,.2),0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12);color:#fff;font-size:14px;line-height:20px;font-weight:500;animation:taskSnackIn .225s cubic-bezier(0,0,.2,1);}
-#task-notistack .notistack-MuiContent-error{background:#d32f2f;}
-#task-notistack .notistack-MuiContent-default{background:#323232;}
-#task-notistack svg{font-size:20px;margin-inline-end:8px;user-select:none;width:1em;height:1em;display:inline-block;fill:currentColor;flex-shrink:0;}
-#task-notistack .task-snack-hide{animation:taskSnackOut .225s cubic-bezier(.4,0,1,1) forwards;}
-@keyframes taskSnackIn{from{opacity:0;transform:translateY(-100%)}to{opacity:1;transform:none}}
-@keyframes taskSnackOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-100%)}}
-</style>
-</head>
+</style></head>
 <body>
-<div id="task-notistack" class="notistack-SnackbarContainer go3118922589 go4034260886 go1141946668 snackbar-margin" aria-live="polite" aria-atomic="true"></div>
 <div id="app-loader" style="position:fixed;inset:0;background:#000;z-index:99999;display:flex;align-items:center;justify-content:center;transition:opacity .3s ease;">
   <div style="width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);border-top-color:#fff;animation:app-loader-spin .8s linear infinite;"></div>
 </div>
@@ -233,7 +219,6 @@ body.offline-loading .Panel--container {
         card.style.display = "";
         card.style.minHeight = CARD_HEIGHT + "px";
         card.innerHTML = '<div class="Placeholder--container" style="text-align:center;display:flex;flex-direction:column;justify-content:center;min-height:' + Math.max(0, CARD_HEIGHT - 32) + 'px;"><div class="Placeholder--children"></div><div class="Placeholder--title-container" style="justify-content:center;"><h2>Задания закончились</h2></div><p class="Placeholder--text Placeholder--text-2">Но уже совсем скоро появятся новые! Пока что можете сыграть в рулетку или пригласить друзей.</p></div>';
-        setTimeout(function(){ showTaskSourceNotification("Заданий больше нет! Новые появятся через несколько часов.", "default"); }, 200);
       });
     }
 
@@ -298,8 +283,8 @@ body.offline-loading .Panel--container {
             check.textContent = "Откройте в Telegram";
             setTimeout(function () { check.textContent = "Проверить"; check.disabled = false; }, 1800);
           } else {
-            showTaskSourceNotification("Выполните задание!", "error");
-            check.disabled = false;
+            check.textContent = "Вы не подписались";
+            setTimeout(function () { check.textContent = "Проверить"; check.disabled = false; }, 1800);
           }
         } catch (_) {
           check.textContent = "Ошибка проверки";
@@ -311,30 +296,6 @@ body.offline-loading .Panel--container {
     function showNextTask() {
       if (index >= tasks.length) showEmpty();
       else showTask(tasks[index]);
-    }
-
-    function showTaskSourceNotification(message, type) {
-      var host = document.getElementById("task-notistack");
-      if (!host) return;
-      var wrap = document.createElement("div");
-      wrap.className = "go1475592160 go1671063245";
-      wrap.style.cssText = "pointer-events: all; overflow: visible; min-height: 0px; transition: height 300ms cubic-bezier(0.4, 0, 0.2, 1);";
-      var collapse = document.createElement("div");
-      collapse.className = "notistack-CollapseWrapper";
-      var snack = document.createElement("div");
-      snack.className = "notistack-Snackbar go3963613292";
-      var content = document.createElement("div");
-      content.className = "go1888806478 notistack-MuiContent notistack-MuiContent-" + (type === "error" ? "error" : "default") + " go167266335";
-      content.setAttribute("role", "alert");
-      content.setAttribute("aria-describedby", "notistack-snackbar");
-      if (type === "error") {
-        content.innerHTML = '<svg viewBox="0 0 24 24" focusable="false" style="font-size:20px;margin-inline-end:8px;user-select:none;width:1em;height:1em;display:inline-block;fill:currentColor;flex-shrink:0;"><path d="M12,2C17.53,2 22,6.47 22,12C22,17.53 17.53,22 12,22C6.47,22 2,17.53 2,12C2,6.47 6.47,2 12,2M15.59,7L12,10.59L8.41,7L7,8.41L10.59,12L7,15.59L8.41,17L12,13.41L15.59,17L17,15.59Z"></path></svg><div id="notistack-snackbar"></div>';
-      } else {
-        content.innerHTML = '<div id="notistack-snackbar"></div>';
-      }
-      content.querySelector("#notistack-snackbar").textContent = message;
-      snack.appendChild(content); collapse.appendChild(snack); wrap.appendChild(collapse); host.appendChild(wrap);
-      setTimeout(function(){ wrap.classList.add("task-snack-hide"); setTimeout(function(){wrap.remove();},225); },2600);
     }
 
     async function loadTasks() {
