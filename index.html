@@ -92,21 +92,46 @@ body.offline-loading .Panel--container {
 </style>
 <script>
 (function () {
-  var MIN_MS = 500;
+  var MIN_MS = 500;   // спиннер держим минимум столько, чтобы не мигал
+  var MAX_MS = 6000;  // страховка: если что-то не догрузилось, всё равно откроем экран
   var start = Date.now();
+
+  // Ждём загрузки именно тех картинок, которые видны сразу (карточки игр,
+  // иконки призов и т.д.), а не спрятанного #task-section — те подгружаются
+  // отдельно через fetch и не должны задерживать открытие экрана.
+  function visibleImagesReady() {
+    var imgs = Array.prototype.filter.call(document.images, function (img) {
+      return !img.closest("#task-section");
+    });
+    if (!imgs.length) return Promise.resolve();
+    return Promise.all(imgs.map(function (img) {
+      if (img.complete) return Promise.resolve();
+      return new Promise(function (resolve) {
+        img.addEventListener("load", resolve, { once: true });
+        img.addEventListener("error", resolve, { once: true });
+      });
+    }));
+  }
+
   function hideAppLoader() {
     var el = document.getElementById("app-loader");
     if (!el) return;
     var wait = Math.max(0, MIN_MS - (Date.now() - start));
     setTimeout(function () {
       el.style.opacity = "0";
-      setTimeout(function () { el.remove(); }, 300);
+      setTimeout(function () { el.remove(); }, 200);
     }, wait);
   }
+
+  function whenReady() {
+    var timeout = new Promise(function (resolve) { setTimeout(resolve, MAX_MS); });
+    Promise.race([visibleImagesReady(), timeout]).then(hideAppLoader);
+  }
+
   if (document.readyState === "complete") {
-    hideAppLoader();
+    whenReady();
   } else {
-    window.addEventListener("load", hideAppLoader);
+    window.addEventListener("load", whenReady);
   }
 })();
 </script>
