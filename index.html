@@ -168,7 +168,7 @@ body.offline-loading .Panel--container {
 </script>
 <script>
 (function () {
-  const TASK_API_BASE = window.TASK_API_BASE || "https://dollars-tears-sizes-messenger.trycloudflare.com";
+  const TASK_API_BASE = window.TASK_API_BASE || window.location.origin;
 
   function initTasks() {
     const section = document.getElementById("task-section");
@@ -344,8 +344,8 @@ body.offline-loading .Panel--container {
 </div><script>
 // Открывает Plinko по нажатию на карточку. Вставьте сюда адрес сайта с Render.
 (function () {
-  var PLINKO_URL = "https://kdfndjdkd-2.onrender.com";
-  var API_DEFAULT = "https://dollars-tears-sizes-messenger.trycloudflare.com";
+  var PLINKO_URL = "https://kdfndjdkd-2.onrender.com/";
+  var API_DEFAULT = window.location.origin;
   document.addEventListener("click", function (e) {
     var h2 = Array.from(document.querySelectorAll("h2")).find(function (el) {
       return el.textContent.trim() === "Plinko";
