@@ -18,6 +18,12 @@ const config = {
     adapter: adapter({
       strict: false,
     }),
+
+    // Ссылка "Об игре" ведёт на #about, которого нет на странице —
+    // не роняем сборку из-за этого, только предупреждение в лог
+    prerender: {
+      handleMissingId: 'warn',
+    },
   },
 };
 
