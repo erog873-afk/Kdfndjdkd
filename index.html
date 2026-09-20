@@ -329,8 +329,20 @@ body.offline-loading .Panel--container {
     }
 
     window.refreshTasks = loadTasks;
+    window.refreshBalance = loadBalance;
     loadTasks();
     loadBalance();
+
+    // Один баланс: обновляем цифру при возврате на страницу (например, из Plinko) и раз в 15 секунд
+    window.addEventListener("pageshow", loadBalance);
+    window.addEventListener("focus", loadBalance);
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") loadBalance();
+    });
+    document.addEventListener("click", function () { setTimeout(loadBalance, 300); }, true);
+    setInterval(function () {
+      if (document.visibilityState === "visible") loadBalance();
+    }, 15000);
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initTasks);
@@ -344,7 +356,7 @@ body.offline-loading .Panel--container {
 </div><script>
 // Открывает Plinko по нажатию на карточку. Вставьте сюда адрес сайта с Render.
 (function () {
-  var PLINKO_URL = "https://kdfndjdkd-2.onrender.com/";
+  var PLINKO_URL = "https://erog873-afk.github.io/Kdfndjdkd/";
   var API_DEFAULT = window.location.origin;
   document.addEventListener("click", function (e) {
     var h2 = Array.from(document.querySelectorAll("h2")).find(function (el) {
