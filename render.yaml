@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: plinko
+    runtime: static
+    buildCommand: npm install -g pnpm@9 && pnpm install --no-frozen-lockfile && pnpm build
+    staticPublishPath: build
+    envVars:
+      - key: NODE_VERSION
+        value: 20
