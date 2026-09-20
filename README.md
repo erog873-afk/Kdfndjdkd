@@ -1,30 +1,46 @@
-# Telegram Bot for Render
+# Telegram Mini App — прототип
 
-## Files
-- bot.py — Telegram bot
-- requirements.txt — Python dependency
-- .python-version — Python version
+Это первый самостоятельный прототип интерфейса по предоставленному скриншоту.
 
-## Render
-Use a Background Worker.
+## Что уже работает
 
-Build Command:
-pip install -r requirements.txt
+- Telegram WebApp SDK подключён.
+- Переключение «Легко / Средне / Сложно».
+- Виртуальный баланс ⭐.
+- Выбор ставки +100 / +500.
+- Игровой раунд «Поймай зелёный».
+- Разная скорость для уровней сложности.
+- Сохранение виртуального баланса через localStorage.
+- Окна «Об игре» и «Честная игра».
+- Адаптивная мобильная верстка и safe-area для Telegram.
 
-Start Command:
-python bot.py
+> ⭐ здесь являются виртуальными очками. Реальных платежей/вывода средств нет.
 
-## Environment Variable
-Add this variable in Render:
+## Быстрый запуск
 
-BOT_TOKEN=YOUR_BOT_TOKEN
+### Вариант 1 — открыть локально
 
-Do not put the bot token directly into bot.py.
+Просто открой `index.html` в браузере.
 
-## Before deployment
-Open bot.py and replace:
-- APP_URL
-- CHANNEL_URL
-- CHAT_URL
+### Вариант 2 — локальный сервер
 
-with your real links.
+```bash
+python3 -m http.server 8080
+```
+
+После этого открой:
+http://localhost:8080
+
+Для Telegram Mini App нужен HTTPS-адрес при размещении в интернете.
+
+## Следующий этап
+
+Для полноценного продукта стоит добавить:
+1. backend + PostgreSQL;
+2. авторизацию Telegram `initData`;
+3. серверный баланс;
+4. историю игр;
+5. серверную проверку результата;
+6. админ-панель;
+7. подключение нужных игр;
+8. публикацию через Telegram BotFather / Menu Button.
