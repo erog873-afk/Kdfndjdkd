@@ -70,6 +70,11 @@
 <script>
 const tg = window.Telegram && window.Telegram.WebApp;
 if (tg) { tg.ready(); tg.expand(); }
+// Кнопка «Назад» Telegram: из карточки человека — к списку, из списка — закрыть панель
+if (tg && tg.BackButton) {
+  tg.BackButton.onClick(() => { if (CURRENT) closeDetail(); else tg.close(); });
+  tg.BackButton.show();
+}
 const INIT = tg ? tg.initData : "";
 let ALL = [];
 let CURRENT = null;
