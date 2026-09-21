@@ -44,7 +44,7 @@ dp = Dispatcher()
 # Минимальная ставка в игре Plinko. Совпадает со значением MIN_BET на фронтенде
 # (Plinko/src/lib/constants/game.ts). Баланс пользователей маленький (0.5-2 ⭐
 # за задания) — если реальные ставки нужны меньше, уменьшите оба значения одинаково.
-PLINKO_MIN_BET = 0.1
+PLINKO_MIN_BET = 25
 
 # Множители по числу рядов и уровню риска. Ячеек на 1 больше, чем рядов.
 PLINKO_PAYOUTS = {
@@ -102,7 +102,7 @@ _plinko_lock = threading.Lock()
 def plinko_change_balance(user_id, delta):
     """Атомарно прибавляет delta (может быть отрицательной) к балансу пользователя в users.json."""
     users, key, record = get_user_record(user_id)
-    new_balance = round(float(record.get("balance", 0.81)) + float(delta), 2)
+    new_balance = round(float(record.get("balance", 100)) + float(delta), 2)
     record["balance"] = new_balance
     users[key] = record
     write_users(users)
@@ -147,10 +147,10 @@ def get_user_record(user_id):
     key = str(user_id)
     record = users.get(key)
     if not isinstance(record, dict):
-        record = {"balance": 0.81, "completed": []}
+        record = {"balance": 100, "completed": []}
         users[key] = record
         write_users(users)
-    record.setdefault("balance", 0.81)
+    record.setdefault("balance", 100)
     record.setdefault("completed", [])
     return users, key, record
 
@@ -159,8 +159,8 @@ def credit_user(user_id, task_id, reward):
     users, key, record = get_user_record(user_id)
     completed = [str(x) for x in record.get("completed", [])]
     if str(task_id) in completed:
-        return float(record.get("balance", 0.81)), False
-    record["balance"] = round(float(record.get("balance", 0.81)) + float(reward), 2)
+        return float(record.get("balance", 100)), False
+    record["balance"] = round(float(record.get("balance", 100)) + float(reward), 2)
     completed.append(str(task_id))
     record["completed"] = completed
     users[key] = record
@@ -275,9 +275,9 @@ class AppHandler(BaseHTTPRequestHandler):
                 init_data = query.get("init_data", [""])[0]
                 user_id = validate_webapp_init_data(init_data)
                 _, _, record = get_user_record(user_id)
-                self.send_body(200, json.dumps({"balance": round(float(record.get("balance", 0.81)), 2)}, ensure_ascii=False))
+                self.send_body(200, json.dumps({"balance": round(float(record.get("balance", 100)), 2)}, ensure_ascii=False))
             except Exception:
-                self.send_body(200, '{"balance":0.81}')
+                self.send_body(200, '{"balance":100}')
             return
         if path == "/health":
             self.send_body(200, '{"ok":true}')
