@@ -22,7 +22,7 @@ from config import TOKEN, ADMIN_ID
 BASE_DIR = Path(__file__).resolve().parent
 TASKS_FILE = BASE_DIR / "tasks.json"
 USERS_FILE = BASE_DIR / "users.json"
-APP_URL = os.getenv("RENDER_EXTERNAL_URL", "https://kdfndjdkd-2.onrender.com")
+APP_URL = os.getenv("https://kdfndjdkd-2.onrender.com", "https://kdfndjdkd-2.onrender.com")
 
 # Ссылки для кнопок "Канал" и "Чат" в приветственном сообщении.
 # Замени на настоящие ссылки твоего канала и чата.
