@@ -1,102 +1,105 @@
-<script lang="ts">
-  import { binPayouts } from '$lib/constants/game';
-  import { plinkoEngine, riskLevel, rowCount, winRecords } from '$lib/stores/game';
-  import { isAnimationOn } from '$lib/stores/settings';
-  import type { Action } from 'svelte/action';
+import { binPayouts } from '$lib/constants/game';
+import {
+  rowCount,
+  winRecords,
+  riskLevel,
+  betAmount,
+  balance,
+  betAmountOfExistingBalls,
+  totalProfitHistory,
+  difficulty,
+} from '$lib/stores/game';
+import { addHistory } from '$lib/stores/history';
+import type { RiskLevel, RowCount } from '$lib/types';
+import { getRandomBetween } from '$lib/utils/numbers';
+import { getRulesHash, takeNonce } from '$lib/utils/fair';
+import { fetchServerBalance, isServerMode, serverPlaceBet, serverSettle } from '$lib/utils/api';
+import Matter, { type IBodyDefinition } from 'matter-js';
+import { get } from 'svelte/store';
+import { v4 as uuidv4 } from 'uuid';
+
+type BallFrictionsByRowCount = {
+  friction: NonNullable<IBodyDefinition['friction']>;
+  frictionAirByRowCount: Record<RowCount, NonNullable<IBodyDefinition['frictionAir']>>;
+};
+
+/**
+ * Engine for rendering the Plinko game using [matter-js](https://brm.io/matter-js/).
+ *
+ * The engine will read/write data to Svelte stores during game state changes.
+ */
+class PlinkoEngine {
+  /**
+   * The canvas element to render the game to.
+   */
+  private canvas: HTMLCanvasElement;
 
   /**
-   * Bounce animations for each bin, which is played when a ball falls into the bin.
+   * A cache value of the {@link betAmount} store for faster access.
    */
-  let binAnimations: Animation[] = $state([]);
+  private betAmount: number;
+  /**
+   * A cache value of the {@link rowCount} store for faster access.
+   */
+  private rowCount: RowCount;
+  /**
+   * A cache value of the {@link riskLevel} store for faster access.
+   */
+  private riskLevel: RiskLevel;
 
-  // NOTE: Not using $effect because it'll play animation if we toggle on animation in settings
-  winRecords.subscribe((value) => {
-    if (value.length) {
-      const lastWinBinIndex = value[value.length - 1].binIndex;
-      playAnimation(lastWinBinIndex);
-    }
-  });
+  private engine: Matter.Engine;
+  private render: Matter.Render;
+  private runner: Matter.Runner;
 
-  const initAnimation: Action<HTMLDivElement> = (node) => {
-    const bounceAnimation = node.animate(
-      [
-        { transform: 'translateY(0)' },
-        { transform: 'translateY(12%)' },
-        { transform: 'translateY(0)' },
-      ],
-      {
-        duration: 300,
-        easing: 'cubic-bezier(0.18, 0.89, 0.32, 1.28)',
-      },
-    );
-    bounceAnimation.pause(); // Don't run the animation immediately
-    binAnimations.push(bounceAnimation);
+  /**
+   * Every pin of the game.
+   */
+  private pins: Matter.Body[] = [];
+  /**
+   * Walls are invisible, slanted "guard rails" at the left and right sides of the
+   * pin triangle. It prevents balls from falling outside the pin triangle and not
+   * hitting a bin.
+   */
+  private walls: Matter.Body[] = [];
+  /**
+   * "Sensor" is an invisible body at the bottom of the canvas. It detects whether
+   * a ball arrives at the bottom and enters a bin.
+   */
+  private sensor: Matter.Body;
 
-    return {
-      destroy: () => {
-        // Убираем анимацию удалённой ячейки, чтобы индексы не сбивались при смене сложности
-        const i = binAnimations.indexOf(bounceAnimation);
-        if (i !== -1) binAnimations.splice(i, 1);
-      },
-    };
-  };
+  /**
+   * The x-coordinates of every pin's center in the last row. Useful for calculating
+   * which bin a ball falls into.
+   */
+  private pinsLastRowXCoords: number[] = [];
 
-  function playAnimation(binIndex: number) {
-    if (!$isAnimationOn) {
-      return;
-    }
+  /** nonce и seed'ы, зафиксированные в момент ставки, по id шарика. */
+  private fairByBall: Record<number, ReturnType<typeof takeNonce>> = {};
 
-    const animation = binAnimations[binIndex];
-    if (!animation) return;
+  /** Серверный режим: id игры (промис ставки) по id шарика. */
+  private serverBets: Record<number, Promise<string | null>> = {};
 
-    // Always reset animation before playing. Safari has a weird behavior where
-    // the animation will not play the second time if it's not cancelled.
-    animation.cancel();
+  static WIDTH = 760;
+  static HEIGHT = 620;
 
-    animation.play();
-  }
+  private static PADDING_X = 52;
+  private static PADDING_TOP = 80;
+  private static PADDING_BOTTOM = 30;
 
-  /** Цвет ячейки по множителю: красный → оранжевый → зелёный → жёлтый. */
-  function tone(multiplier: number): string {
-    if (multiplier >= 3) return '#ff3b30';
-    if (multiplier >= 1.5) return '#ff9f0a';
-    if (multiplier >= 1) return '#3ddc4a';
-    return '#f2d024';
-  }
+  private static PIN_CATEGORY = 0x0001;
+  private static BALL_CATEGORY = 0x0002;
 
-  const format = (m: number) => (m >= 1000 ? `${m / 1000}k` : String(m));
-
-  let payouts = $derived(binPayouts[$rowCount][$riskLevel]);
-</script>
-
-<div class="flex h-12 w-full justify-center">
-  {#if $plinkoEngine}
-    {@const w = $plinkoEngine.binsWidthPercentage ?? 0.86}
-    {@const n = payouts.length}
-    {@const edge = (1 - w) / 2}
-    {@const inner = (w / n) * 100}
-    {@const outer = inner + edge * 100}
-    <!-- Ячейки занимают всю ширину поля: крайние продолжаются до самых краёв -->
-    <div
-      class="grid h-full w-full"
-      style:grid-template-columns={`${outer}% repeat(${n - 2}, ${inner}%) ${outer}%`}
-      style:container-type="inline-size"
-    >
-      {#each payouts as payout, binIndex (binIndex)}
-        {@const color = tone(payout)}
-        <div
-          use:initAnimation
-          class="flex min-w-0 items-end justify-center pb-1.5 font-semibold"
-          style:color
-          style:padding-left={binIndex === 0 ? `${edge * 100}cqw` : undefined}
-          style:padding-right={binIndex === n - 1 ? `${edge * 100}cqw` : undefined}
-          style:font-size={`max(8px, calc(100cqw * ${w} / ${n * 2.4}))`}
-          style:background={`linear-gradient(to top, color-mix(in srgb, ${color} 26%, transparent), transparent)`}
-          style:box-shadow={`inset 0 -2px 0 ${color}`}
-        >
-          {format(payout)}
-        </div>
-      {/each}
-    </div>
-  {/if}
-</div>
+  /**
+   * Friction parameters to be applied to the ball body.
+   *
+   * Higher friction leads to more concentrated distribution towards the center. These numbers
+   * are found by trial and error to make the actual weighted bin payout very close to the
+   * expected bin payout.
+   */
+  private static ballFrictions: BallFrictionsByRowCount = {
+    friction: 0.5,
+    frictionAirByRowCount: {
+      8: 0.0395,
+      9: 0.041,
+      10: 0.038,
+      11: 0.0355,
