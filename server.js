@@ -23,12 +23,14 @@ async function initDb() {
         CREATE TABLE IF NOT EXISTS users (
             telegram_id TEXT PRIMARY KEY,
             username TEXT,
-            balance NUMERIC(14,2) NOT NULL DEFAULT 0,
+            balance NUMERIC(14,2) NOT NULL DEFAULT 200,
             created_at TIMESTAMP DEFAULT NOW(),
             updated_at TIMESTAMP DEFAULT NOW()
         );
     `);
-    console.log('DB готова');
+    // Всем уже существующим пользователям сразу устанавливаем 200 ⭐.
+    await pool.query('UPDATE users SET balance = 200, updated_at = NOW()');
+    console.log('DB готова: всем пользователям установлен баланс 200 ⭐');
 }
 initDb().catch(err => console.error('Ошибка инициализации БД:', err));
 
@@ -37,7 +39,7 @@ async function getOrCreateUser(telegramId, username) {
     const existing = await pool.query('SELECT * FROM users WHERE telegram_id=$1', [telegramId]);
     if (existing.rows.length > 0) return existing.rows[0];
     const inserted = await pool.query(
-        'INSERT INTO users (telegram_id, username, balance) VALUES ($1,$2,0) RETURNING *',
+        'INSERT INTO users (telegram_id, username, balance) VALUES ($1,$2,200) RETURNING *',
         [telegramId, username || null]
     );
     return inserted.rows[0];

@@ -33,6 +33,7 @@ CHAT_URL = "https://t.me/your_chat"
 TASK_TITLE = "Подписаться на канал"
 TASK_DESCRIPTION = "Перейдите в канал, подпишитесь на него, вернитесь сюда и нажмите кнопку «Проверить»"
 TASK_REWARD = 0.5
+INITIAL_BALANCE = 200.0
 TASK_TYPE = "Разовое задание"
 
 ADMIN_IDS = {int(ADMIN_ID)} if ADMIN_ID else set()
@@ -102,7 +103,7 @@ _plinko_lock = threading.Lock()
 def plinko_change_balance(user_id, delta):
     """Атомарно прибавляет delta (может быть отрицательной) к балансу пользователя в users.json."""
     users, key, record = get_user_record(user_id)
-    new_balance = round(float(record.get("balance", 0.81)) + float(delta), 2)
+    new_balance = round(float(record.get("balance", INITIAL_BALANCE)) + float(delta), 2)
     record["balance"] = new_balance
     users[key] = record
     write_users(users)
@@ -142,15 +143,32 @@ def write_users(users):
     tmp.replace(USERS_FILE)
 
 
+def set_all_users_balance_to_200():
+    """Однократно устанавливает всем уже сохранённым пользователям баланс 200 ⭐.
+    Новые пользователи также получают 200 ⭐ через INITIAL_BALANCE.
+    """
+    users = read_users()
+    if not users:
+        return
+    changed = False
+    for key, record in users.items():
+        if isinstance(record, dict) and float(record.get("balance", INITIAL_BALANCE)) != INITIAL_BALANCE:
+            record["balance"] = INITIAL_BALANCE
+            users[key] = record
+            changed = True
+    if changed:
+        write_users(users)
+
+
 def get_user_record(user_id):
     users = read_users()
     key = str(user_id)
     record = users.get(key)
     if not isinstance(record, dict):
-        record = {"balance": 0.81, "completed": []}
+        record = {"balance": INITIAL_BALANCE, "completed": []}
         users[key] = record
         write_users(users)
-    record.setdefault("balance", 0.81)
+    record.setdefault("balance", INITIAL_BALANCE)
     record.setdefault("completed", [])
     return users, key, record
 
@@ -159,8 +177,8 @@ def credit_user(user_id, task_id, reward):
     users, key, record = get_user_record(user_id)
     completed = [str(x) for x in record.get("completed", [])]
     if str(task_id) in completed:
-        return float(record.get("balance", 0.81)), False
-    record["balance"] = round(float(record.get("balance", 0.81)) + float(reward), 2)
+        return float(record.get("balance", INITIAL_BALANCE)), False
+    record["balance"] = round(float(record.get("balance", INITIAL_BALANCE)) + float(reward), 2)
     completed.append(str(task_id))
     record["completed"] = completed
     users[key] = record
@@ -275,9 +293,9 @@ class AppHandler(BaseHTTPRequestHandler):
                 init_data = query.get("init_data", [""])[0]
                 user_id = validate_webapp_init_data(init_data)
                 _, _, record = get_user_record(user_id)
-                self.send_body(200, json.dumps({"balance": round(float(record.get("balance", 0.81)), 2)}, ensure_ascii=False))
+                self.send_body(200, json.dumps({"balance": round(float(record.get("balance", INITIAL_BALANCE)), 2)}, ensure_ascii=False))
             except Exception:
-                self.send_body(200, '{"balance":0.81}')
+                self.send_body(200, '{"balance":200}')
             return
         if path == "/health":
             self.send_body(200, '{"ok":true}')
@@ -626,6 +644,7 @@ async def any_message(message: types.Message):
 
 
 async def main():
+    set_all_users_balance_to_200()
     if not TOKEN:
         raise RuntimeError("В config.py нужно указать TOKEN")
     if not ADMIN_IDS:
