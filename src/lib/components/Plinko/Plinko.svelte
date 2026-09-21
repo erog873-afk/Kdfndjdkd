@@ -20,7 +20,8 @@
 </script>
 
 <!-- Труба стоит над полем: шарик выпадает из неё за верхним краем и падает на кегли -->
-<div class="relative pt-8">
+<!-- -mt-10: труба ложится в свободное место над полем, а само поле поднимается выше -->
+<div class="relative -mt-10 pt-8">
   <div
     aria-hidden="true"
     class="absolute top-0 left-1/2 z-10 h-9 w-[11%] -translate-x-1/2 rounded-t-lg bg-gradient-to-r from-[#55565a] via-[#a0a1a5] to-[#55565a]"
