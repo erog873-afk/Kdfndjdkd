@@ -22,6 +22,13 @@ from config import TOKEN, ADMIN_ID
 BASE_DIR = Path(__file__).resolve().parent
 TASKS_FILE = BASE_DIR / "tasks.json"
 USERS_FILE = BASE_DIR / "users.json"
+
+# Через веб-сервер отдаются только эти типы файлов (страницы, стили, скрипты, картинки).
+# users.json, tasks.json, *.py и прочее наружу не выдаются.
+PUBLIC_SUFFIXES = {
+    ".html", ".css", ".js", ".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg", ".ico",
+    ".mp4", ".woff", ".woff2",
+}
 APP_URL = os.getenv("RENDER_EXTERNAL_URL", "https://kdfndjdkd-2.onrender.com")
 
 # Ссылки для кнопок "Канал" и "Чат" в приветственном сообщении.
@@ -168,6 +175,101 @@ def credit_user(user_id, task_id, reward):
     return float(record["balance"]), True
 
 
+def touch_user(user_id, init_data):
+    """Запоминает имя и время последнего визита (для админ-панели). Ошибки не пробрасывает."""
+    try:
+        parsed = urllib.parse.parse_qs(init_data, keep_blank_values=True)
+        u = json.loads(parsed.get("user", [""])[0] or "{}")
+        name = " ".join(x for x in (u.get("first_name", ""), u.get("last_name", "")) if x).strip()
+        username = u.get("username", "") or ""
+        with _plinko_lock:
+            users, key, record = get_user_record(user_id)
+            changed = False
+            if record.get("name") != name or record.get("username") != username:
+                record["name"] = name
+                record["username"] = username
+                changed = True
+            now = int(time.time())
+            if now - int(record.get("last_seen", 0)) > 60:
+                record["last_seen"] = now
+                changed = True
+            if changed:
+                users[key] = record
+                write_users(users)
+    except Exception:
+        pass
+
+
+def record_play_bet(user_id, amount):
+    """Статистика: ещё одна игра и сумма ставок. Вызывать внутри _plinko_lock."""
+    users, key, record = get_user_record(user_id)
+    record["plays"] = int(record.get("plays", 0)) + 1
+    record["wagered"] = round(float(record.get("wagered", 0)) + float(amount), 2)
+    record["last_play"] = int(time.time())
+    users[key] = record
+    write_users(users)
+
+
+def record_play_result(user_id, bet, payout, multiplier, rows, risk):
+    """Статистика: выигрыш и последние 20 игр. Вызывать внутри _plinko_lock."""
+    users, key, record = get_user_record(user_id)
+    record["won"] = round(float(record.get("won", 0)) + float(payout), 2)
+    games = record.get("games", [])
+    games.insert(0, {
+        "t": int(time.time()), "bet": bet, "payout": payout,
+        "x": multiplier, "rows": rows, "risk": risk,
+    })
+    record["games"] = games[:20]
+    users[key] = record
+    write_users(users)
+
+
+def admin_row(key, rec):
+    return {
+        "id": key,
+        "name": rec.get("name", ""),
+        "username": rec.get("username", ""),
+        "balance": round(float(rec.get("balance", 100)), 2),
+        "plays": int(rec.get("plays", 0)),
+        "wagered": round(float(rec.get("wagered", 0)), 2),
+        "won": round(float(rec.get("won", 0)), 2),
+        "tasks": len(rec.get("completed", []) or []),
+        "last_play": int(rec.get("last_play", 0)),
+        "last_seen": int(rec.get("last_seen", 0)),
+    }
+
+
+def admin_change_balance(admin_id, target, action, amount):
+    """Выдать (add), отнять (sub) или установить (set) баланс. Возвращает (до, после)."""
+    if not math.isfinite(amount) or amount < 0 or amount > 1_000_000:
+        raise ValueError("bad_amount")
+    if action not in ("add", "sub", "set"):
+        raise ValueError("bad_action")
+    with _plinko_lock:
+        users = read_users()
+        rec = users.get(target)
+        if not isinstance(rec, dict):
+            raise KeyError("user_not_found")
+        before = round(float(rec.get("balance", 100)), 2)
+        if action == "add":
+            after = before + amount
+        elif action == "sub":
+            after = max(0.0, before - amount)
+        else:
+            after = amount
+        after = round(after, 2)
+        rec["balance"] = after
+        log = rec.get("log", [])
+        log.insert(0, {
+            "t": int(time.time()), "admin": admin_id, "action": action,
+            "amount": round(amount, 2), "before": before, "after": after,
+        })
+        rec["log"] = log[:30]
+        users[target] = rec
+        write_users(users)
+    return before, after
+
+
 def next_task_id(tasks):
     ids = [int(t.get("id", 0)) for t in tasks if str(t.get("id", "")).isdigit()]
     return str(max(ids + [0]) + 1)
@@ -274,6 +376,7 @@ class AppHandler(BaseHTTPRequestHandler):
                 query = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
                 init_data = query.get("init_data", [""])[0]
                 user_id = validate_webapp_init_data(init_data)
+                touch_user(user_id, init_data)
                 _, _, record = get_user_record(user_id)
                 self.send_body(200, json.dumps({"balance": round(float(record.get("balance", 100)), 2)}, ensure_ascii=False))
             except Exception:
@@ -287,14 +390,25 @@ class AppHandler(BaseHTTPRequestHandler):
         if BASE_DIR not in target.parents and target != BASE_DIR:
             self.send_body(403, "Forbidden", "text/plain; charset=utf-8")
             return
-        if not target.is_file():
+        if (
+            target.suffix.lower() not in PUBLIC_SUFFIXES
+            or target.name.startswith(".")
+            or not target.is_file()
+        ):
             self.send_body(404, "Not found", "text/plain; charset=utf-8")
             return
         types_map = {
             ".html": "text/html; charset=utf-8",
             ".css": "text/css; charset=utf-8",
             ".js": "application/javascript; charset=utf-8",
-            ".json": "application/json; charset=utf-8",
+            ".svg": "image/svg+xml",
+            ".png": "image/png",
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+            ".webp": "image/webp",
+            ".gif": "image/gif",
+            ".ico": "image/x-icon",
+            ".mp4": "video/mp4",
         }
         self.send_body(200, target.read_bytes(), types_map.get(target.suffix, "application/octet-stream"))
 
@@ -303,6 +417,9 @@ class AppHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         path = urllib.parse.urlparse(self.path).path
+        if path.startswith("/api/admin/"):
+            self.handle_admin(path)
+            return
         if path == "/api/plinko/bet":
             self.handle_plinko_bet()
             return
@@ -358,6 +475,7 @@ class AppHandler(BaseHTTPRequestHandler):
                     self.send_body(402, '{"error":"not_enough_balance"}')
                     return
                 balance = plinko_change_balance(user_id, -amount)
+                record_play_bet(user_id, amount)
                 game_id = uuid.uuid4().hex
                 _plinko_games[game_id] = {
                     "user": user_id, "amount": amount, "rows": rows, "risk": risk,
@@ -388,9 +506,58 @@ class AppHandler(BaseHTTPRequestHandler):
                 else:
                     _, _, record = get_user_record(user_id)
                     balance = float(record.get("balance", 0))
+                record_play_result(
+                    user_id, game["amount"], payout, multiplier, game["rows"], game["risk"]
+                )
             self.send_body(200, json.dumps(
                 {"balance": balance, "payout": payout, "multiplier": multiplier}, ensure_ascii=False
             ))
+        except Exception as exc:
+            self.send_body(400, json.dumps({"error": str(exc)}, ensure_ascii=False))
+
+    def handle_admin(self, path):
+        """Админ-API: доступ только у Telegram-аккаунтов из ADMIN_IDS (проверяется подпись Telegram)."""
+        try:
+            payload = self.body_json()
+            admin_id = validate_webapp_init_data(str(payload.get("init_data", "")))
+            if admin_id not in ADMIN_IDS:
+                self.send_body(403, '{"error":"forbidden"}')
+                return
+            if path == "/api/admin/users":
+                rows = [admin_row(k, v) for k, v in read_users().items() if isinstance(v, dict)]
+                summary = {
+                    "users": len(rows),
+                    "players": sum(1 for r in rows if r["plays"] > 0),
+                    "plays": sum(r["plays"] for r in rows),
+                    "balance_total": round(sum(r["balance"] for r in rows), 2),
+                    "wagered": round(sum(r["wagered"] for r in rows), 2),
+                    "won": round(sum(r["won"] for r in rows), 2),
+                }
+                rows.sort(key=lambda r: max(r["last_seen"], r["last_play"]), reverse=True)
+                self.send_body(200, json.dumps({"summary": summary, "users": rows[:2000]}, ensure_ascii=False))
+                return
+            target = str(int(payload.get("user_id", 0)))
+            if path == "/api/admin/user":
+                rec = read_users().get(target)
+                if not isinstance(rec, dict):
+                    self.send_body(404, '{"error":"user_not_found"}')
+                    return
+                data = admin_row(target, rec)
+                data["games"] = rec.get("games", [])
+                data["log"] = rec.get("log", [])
+                self.send_body(200, json.dumps(data, ensure_ascii=False))
+                return
+            if path == "/api/admin/balance":
+                action = str(payload.get("action", ""))
+                amount = float(payload.get("amount", 0))
+                try:
+                    before, after = admin_change_balance(admin_id, target, action, amount)
+                except KeyError:
+                    self.send_body(404, '{"error":"user_not_found"}')
+                    return
+                self.send_body(200, json.dumps({"before": before, "balance": after}, ensure_ascii=False))
+                return
+            self.send_body(404, '{"error":"not_found"}')
         except Exception as exc:
             self.send_body(400, json.dumps({"error": str(exc)}, ensure_ascii=False))
 
@@ -407,6 +574,10 @@ def admin_menu():
     kb = InlineKeyboardBuilder()
     kb.row(types.InlineKeyboardButton(text="➕ Добавить задание", callback_data="add_task"))
     kb.row(types.InlineKeyboardButton(text="📋 Мои задания", callback_data="list_tasks"))
+    kb.row(types.InlineKeyboardButton(
+        text="👥 Пользователи и балансы",
+        web_app=types.WebAppInfo(url=APP_URL.rstrip("/") + "/panel.html"),
+    ))
     kb.row(types.InlineKeyboardButton(text="⭐ Открыть приложение", web_app=types.WebAppInfo(url=APP_URL)))
     return kb.as_markup()
 

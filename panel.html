@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Панель администратора</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root { --bg:#111216; --card:#1c1d22; --card2:#292a30; --text:#fff; --muted:#96979d; --blue:#2f6bff; --green:#3ecf8e; --red:#ff6b6b; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+  .wrap { max-width:760px; margin:0 auto; padding:calc(16px + env(safe-area-inset-top,0px)) 14px calc(40px + env(safe-area-inset-bottom,0px)); }
+  h1 { font-size:22px; margin:0 0 14px; }
+  .muted { color:var(--muted); font-size:13px; }
+  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
+  .stat { background:var(--card); border-radius:14px; padding:10px 12px; }
+  .stat b { display:block; font-size:17px; margin-top:2px; }
+  .bar { display:flex; gap:8px; margin-bottom:12px; }
+  input, select { width:100%; border:0; outline:0; border-radius:12px; background:var(--card2); color:var(--text); padding:12px; font-size:15px; }
+  button { border:0; border-radius:12px; padding:12px 14px; font-weight:700; font-size:15px; cursor:pointer; color:#fff; background:var(--card2); }
+  button.primary { background:var(--blue); }
+  button.green { background:#1f5a44; color:#b9f3d9; }
+  button.red { background:#5a2226; color:#ffc4c4; }
+  .user { background:var(--card); border-radius:16px; padding:12px 14px; margin-bottom:8px; cursor:pointer; }
+  .user .top { display:flex; justify-content:space-between; gap:10px; align-items:baseline; }
+  .user .name { font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .user .bal { font-weight:800; white-space:nowrap; }
+  .user .row2 { display:flex; flex-wrap:wrap; gap:4px 12px; margin-top:4px; }
+  #msg { padding:30px 10px; text-align:center; color:var(--muted); }
+  #detail { position:fixed; inset:0; background:var(--bg); overflow-y:auto; display:none; z-index:10; }
+  .card { background:var(--card); border-radius:16px; padding:14px; margin-bottom:12px; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .kv b { display:block; font-size:16px; }
+  .btns { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:10px; }
+  .quick { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+  .quick button { padding:8px 12px; font-size:14px; }
+  .item { display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-top:1px solid #2a2b31; font-size:14px; }
+  .item:first-child { border-top:0; }
+  .pos { color:var(--green); } .neg { color:var(--red); }
+  .back { margin-bottom:12px; }
+</style>
+</head>
+<body>
+<div class="wrap" id="list-view">
+  <h1>Пользователи и балансы</h1>
+  <div id="stats" class="stats"></div>
+  <div class="bar">
+    <input id="q" type="search" placeholder="Поиск: имя, @username или ID">
+    <button id="refresh" title="Обновить">⟳</button>
+  </div>
+  <div class="bar">
+    <select id="sort">
+      <option value="recent">Сначала недавние</option>
+      <option value="balance">По балансу</option>
+      <option value="plays">По числу игр</option>
+      <option value="wagered">По сумме ставок</option>
+    </select>
+    <select id="filter">
+      <option value="all">Все</option>
+      <option value="played">Играли</option>
+      <option value="notplayed">Не играли</option>
+    </select>
+  </div>
+  <div id="users"></div>
+  <div id="msg">Загрузка…</div>
+</div>
+
+<div id="detail"><div class="wrap" id="detail-body"></div></div>
+
+<script>
+const tg = window.Telegram && window.Telegram.WebApp;
+if (tg) { tg.ready(); tg.expand(); }
+const INIT = tg ? tg.initData : "";
+let ALL = [];
+let CURRENT = null;
+
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = (n) => Number(n || 0).toFixed(2).replace(".", ",");
+const when = (t) => t ? new Date(t * 1000).toLocaleString("ru-RU", {day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"}) : "—";
+
+async function api(path, body) {
+  const r = await fetch(path, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({init_data: INIT, ...(body || {})}),
+  });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(r.status === 403 ? "forbidden" : (d.error || ("Ошибка " + r.status)));
+  return d;
+}
+
+function showMsg(t) { $("msg").textContent = t; $("msg").style.display = t ? "block" : "none"; }
+
+function confirmAsk(text, cb) {
+  if (tg && tg.showConfirm) tg.showConfirm(text, (ok) => ok && cb());
+  else if (confirm(text)) cb();
+}
+
+async function load() {
+  if (!INIT) { showMsg("Откройте панель из Telegram: команда /admin → «Пользователи и балансы»."); return; }
+  showMsg("Загрузка…");
+  try {
+    const d = await api("/api/admin/users");
+    ALL = d.users;
+    const s = d.summary;
+    $("stats").innerHTML =
+      `<div class="stat"><span class="muted">Пользователей</span><b>${s.users}</b></div>` +
+      `<div class="stat"><span class="muted">Играли</span><b>${s.players}</b></div>` +
+      `<div class="stat"><span class="muted">Игр всего</span><b>${s.plays}</b></div>` +
+      `<div class="stat"><span class="muted">Сумма балансов</span><b>${fmt(s.balance_total)}</b></div>` +
+      `<div class="stat"><span class="muted">Поставлено</span><b>${fmt(s.wagered)}</b></div>` +
+      `<div class="stat"><span class="muted">Выплачено</span><b>${fmt(s.won)}</b></div>`;
+    render();
+  } catch (e) {
+    showMsg(e.message === "forbidden" ? "Нет доступа: панель только для администраторов." : "Не удалось загрузить: " + e.message);
+  }
+}
+
+function render() {
+  const q = $("q").value.trim().toLowerCase().replace(/^@/, "");
+  const sort = $("sort").value, filter = $("filter").value;
+  let rows = ALL.filter((u) => {
+    if (filter === "played" && !u.plays) return false;
+    if (filter === "notplayed" && u.plays) return false;
+    if (!q) return true;
+    return u.id.includes(q) || (u.name || "").toLowerCase().includes(q) || (u.username || "").toLowerCase().includes(q);
+  });
+  const key = {
+    recent: (u) => Math.max(u.last_seen, u.last_play),
+    balance: (u) => u.balance,
+    plays: (u) => u.plays,
+    wagered: (u) => u.wagered,
+  }[sort];
+  rows = rows.slice().sort((a, b) => key(b) - key(a));
+  $("users").innerHTML = rows.map((u) => `
+    <div class="user" data-id="${esc(u.id)}">
+      <div class="top"><span class="name">${esc(u.name || "Без имени")} ${u.username ? '<span class="muted">@' + esc(u.username) + "</span>" : ""}</span><span class="bal">⭐ ${fmt(u.balance)}</span></div>
+      <div class="row2 muted"><span>ID ${esc(u.id)}</span><span>Игр: ${u.plays}</span><span>Ставки: ${fmt(u.wagered)}</span><span>Выигрыш: ${fmt(u.won)}</span><span>Был: ${when(Math.max(u.last_seen, u.last_play))}</span></div>
+    </div>`).join("");
+  showMsg(rows.length ? "" : "Никого не найдено.");
+}
+
+async function openUser(id) {
+  CURRENT = id;
+  $("detail").style.display = "block";
+  $("detail-body").innerHTML = '<div class="card">Загрузка…</div>';
+  try {
+    const u = await api("/api/admin/user", {user_id: id});
+    drawDetail(u);
+  } catch (e) {
+    $("detail-body").innerHTML = '<button class="back" onclick="closeDetail()">← Назад</button><div class="card">Ошибка: ' + esc(e.message) + "</div>";
+  }
+}
+
+function closeDetail() { $("detail").style.display = "none"; CURRENT = null; }
+
+function drawDetail(u) {
+  const games = (u.games || []).map((g) => {
+    const diff = g.payout - g.bet;
+    return `<div class="item"><span>${when(g.t)} · ставка ${fmt(g.bet)} · ×${g.x}</span><span class="${diff >= 0 ? "pos" : "neg"}">${diff >= 0 ? "+" : ""}${fmt(diff)}</span></div>`;
+  }).join("") || '<div class="muted">Пока не играл.</div>';
+  const names = {add: "Выдано", sub: "Отнято", set: "Установлено"};
+  const log = (u.log || []).map((l) =>
+    `<div class="item"><span>${when(l.t)} · ${names[l.action] || l.action} ${fmt(l.amount)}</span><span class="muted">${fmt(l.before)} → ${fmt(l.after)}</span></div>`
+  ).join("") || '<div class="muted">Изменений не было.</div>';
+  $("detail-body").innerHTML = `
+    <button class="back" onclick="closeDetail()">← Назад</button>
+    <div class="card">
+      <div style="font-size:19px;font-weight:800">${esc(u.name || "Без имени")}</div>
+      <div class="muted">${u.username ? "@" + esc(u.username) + " · " : ""}ID ${esc(u.id)}</div>
+      <div style="font-size:28px;font-weight:800;margin:10px 0">⭐ ${fmt(u.balance)}</div>
+      <div class="grid2">
+        <div class="kv"><span class="muted">Игр</span><b>${u.plays}</b></div>
+        <div class="kv"><span class="muted">Заданий выполнено</span><b>${u.tasks}</b></div>
+        <div class="kv"><span class="muted">Поставлено</span><b>${fmt(u.wagered)}</b></div>
+        <div class="kv"><span class="muted">Выплачено</span><b>${fmt(u.won)}</b></div>
+        <div class="kv"><span class="muted">Последняя игра</span><b>${when(u.last_play)}</b></div>
+        <div class="kv"><span class="muted">Был в приложении</span><b>${when(u.last_seen)}</b></div>
+      </div>
+    </div>
+    <div class="card">
+      <b>Изменить баланс</b>
+      <input id="amount" type="number" inputmode="decimal" min="0" step="any" placeholder="Сумма" style="margin-top:10px">
+      <div class="quick">
+        ${[10, 50, 100, 500].map((n) => `<button onclick="$('amount').value=${n}">${n}</button>`).join("")}
+      </div>
+      <div class="btns">
+        <button class="green" onclick="change('add')">Выдать</button>
+        <button class="red" onclick="change('sub')">Отнять</button>
+        <button onclick="change('set')">Установить</button>
+      </div>
+      <div id="dmsg" class="muted" style="margin-top:10px"></div>
+    </div>
+    <div class="card"><b>Последние игры</b><div style="margin-top:6px">${games}</div></div>
+    <div class="card"><b>Действия администратора</b><div style="margin-top:6px">${log}</div></div>`;
+}
+
+function change(action) {
+  const amount = parseFloat(String($("amount").value).replace(",", "."));
+  if (!isFinite(amount) || amount < 0) { $("dmsg").textContent = "Введите сумму."; return; }
+  const words = {add: "Выдать", sub: "Отнять", set: "Установить баланс"};
+  confirmAsk(`${words[action]}: ${fmt(amount)} ⭐ (ID ${CURRENT})?`, async () => {
+    try {
+      await api("/api/admin/balance", {user_id: CURRENT, action, amount});
+      const id = CURRENT;
+      await load();
+      await openUser(id);
+      $("dmsg").textContent = "Готово.";
+    } catch (e) {
+      $("dmsg").textContent = "Ошибка: " + e.message;
+    }
+  });
+}
+
+$("users").addEventListener("click", (e) => {
+  const el = e.target.closest(".user");
+  if (el) openUser(el.dataset.id);
+});
+["q", "sort", "filter"].forEach((id) => $(id).addEventListener("input", render));
+$("refresh").addEventListener("click", load);
+load();
+</script>
+</body>
+</html>
