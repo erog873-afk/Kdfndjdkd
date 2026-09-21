@@ -3,8 +3,6 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-  // Consult https://kit.svelte.dev/docs/integrations#preprocessors
-  // for more information about preprocessors
   preprocess: vitePreprocess(),
 
   kit: {
@@ -14,15 +12,14 @@ const config = {
     // Один файл: весь JS и CSS вставляется прямо в build/index.html
     output: { bundleStrategy: 'inline' },
 
-    // Static site generation (SSG) is used: https://kit.svelte.dev/docs/adapter-static
     adapter: adapter({
       strict: false,
     }),
 
-    // Ссылка "Об игре" ведёт на #about, которого нет на странице —
-    // не роняем сборку из-за этого, только предупреждение в лог
+    // Не роняем сборку из-за ссылок на иконки и #about — только предупреждение в лог
     prerender: {
       handleMissingId: 'warn',
+      handleHttpError: 'warn',
     },
   },
 };
