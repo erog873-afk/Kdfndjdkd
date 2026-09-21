@@ -6,6 +6,7 @@ import {
   type RowCount,
   type WinRecord,
 } from '$lib/types';
+import { isServerMode } from '$lib/utils/api';
 import { interpolateRgbColors } from '$lib/utils/colors';
 import { countValueOccurrences } from '$lib/utils/numbers';
 import { derived, writable } from 'svelte/store';
@@ -39,7 +40,8 @@ export const totalProfitHistory = writable<number[]>([0]);
  * on every balance change. This prevents unnecessary writes to local storage, which can
  * be slow on low-end devices.
  */
-export const balance = writable<number>(DEFAULT_BALANCE);
+// В Telegram баланс только серверный: пока он не загружен, показываем 0, а не «демо»-200
+export const balance = writable<number>(isServerMode() ? 0 : DEFAULT_BALANCE);
 
 /**
  * RGB colors for every bin. The length of the array is the number of bins.
